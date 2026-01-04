@@ -56,11 +56,11 @@ Public Class FormDineInOrders
     .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
                 .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
                 .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
-                .ColumnHeadersDefaultCellStyle.BackColor = Color.White
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(108, 117, 125)    
                 .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
                 .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
-                .ColumnHeadersHeight = 50
-                .RowTemplate.Height = 50
+                 .ColumnHeadersHeight = 45
+                .RowTemplate.Height = 45
                 .EnableHeadersVisualStyles = True
         End With
 

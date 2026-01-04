@@ -22,9 +22,9 @@ Partial Class FormCustomerOrderHistory
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle9 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.btnClose = New System.Windows.Forms.Label()
         Me.txtSearch = New System.Windows.Forms.TextBox()
@@ -32,13 +32,6 @@ Partial Class FormCustomerOrderHistory
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.tabOrders = New System.Windows.Forms.TabPage()
         Me.dgvOrders = New System.Windows.Forms.DataGridView()
-        Me.colOrderID = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colDateTime = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colOrderType = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colItemCount = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colTotalAmount = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colPayment = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.colStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.tabReservations = New System.Windows.Forms.TabPage()
         Me.dgvReservations = New System.Windows.Forms.DataGridView()
         Me.colResID = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -48,8 +41,14 @@ Partial Class FormCustomerOrderHistory
         Me.colResTotal = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colResStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colResPayment = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colOrderID = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colDateTime = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colOrderType = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colItemCount = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colTotalAmount = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colPayment = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colStatus = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Panel1.SuspendLayout()
-
         Me.TabControl1.SuspendLayout()
         Me.tabOrders.SuspendLayout()
         CType(Me.dgvOrders, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -66,7 +65,7 @@ Partial Class FormCustomerOrderHistory
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(880, 60)
+        Me.Panel1.Size = New System.Drawing.Size(900, 60)
         Me.Panel1.TabIndex = 0
         '
         'btnClose
@@ -76,7 +75,7 @@ Partial Class FormCustomerOrderHistory
         Me.btnClose.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnClose.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnClose.ForeColor = System.Drawing.Color.Gray
-        Me.btnClose.Location = New System.Drawing.Point(860, 10)
+        Me.btnClose.Location = New System.Drawing.Point(868, 10)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(20, 21)
         Me.btnClose.TabIndex = 2
@@ -86,9 +85,9 @@ Partial Class FormCustomerOrderHistory
         '
         Me.txtSearch.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.txtSearch.Location = New System.Drawing.Point(623, 22)
+        Me.txtSearch.Location = New System.Drawing.Point(510, 22)
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(200, 25)
+        Me.txtSearch.Size = New System.Drawing.Size(333, 25)
         Me.txtSearch.TabIndex = 1
         '
         'lblTitle
@@ -111,7 +110,7 @@ Partial Class FormCustomerOrderHistory
         Me.TabControl1.Location = New System.Drawing.Point(0, 60)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(880, 307)
+        Me.TabControl1.Size = New System.Drawing.Size(900, 307)
         Me.TabControl1.TabIndex = 1
         '
         'tabOrders
@@ -131,19 +130,18 @@ Partial Class FormCustomerOrderHistory
         Me.dgvOrders.AllowUserToDeleteRows = False
         Me.dgvOrders.AllowUserToResizeColumns = False
         Me.dgvOrders.AllowUserToResizeRows = False
-        Me.dgvOrders.AutoGenerateColumns = False
         Me.dgvOrders.BackgroundColor = System.Drawing.Color.White
         Me.dgvOrders.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvOrders.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.dgvOrders.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgvOrders.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle7.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle7.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        DataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.White
+        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvOrders.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle7
         Me.dgvOrders.ColumnHeadersHeight = 45
         Me.dgvOrders.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.colOrderID, Me.colDateTime, Me.colOrderType, Me.colItemCount, Me.colTotalAmount, Me.colPayment, Me.colStatus})
         Me.dgvOrders.Dock = System.Windows.Forms.DockStyle.Fill
@@ -156,56 +154,13 @@ Partial Class FormCustomerOrderHistory
         Me.dgvOrders.Size = New System.Drawing.Size(886, 273)
         Me.dgvOrders.TabIndex = 1
         '
-        'colOrderID
-        '
-        Me.colOrderID.HeaderText = "Order ID"
-        Me.colOrderID.Name = "colOrderID"
-        Me.colOrderID.ReadOnly = True
-        '
-        'colDateTime
-        '
-        Me.colDateTime.HeaderText = "Date & Time"
-        Me.colDateTime.Name = "colDateTime"
-        Me.colDateTime.ReadOnly = True
-        Me.colDateTime.Width = 150
-        '
-        'colOrderType
-        '
-        Me.colOrderType.HeaderText = "Order Type"
-        Me.colOrderType.Name = "colOrderType"
-        Me.colOrderType.ReadOnly = True
-        '
-        'colItemCount
-        '
-        Me.colItemCount.HeaderText = "Item Count"
-        Me.colItemCount.Name = "colItemCount"
-        Me.colItemCount.ReadOnly = True
-        '
-        'colTotalAmount
-        '
-        Me.colTotalAmount.HeaderText = "Total Amount"
-        Me.colTotalAmount.Name = "colTotalAmount"
-        Me.colTotalAmount.ReadOnly = True
-        '
-        'colPayment
-        '
-        Me.colPayment.HeaderText = "Payment"
-        Me.colPayment.Name = "colPayment"
-        Me.colPayment.ReadOnly = True
-        '
-        'colStatus
-        '
-        Me.colStatus.HeaderText = "Status"
-        Me.colStatus.Name = "colStatus"
-        Me.colStatus.ReadOnly = True
-        '
         'tabReservations
         '
         Me.tabReservations.Controls.Add(Me.dgvReservations)
         Me.tabReservations.Location = New System.Drawing.Point(4, 24)
         Me.tabReservations.Name = "tabReservations"
         Me.tabReservations.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabReservations.Size = New System.Drawing.Size(892, 279)
+        Me.tabReservations.Size = New System.Drawing.Size(872, 279)
         Me.tabReservations.TabIndex = 1
         Me.tabReservations.Text = "Reservations"
         Me.tabReservations.UseVisualStyleBackColor = True
@@ -216,29 +171,28 @@ Partial Class FormCustomerOrderHistory
         Me.dgvReservations.AllowUserToDeleteRows = False
         Me.dgvReservations.AllowUserToResizeColumns = False
         Me.dgvReservations.AllowUserToResizeRows = False
-        Me.dgvReservations.AutoGenerateColumns = False
         Me.dgvReservations.BackgroundColor = System.Drawing.Color.White
         Me.dgvReservations.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.dgvReservations.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.dgvReservations.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle2.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        DataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgvReservations.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle8.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle8.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        DataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        DataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.White
+        DataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvReservations.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle8
         Me.dgvReservations.ColumnHeadersHeight = 45
         Me.dgvReservations.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.colResID, Me.colResDateTime, Me.colResItems, Me.colGuests, Me.colResTotal, Me.colResStatus, Me.colResPayment})
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        DataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvReservations.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle9.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        DataGridViewCellStyle9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        DataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvReservations.DefaultCellStyle = DataGridViewCellStyle9
         Me.dgvReservations.Dock = System.Windows.Forms.DockStyle.Fill
         Me.dgvReservations.EnableHeadersVisualStyles = False
         Me.dgvReservations.Location = New System.Drawing.Point(3, 3)
@@ -246,7 +200,7 @@ Partial Class FormCustomerOrderHistory
         Me.dgvReservations.ReadOnly = True
         Me.dgvReservations.RowHeadersVisible = False
         Me.dgvReservations.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvReservations.Size = New System.Drawing.Size(886, 273)
+        Me.dgvReservations.Size = New System.Drawing.Size(866, 273)
         Me.dgvReservations.TabIndex = 2
         '
         'colResID
@@ -294,6 +248,52 @@ Partial Class FormCustomerOrderHistory
         Me.colResPayment.Name = "colResPayment"
         Me.colResPayment.ReadOnly = True
         '
+        'colOrderID
+        '
+        Me.colOrderID.HeaderText = "Order ID"
+        Me.colOrderID.Name = "colOrderID"
+        Me.colOrderID.ReadOnly = True
+        '
+        'colDateTime
+        '
+        Me.colDateTime.HeaderText = "Date & Time"
+        Me.colDateTime.Name = "colDateTime"
+        Me.colDateTime.ReadOnly = True
+        Me.colDateTime.Width = 150
+        '
+        'colOrderType
+        '
+        Me.colOrderType.HeaderText = "Order Type"
+        Me.colOrderType.Name = "colOrderType"
+        Me.colOrderType.ReadOnly = True
+        '
+        'colItemCount
+        '
+        Me.colItemCount.HeaderText = "Item Count"
+        Me.colItemCount.Name = "colItemCount"
+        Me.colItemCount.ReadOnly = True
+        Me.colItemCount.Width = 120
+        '
+        'colTotalAmount
+        '
+        Me.colTotalAmount.HeaderText = "Total Amount"
+        Me.colTotalAmount.Name = "colTotalAmount"
+        Me.colTotalAmount.ReadOnly = True
+        Me.colTotalAmount.Width = 120
+        '
+        'colPayment
+        '
+        Me.colPayment.HeaderText = "Payment"
+        Me.colPayment.Name = "colPayment"
+        Me.colPayment.ReadOnly = True
+        '
+        'colStatus
+        '
+        Me.colStatus.HeaderText = "Status"
+        Me.colStatus.Name = "colStatus"
+        Me.colStatus.ReadOnly = True
+        Me.colStatus.Width = 120
+        '
         'FormCustomerOrderHistory
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -328,13 +328,6 @@ Partial Class FormCustomerOrderHistory
     Friend WithEvents tabOrders As System.Windows.Forms.TabPage
     Friend WithEvents tabReservations As System.Windows.Forms.TabPage
     Friend WithEvents dgvOrders As System.Windows.Forms.DataGridView
-    Friend WithEvents colOrderID As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents colDateTime As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents colOrderType As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents colItemCount As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents colTotalAmount As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents colPayment As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents colStatus As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents dgvReservations As System.Windows.Forms.DataGridView
     Friend WithEvents colResID As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents colResDateTime As System.Windows.Forms.DataGridViewTextBoxColumn
@@ -343,4 +336,11 @@ Partial Class FormCustomerOrderHistory
     Friend WithEvents colResTotal As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents colResStatus As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents colResPayment As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents colOrderID As DataGridViewTextBoxColumn
+    Friend WithEvents colDateTime As DataGridViewTextBoxColumn
+    Friend WithEvents colOrderType As DataGridViewTextBoxColumn
+    Friend WithEvents colItemCount As DataGridViewTextBoxColumn
+    Friend WithEvents colTotalAmount As DataGridViewTextBoxColumn
+    Friend WithEvents colPayment As DataGridViewTextBoxColumn
+    Friend WithEvents colStatus As DataGridViewTextBoxColumn
 End Class

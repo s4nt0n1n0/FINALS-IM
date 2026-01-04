@@ -110,7 +110,7 @@ Partial Class FormEmployeeAttendance
         Me.RoundedPane24.FillColor = System.Drawing.Color.White
         Me.RoundedPane24.Location = New System.Drawing.Point(30, 255)
         Me.RoundedPane24.Name = "RoundedPane24"
-        Me.RoundedPane24.Size = New System.Drawing.Size(1334, 565)
+        Me.RoundedPane24.Size = New System.Drawing.Size(1045, 470)
         Me.RoundedPane24.TabIndex = 7
         '
         'PaginationContainer
@@ -120,9 +120,9 @@ Partial Class FormEmployeeAttendance
         Me.PaginationContainer.Controls.Add(Me.btnNext)
         Me.PaginationContainer.Controls.Add(Me.btnPrev)
         Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
-        Me.PaginationContainer.Location = New System.Drawing.Point(24, 513)
+        Me.PaginationContainer.Location = New System.Drawing.Point(24, 418)
         Me.PaginationContainer.Name = "PaginationContainer"
-        Me.PaginationContainer.Size = New System.Drawing.Size(1289, 40)
+        Me.PaginationContainer.Size = New System.Drawing.Size(1000, 40)
         Me.PaginationContainer.TabIndex = 12
         '
         'btnNext
@@ -131,7 +131,7 @@ Partial Class FormEmployeeAttendance
         Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnNext.Location = New System.Drawing.Point(1199, 5)
+        Me.btnNext.Location = New System.Drawing.Point(910, 5)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(80, 30)
         Me.btnNext.TabIndex = 2
@@ -144,7 +144,7 @@ Partial Class FormEmployeeAttendance
         Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnPrev.Location = New System.Drawing.Point(1109, 5)
+        Me.btnPrev.Location = New System.Drawing.Point(820, 5)
         Me.btnPrev.Name = "btnPrev"
         Me.btnPrev.Size = New System.Drawing.Size(80, 30)
         Me.btnPrev.TabIndex = 1
@@ -170,9 +170,9 @@ Partial Class FormEmployeeAttendance
         Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
         Me.SearchContainer.CornerRadius = 10
         Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.SearchContainer.Location = New System.Drawing.Point(756, 28)
+        Me.SearchContainer.Location = New System.Drawing.Point(630, 20)
         Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(547, 38)
+        Me.SearchContainer.Size = New System.Drawing.Size(384, 38)
         Me.SearchContainer.TabIndex = 11
         '
         'TextBoxSearch
@@ -226,7 +226,7 @@ Partial Class FormEmployeeAttendance
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.RowHeadersVisible = False
         Me.DataGridView1.RowHeadersWidth = 51
-        Me.DataGridView1.Size = New System.Drawing.Size(1289, 422)
+        Me.DataGridView1.Size = New System.Drawing.Size(990, 327)
         Me.DataGridView1.TabIndex = 10
         '
         'RoundedPane23

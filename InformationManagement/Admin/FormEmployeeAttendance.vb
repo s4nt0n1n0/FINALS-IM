@@ -125,8 +125,8 @@ Public Class FormEmployeeAttendance
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.White
                 .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
                 .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 9)
-                .ColumnHeadersHeight = 50
-                .RowTemplate.Height = 50
+                .RowTemplate.Height = 45
+                .ColumnHeadersHeight = 45
                 .EnableHeadersVisualStyles = True
             End With
 
@@ -553,9 +553,6 @@ Public Class FormEmployeeAttendance
     Public Async Sub RefreshData()
         Await RefreshAttendanceAsync(True)
     End Sub
-
-
-
 
 
 End Class

@@ -2,7 +2,6 @@
 
 Public Class Inventory
     Private isShowingAlerts As Boolean = False
-    Private WithEvents btnInventoryAlerts As Button
     Private _lastSearchText As String = ""
     Private isInitializing As Boolean = True
     Private Sub Inventory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -847,8 +846,8 @@ Public Class Inventory
             btnInventoryAlerts = New Button()
             btnInventoryAlerts.Name = "btnInventoryAlerts"
             btnInventoryAlerts.FlatStyle = FlatStyle.Flat
+
             btnInventoryAlerts.FlatAppearance.BorderSize = 0
-            btnInventoryAlerts.Font = New Font("Segoe UI", 10, FontStyle.Bold)
             btnInventoryAlerts.ForeColor = Color.White
             btnInventoryAlerts.Cursor = Cursors.Hand
             btnInventoryAlerts.Anchor = AnchorStyles.Top Or AnchorStyles.Right
@@ -989,6 +988,10 @@ Public Class Inventory
     End Sub
 
     Private Sub Label6_Click(sender As Object, e As EventArgs) Handles Label6.Click
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnInventoryAlerts.Click
 
     End Sub
 End Class

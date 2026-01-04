@@ -429,8 +429,8 @@ Public Class FormTakeOutOrders
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.White
                 .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
                 .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-                .ColumnHeadersHeight = 50
-                .RowTemplate.Height = 50
+                .ColumnHeadersHeight = 45
+                .RowTemplate.Height = 45
                 .EnableHeadersVisualStyles = True
 
             If .Columns.Contains("OrderID") Then .Columns("OrderID").Visible = False

@@ -22,10 +22,10 @@ Partial Class FormProductPerformance
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim Title2 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
+        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim Title1 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormProductPerformance))
         Me.RoundedPane21 = New InformationManagement.RoundedPane2()
         Me.RoundedPane28 = New InformationManagement.RoundedPane2()
@@ -88,7 +88,7 @@ Partial Class FormProductPerformance
         Me.RoundedPane21.CornerRadius = 20
         Me.RoundedPane21.FillColor = System.Drawing.Color.White
         Me.RoundedPane21.ForeColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(41, Byte), Integer), CType(CType(59, Byte), Integer))
-        Me.RoundedPane21.Location = New System.Drawing.Point(15, 12)
+        Me.RoundedPane21.Location = New System.Drawing.Point(-6, -35)
         Me.RoundedPane21.Name = "RoundedPane21"
         Me.RoundedPane21.Size = New System.Drawing.Size(1256, 690)
         Me.RoundedPane21.TabIndex = 0
@@ -109,43 +109,43 @@ Partial Class FormProductPerformance
         'Chart1
         '
         Me.Chart1.BorderlineColor = System.Drawing.Color.Transparent
-        ChartArea2.AxisX.Interval = 1.0R
-        ChartArea2.AxisX.LabelStyle.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        ChartArea2.AxisX.LabelStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        ChartArea2.AxisX.LineColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
-        ChartArea2.AxisX.MajorGrid.Enabled = False
-        ChartArea2.AxisY.LabelStyle.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        ChartArea2.AxisY.LabelStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        ChartArea2.AxisY.LabelStyle.Format = "₱#,##0"
-        ChartArea2.AxisY.LineColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
-        ChartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
-        ChartArea2.BackColor = System.Drawing.Color.White
-        ChartArea2.Name = "ChartArea1"
-        Me.Chart1.ChartAreas.Add(ChartArea2)
-        Legend2.Enabled = False
-        Legend2.Name = "Legend1"
-        Me.Chart1.Legends.Add(Legend2)
+        ChartArea1.AxisX.Interval = 1.0R
+        ChartArea1.AxisX.LabelStyle.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        ChartArea1.AxisX.LabelStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        ChartArea1.AxisX.LineColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        ChartArea1.AxisX.MajorGrid.Enabled = False
+        ChartArea1.AxisY.LabelStyle.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        ChartArea1.AxisY.LabelStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        ChartArea1.AxisY.LabelStyle.Format = "₱#,##0"
+        ChartArea1.AxisY.LineColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        ChartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
+        ChartArea1.BackColor = System.Drawing.Color.White
+        ChartArea1.Name = "ChartArea1"
+        Me.Chart1.ChartAreas.Add(ChartArea1)
+        Legend1.Enabled = False
+        Legend1.Name = "Legend1"
+        Me.Chart1.Legends.Add(Legend1)
         Me.Chart1.Location = New System.Drawing.Point(9, 11)
         Me.Chart1.Name = "Chart1"
         Me.Chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
-        Series2.BorderWidth = 0
-        Series2.ChartArea = "ChartArea1"
-        Series2.Color = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Series2.LabelForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(85, Byte), Integer), CType(CType(105, Byte), Integer))
-        Series2.Legend = "Legend1"
-        Series2.Name = "Revenue"
-        Series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.[String]
-        Series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int64
-        Me.Chart1.Series.Add(Series2)
+        Series1.BorderWidth = 0
+        Series1.ChartArea = "ChartArea1"
+        Series1.Color = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
+        Series1.LabelForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(85, Byte), Integer), CType(CType(105, Byte), Integer))
+        Series1.Legend = "Legend1"
+        Series1.Name = "Revenue"
+        Series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.[String]
+        Series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int64
+        Me.Chart1.Series.Add(Series1)
         Me.Chart1.Size = New System.Drawing.Size(1175, 356)
         Me.Chart1.TabIndex = 0
         Me.Chart1.Text = "Chart1"
-        Title2.Alignment = System.Drawing.ContentAlignment.TopLeft
-        Title2.Font = New System.Drawing.Font("Segoe UI Semibold", 14.0!, System.Drawing.FontStyle.Bold)
-        Title2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
-        Title2.Name = "Title1"
-        Title2.Text = "Revenue Performance"
-        Me.Chart1.Titles.Add(Title2)
+        Title1.Alignment = System.Drawing.ContentAlignment.TopLeft
+        Title1.Font = New System.Drawing.Font("Segoe UI Semibold", 14.0!, System.Drawing.FontStyle.Bold)
+        Title1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
+        Title1.Name = "Title1"
+        Title1.Text = "Revenue Performance"
+        Me.Chart1.Titles.Add(Title1)
         '
         'RoundedPane27
         '

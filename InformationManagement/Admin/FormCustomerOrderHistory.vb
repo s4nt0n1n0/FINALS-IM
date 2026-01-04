@@ -83,7 +83,7 @@ Public Class FormCustomerOrderHistory
             .RowTemplate.Height = 45
             .ColumnHeadersHeight = 45
             .EnableHeadersVisualStyles = False
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.White
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(108, 117, 125)
             .ColumnHeadersDefaultCellStyle.ForeColor = Color.DimGray
 
             ' Map properties

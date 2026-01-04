@@ -22,7 +22,7 @@ Partial Class FormCustomerHistory
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.LabelHeader = New System.Windows.Forms.Label()
         Me.LabelSubHeader = New System.Windows.Forms.Label()
@@ -122,7 +122,7 @@ Partial Class FormCustomerHistory
         Me.RoundedPane21.Location = New System.Drawing.Point(22, 89)
         Me.RoundedPane21.Margin = New System.Windows.Forms.Padding(2)
         Me.RoundedPane21.Name = "RoundedPane21"
-        Me.RoundedPane21.Size = New System.Drawing.Size(1220, 496)
+        Me.RoundedPane21.Size = New System.Drawing.Size(1045, 470)
         Me.RoundedPane21.TabIndex = 2
         '
         'PaginationContainer
@@ -132,10 +132,10 @@ Partial Class FormCustomerHistory
         Me.PaginationContainer.Controls.Add(Me.btnNext)
         Me.PaginationContainer.Controls.Add(Me.btnPrev)
         Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
-        Me.PaginationContainer.Location = New System.Drawing.Point(15, 443)
+        Me.PaginationContainer.Location = New System.Drawing.Point(15, 423)
         Me.PaginationContainer.Margin = New System.Windows.Forms.Padding(2)
         Me.PaginationContainer.Name = "PaginationContainer"
-        Me.PaginationContainer.Size = New System.Drawing.Size(1189, 37)
+        Me.PaginationContainer.Size = New System.Drawing.Size(999, 37)
         Me.PaginationContainer.TabIndex = 10
         '
         'btnNext
@@ -144,7 +144,7 @@ Partial Class FormCustomerHistory
         Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnNext.Location = New System.Drawing.Point(1114, 4)
+        Me.btnNext.Location = New System.Drawing.Point(914, 4)
         Me.btnNext.Margin = New System.Windows.Forms.Padding(2)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(80, 30)
@@ -158,7 +158,7 @@ Partial Class FormCustomerHistory
         Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnPrev.Location = New System.Drawing.Point(1024, 4)
+        Me.btnPrev.Location = New System.Drawing.Point(823, 4)
         Me.btnPrev.Margin = New System.Windows.Forms.Padding(2)
         Me.btnPrev.Name = "btnPrev"
         Me.btnPrev.Size = New System.Drawing.Size(80, 30)
@@ -187,10 +187,10 @@ Partial Class FormCustomerHistory
         Me.SearchContainer.Controls.Add(Me.txtSearch)
         Me.SearchContainer.CornerRadius = 10
         Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.SearchContainer.Location = New System.Drawing.Point(1000, 18)
+        Me.SearchContainer.Location = New System.Drawing.Point(630, 20)
         Me.SearchContainer.Margin = New System.Windows.Forms.Padding(2)
         Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(210, 38)
+        Me.SearchContainer.Size = New System.Drawing.Size(384, 38)
         Me.SearchContainer.TabIndex = 1
         '
         'txtSearch
@@ -229,14 +229,14 @@ Partial Class FormCustomerHistory
         Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle4.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold)
+        DataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.White
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.DataGridView1.ColumnHeadersHeight = 45
         Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.colCustomerName, Me.colContact, Me.colType, Me.colLastVisit, Me.colTotalVisits, Me.colTotalSpent, Me.colAction})
         Me.DataGridView1.EnableHeadersVisualStyles = False
@@ -247,7 +247,7 @@ Partial Class FormCustomerHistory
         Me.DataGridView1.RowHeadersVisible = False
         Me.DataGridView1.RowTemplate.Height = 50
         Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.DataGridView1.Size = New System.Drawing.Size(1189, 366)
+        Me.DataGridView1.Size = New System.Drawing.Size(1014, 340)
         Me.DataGridView1.TabIndex = 0
         '
         'colCustomerName
