@@ -255,14 +255,19 @@ Partial Class Inventory
         '
         'Category
         '
+        Me.Category.BackColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.Category.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.Category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.Category.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Category.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.Category.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.Category.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Category.FormattingEnabled = True
+        Me.Category.ItemHeight = 29
         Me.Category.Items.AddRange(New Object() {"Meat & Poultry", "Vegetables", "Dairy", "Dry Goods", "Oils & Condiments", "Herbs & Spices", "Beverages", "Seafood"})
-        Me.Category.Location = New System.Drawing.Point(841, 255)
+        Me.Category.Location = New System.Drawing.Point(840, 251)
         Me.Category.Margin = New System.Windows.Forms.Padding(2)
         Me.Category.Name = "Category"
-        Me.Category.Size = New System.Drawing.Size(188, 25)
+        Me.Category.Size = New System.Drawing.Size(188, 35)
         Me.Category.TabIndex = 37
         '
         'Label2
@@ -476,6 +481,7 @@ Partial Class Inventory
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Splitter1)
+        Me.DoubleBuffered = True
         Me.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Margin = New System.Windows.Forms.Padding(2)
         Me.Name = "Inventory"

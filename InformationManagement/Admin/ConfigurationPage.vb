@@ -471,4 +471,9 @@ Public Class ConfigurationPage
         lblServerStatus.Text = "Enter the database password (leave empty if none for XAMPP)"
         lblServerStatus.ForeColor = Color.Gray
     End Sub
+    Private Sub ConfigurationPage_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+
+        Application.Exit()
+
+    End Sub
 End Class

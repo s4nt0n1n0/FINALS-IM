@@ -417,6 +417,7 @@ Partial Class ActivityLogsForm
         Me.Controls.Add(Me.Panel4)
         Me.Controls.Add(Me.dgvActivityLogs)
         Me.Controls.Add(Me.pnlFilters)
+        Me.DoubleBuffered = True
         Me.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.MinimumSize = New System.Drawing.Size(1000, 600)
         Me.Name = "ActivityLogsForm"

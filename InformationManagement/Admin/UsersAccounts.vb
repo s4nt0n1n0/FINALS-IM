@@ -23,6 +23,7 @@ Public Class UsersAccounts
         SetupToggleButtons() ' Add toggle buttons
         ' SetupAddButton() ' Disable original Add button favor of Employee view workflow
         InitializeSearchBox()
+        If cmbDateFilter.Items.Count > 0 Then cmbDateFilter.SelectedIndex = 0
         isInitializing = False
         LoadDataBasedOnMode()
         initialLoadComplete = True
@@ -68,6 +69,7 @@ Public Class UsersAccounts
                 If btnUpdateStatus IsNot Nothing Then
                     btnUpdateStatus.Location = New Point(formWidth - rightMargin - btnUpdateStatus.Width, topMargin + 10)
                 End If
+
             End If
 
             ' DataGridView - Calculate available space
@@ -183,7 +185,7 @@ Public Class UsersAccounts
             .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
             .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
             .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-            
+
             ' Default Cell Style
             .DefaultCellStyle.BackColor = SystemColors.Window
             .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
@@ -253,10 +255,12 @@ Public Class UsersAccounts
             ' Configure Columns for Employee Mode
             If UsersAccountData.Columns.Contains("colEdit") Then UsersAccountData.Columns("colEdit").Visible = False
             If UsersAccountData.Columns.Contains("colDelete") Then UsersAccountData.Columns("colDelete").Visible = False
+            If UsersAccountData.Columns.Contains("colUsername") Then UsersAccountData.Columns("colUsername").Visible = False
+            If UsersAccountData.Columns.Contains("colPassword") Then UsersAccountData.Columns("colPassword").Visible = False
             If UsersAccountData.Columns.Contains("colCreateAccount") Then UsersAccountData.Columns("colCreateAccount").Visible = True
 
             openConn()
-            Dim query As String = "
+            Dim query As String = $"
                 SELECT 
                     EmployeeID as id,
                     CONCAT(FirstName, ' ', LastName) as name,
@@ -268,6 +272,7 @@ Public Class UsersAccounts
                 WHERE EmploymentStatus = 'Active' 
                 AND Position = 'Employee'
                 AND EmployeeID NOT IN (SELECT IFNULL(employee_id,0) FROM user_accounts)
+                {GetDateFilterCondition("HireDate")}
                 ORDER BY FirstName"
 
             Dim cmd As New MySqlCommand(query, conn)
@@ -293,11 +298,13 @@ Public Class UsersAccounts
             ' Configure Columns for Staff Mode
             If UsersAccountData.Columns.Contains("colEdit") Then UsersAccountData.Columns("colEdit").Visible = True
             If UsersAccountData.Columns.Contains("colDelete") Then UsersAccountData.Columns("colDelete").Visible = True
+            If UsersAccountData.Columns.Contains("colUsername") Then UsersAccountData.Columns("colUsername").Visible = True
+            If UsersAccountData.Columns.Contains("colPassword") Then UsersAccountData.Columns("colPassword").Visible = True
             If UsersAccountData.Columns.Contains("colCreateAccount") Then UsersAccountData.Columns("colCreateAccount").Visible = False
 
             openConn()
             ' FIXED QUERY: Load staff with status from Employee table
-            Dim query As String = "
+            Dim query As String = $"
                 SELECT 
                     ua.id,
                     ua.name,
@@ -310,6 +317,7 @@ Public Class UsersAccounts
                 FROM user_accounts ua
                 LEFT JOIN employee e ON ua.employee_id = e.EmployeeID
                 WHERE ua.position != 'Administrator' AND ua.position != 'Admin' AND ua.type != 0
+                {GetDateFilterCondition("ua.created_at")}
                 ORDER BY ua.created_at DESC
                 LIMIT 1000"
 
@@ -556,12 +564,15 @@ Public Class UsersAccounts
             Dim empId As Integer = CInt(selectedRow.Cells("colEmployeeID").Value)
             Dim empName As String = selectedRow.Cells("txtName").Value.ToString()
             Dim empRole As String = selectedRow.Cells("colRole").Value.ToString()
+            Dim empEmail As String = ""
+            If UsersAccountData.Columns.Contains("colUsername") AndAlso selectedRow.Cells("colUsername").Value IsNot Nothing Then
+                empEmail = selectedRow.Cells("colUsername").Value.ToString()
+            End If
 
             Dim frm As New CreateAccount()
-            ' Pre-fill for linking
-            frm.LoadEmployeeData(empId, empName, empRole)
-
-            If frm.ShowDialog() = DialogResult.OK Then
+            ' Pre-fill for linking (Username is now automated using Email)
+            frm.LoadEmployeeData(empId, empName, empRole, empEmail)
+              If frm.ShowDialog() = DialogResult.OK Then
                 ' MDA FIX
                 UsersAccountData.CurrentCell = Nothing
                 Me.BeginInvoke(Sub() LoadDataBasedOnMode())
@@ -668,7 +679,6 @@ Public Class UsersAccounts
         End If
         txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
     End Sub
-
     Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
         if String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
             TextBoxSearch.Text = "Search staff..."
@@ -676,6 +686,29 @@ Public Class UsersAccounts
         End If
         txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
     End Sub
+
+    Private Sub cmbDateFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbDateFilter.SelectedIndexChanged
+        If isInitializing Then Return
+        LoadDataBasedOnMode()
+    End Sub
+
+    Private Function GetDateFilterCondition(dateColumn As String) As String
+        If cmbDateFilter Is Nothing OrElse cmbDateFilter.SelectedIndex <= 0 Then Return ""
+
+        Dim filter As String = cmbDateFilter.SelectedItem.ToString()
+        Select Case filter
+            Case "Today"
+                Return $" AND DATE({dateColumn}) = CURDATE()"
+            Case "This Week"
+                Return $" AND YEARWEEK({dateColumn}, 1) = YEARWEEK(CURDATE(), 1)"
+            Case "This Month"
+                Return $" AND YEAR({dateColumn}) = YEAR(CURDATE()) AND MONTH({dateColumn}) = MONTH(CURDATE())"
+            Case "This Year"
+                Return $" AND YEAR({dateColumn}) = YEAR(CURDATE())"
+            Case Else
+                Return ""
+        End Select
+    End Function
 
     ' =======================================================
     ' INITIALIZE SEARCH BOX

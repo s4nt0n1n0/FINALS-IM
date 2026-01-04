@@ -176,9 +176,10 @@ Public Class Dashboard
             Dim dateFilterPayment As String = GetDateFilterCondition("PaymentDate")
 
             ' Calculate from both Orders and Payments (targeting reservations)
+            ' Include 'Served' for orders as it represents realized sales in Dine-in
             cmd = New MySqlCommand($"
                 SELECT COALESCE(
-                    (SELECT SUM(TotalAmount) FROM orders WHERE OrderStatus = 'Completed' AND {dateFilter}),
+                    (SELECT SUM(TotalAmount) FROM orders WHERE OrderStatus IN ('Completed', 'Served') AND {dateFilter}),
                     0
                 ) + COALESCE(
                     (SELECT SUM(AmountPaid) FROM payments WHERE ReservationID IS NOT NULL AND PaymentStatus IN ('Paid', 'Completed') AND {dateFilterPayment}),
@@ -223,14 +224,21 @@ Public Class Dashboard
     Private Sub LoadTotalOrders()
         Try
             openConn()
-            Dim dateFilter As String = GetDateFilterCondition("OrderDate")
+            Dim dateFilterOrder As String = GetDateFilterCondition("OrderDate")
+            Dim dateFilterPayment As String = GetDateFilterCondition("PaymentDate")
 
-            ' Count both POS and Website orders with proper filter
+            ' Count both POS/Website orders and successfully paid/completed reservations
             cmd = New MySqlCommand($"
-            SELECT COUNT(*) FROM orders 
-            WHERE OrderSource IN ('POS', 'Website') 
-            AND OrderStatus IN ('Completed', 'Served', 'Cancelled', 'Pending')
-            AND {dateFilter}", conn)
+                SELECT (
+                    SELECT COUNT(*) FROM orders 
+                    WHERE OrderStatus IN ('Completed', 'Served') 
+                    AND {dateFilterOrder}
+                ) + (
+                    SELECT COUNT(DISTINCT ReservationID) FROM payments 
+                    WHERE ReservationID IS NOT NULL 
+                    AND PaymentStatus IN ('Paid', 'Completed') 
+                    AND {dateFilterPayment}
+                ) as TotalOrders", conn)
 
             Dim totalOrders As Integer = Convert.ToInt32(cmd.ExecuteScalar())
             lblTotalOrder.Text = totalOrders.ToString("#,##0")
@@ -532,14 +540,25 @@ LIMIT 8;"
     Private Sub LoadAverageOrder()
         Try
             openConn()
-            Dim dateFilter As String = GetDateFilterCondition("o.OrderDate")
+            Dim dateFilterOrder As String = GetDateFilterCondition("OrderDate")
+            Dim dateFilterPayment As String = GetDateFilterCondition("PaymentDate")
 
-            ' Calculate average order value from completed/served orders
+            ' Calculate Average Order Value as (Total Revenue) / (Total Orders)
+            ' This ensures it remains perfectly consistent with the Revenue and Order labels
             cmd = New MySqlCommand($"
-            SELECT COALESCE(AVG(o.TotalAmount), 0) as AverageOrder
-            FROM orders o
-            WHERE o.OrderStatus IN ('Served', 'Completed')
-            AND {dateFilter}", conn)
+                SELECT 
+                    CASE WHEN counts.TotalCount = 0 THEN 0 
+                    ELSE revs.TotalRev / counts.TotalCount END as AOV
+                FROM (
+                    SELECT 
+                        (SELECT COALESCE(SUM(TotalAmount), 0) FROM orders WHERE OrderStatus IN ('Completed', 'Served') AND {dateFilterOrder}) + 
+                        (SELECT COALESCE(SUM(AmountPaid), 0) FROM payments WHERE ReservationID IS NOT NULL AND PaymentStatus IN ('Paid', 'Completed') AND {dateFilterPayment}) as TotalRev
+                ) as revs,
+                (
+                    SELECT 
+                        (SELECT COUNT(*) FROM orders WHERE OrderStatus IN ('Completed', 'Served') AND {dateFilterOrder}) + 
+                        (SELECT COUNT(DISTINCT ReservationID) FROM payments WHERE ReservationID IS NOT NULL AND PaymentStatus IN ('Paid', 'Completed') AND {dateFilterPayment}) as TotalCount
+                ) as counts", conn)
 
             Dim avgOrder As Decimal = Convert.ToDecimal(cmd.ExecuteScalar())
             lblAverageOrder.Text = "₱" & avgOrder.ToString("N2")
@@ -593,7 +612,7 @@ LIMIT 8;"
             o.OrderType,
             COALESCE(SUM(o.TotalAmount), 0) as TotalSales
         FROM orders o
-        WHERE o.OrderStatus = 'Completed'
+        WHERE o.OrderStatus IN ('Completed', 'Served')
         AND {orderDateFilter}
         GROUP BY o.OrderType", conn)
 

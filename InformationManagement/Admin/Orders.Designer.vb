@@ -25,8 +25,6 @@ Partial Class Orders
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.btnRefresh = New System.Windows.Forms.Button()
-        Me.txtSearch = New InformationManagement.RoundedPane2()
-        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.lblSearch = New System.Windows.Forms.Label()
         Me.btnViewCalendar = New System.Windows.Forms.Button()
         Me.Panel3 = New System.Windows.Forms.Panel()
@@ -49,12 +47,14 @@ Partial Class Orders
         Me.DataGridView2 = New System.Windows.Forms.DataGridView()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.lblTotalOrders = New System.Windows.Forms.Label()
+        Me.txtSearch = New InformationManagement.RoundedPane2()
+        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.Panel1.SuspendLayout()
         Me.Panel2.SuspendLayout()
-        Me.txtSearch.SuspendLayout()
         Me.Panel3.SuspendLayout()
         CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel4.SuspendLayout()
+        Me.txtSearch.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
@@ -156,31 +156,6 @@ Partial Class Orders
         Me.btnRefresh.TabIndex = 2
         Me.btnRefresh.Text = "Refresh"
         Me.btnRefresh.UseVisualStyleBackColor = False
-        '
-        'txtSearch
-        '
-        Me.txtSearch.BackColor = System.Drawing.Color.Transparent
-        Me.txtSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
-        Me.txtSearch.BorderThickness = 1
-        Me.txtSearch.Controls.Add(Me.TextBoxSearch)
-        Me.txtSearch.CornerRadius = 10
-        Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.txtSearch.Location = New System.Drawing.Point(103, 11)
-        Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(487, 38)
-        Me.txtSearch.TabIndex = 1
-        '
-        'TextBoxSearch
-        '
-        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
-        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
-        Me.TextBoxSearch.Name = "TextBoxSearch"
-        Me.TextBoxSearch.Size = New System.Drawing.Size(450, 18)
-        Me.TextBoxSearch.TabIndex = 0
-        Me.TextBoxSearch.Text = "Search orders..."
         '
         'lblSearch
         '
@@ -379,7 +354,7 @@ Partial Class Orders
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
         Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.Label1.Location = New System.Drawing.Point(866, 26)
+        Me.Label1.Location = New System.Drawing.Point(866, 29)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(107, 15)
         Me.Label1.TabIndex = 10
@@ -388,12 +363,17 @@ Partial Class Orders
         'cboRecordsPerPage
         '
         Me.cboRecordsPerPage.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboRecordsPerPage.BackColor = System.Drawing.Color.Snow
+        Me.cboRecordsPerPage.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
         Me.cboRecordsPerPage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboRecordsPerPage.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.cboRecordsPerPage.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.cboRecordsPerPage.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.cboRecordsPerPage.FormattingEnabled = True
+        Me.cboRecordsPerPage.ItemHeight = 24
         Me.cboRecordsPerPage.Location = New System.Drawing.Point(978, 23)
         Me.cboRecordsPerPage.Name = "cboRecordsPerPage"
-        Me.cboRecordsPerPage.Size = New System.Drawing.Size(91, 23)
+        Me.cboRecordsPerPage.Size = New System.Drawing.Size(91, 30)
         Me.cboRecordsPerPage.TabIndex = 11
         '
         'btnLastPage
@@ -515,6 +495,31 @@ Partial Class Orders
         Me.lblTotalOrders.TabIndex = 0
         Me.lblTotalOrders.Text = "Total Orders: 0"
         '
+        'txtSearch
+        '
+        Me.txtSearch.BackColor = System.Drawing.Color.Transparent
+        Me.txtSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.txtSearch.BorderThickness = 1
+        Me.txtSearch.Controls.Add(Me.TextBoxSearch)
+        Me.txtSearch.CornerRadius = 10
+        Me.txtSearch.FillColor = System.Drawing.Color.Snow
+        Me.txtSearch.Location = New System.Drawing.Point(103, 11)
+        Me.txtSearch.Name = "txtSearch"
+        Me.txtSearch.Size = New System.Drawing.Size(487, 38)
+        Me.txtSearch.TabIndex = 1
+        '
+        'TextBoxSearch
+        '
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.Snow
+        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
+        Me.TextBoxSearch.Name = "TextBoxSearch"
+        Me.TextBoxSearch.Size = New System.Drawing.Size(450, 18)
+        Me.TextBoxSearch.TabIndex = 0
+        Me.TextBoxSearch.Text = "Search orders..."
+        '
         'Orders
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -525,6 +530,7 @@ Partial Class Orders
         Me.Controls.Add(Me.Panel3)
         Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.Panel1)
+        Me.DoubleBuffered = True
         Me.Margin = New System.Windows.Forms.Padding(2)
         Me.MinimumSize = New System.Drawing.Size(804, 588)
         Me.Name = "Orders"
@@ -535,13 +541,13 @@ Partial Class Orders
         Me.Panel1.PerformLayout()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
-        Me.txtSearch.ResumeLayout(False)
-        Me.txtSearch.PerformLayout()
         Me.Panel3.ResumeLayout(False)
         Me.Panel3.PerformLayout()
         CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
+        Me.txtSearch.ResumeLayout(False)
+        Me.txtSearch.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub

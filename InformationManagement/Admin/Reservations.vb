@@ -1350,7 +1350,15 @@ Public Class Reservations
             MessageBox.Show("Error opening calendar: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+    Private Sub ComboBox_DrawItem(sender As Object, e As DrawItemEventArgs) _
+        Handles cboRecordsPerPage.DrawItem
 
+        If e.Index < 0 Then Return
+        Dim cmb As ComboBox = DirectCast(sender, ComboBox)
+        e.DrawBackground()
+        e.Graphics.DrawString(cmb.Items(e.Index).ToString(), cmb.Font, Brushes.Black, e.Bounds)
+        e.DrawFocusRectangle()
+    End Sub
     Private Sub lblTotalReservations_Click(sender As Object, e As EventArgs) Handles lblTotalReservations.Click
 
     End Sub

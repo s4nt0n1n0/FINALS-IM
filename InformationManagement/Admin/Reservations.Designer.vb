@@ -17,7 +17,7 @@ Partial Class Reservations
 
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.Panel2 = New System.Windows.Forms.Panel()
@@ -51,6 +51,7 @@ Partial Class Reservations
         Me.lblTotalReservations = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         Me.Panel2.SuspendLayout()
+        Me.txtSearch.SuspendLayout()
         Me.Panel3.SuspendLayout()
         CType(Me.Reservation, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel4.SuspendLayout()
@@ -152,7 +153,7 @@ Partial Class Reservations
         Me.txtSearch.BorderThickness = 1
         Me.txtSearch.Controls.Add(Me.TextBoxSearch)
         Me.txtSearch.CornerRadius = 10
-        Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.txtSearch.FillColor = System.Drawing.Color.Snow
         Me.txtSearch.Location = New System.Drawing.Point(102, 11)
         Me.txtSearch.Name = "txtSearch"
         Me.txtSearch.Size = New System.Drawing.Size(478, 38)
@@ -160,7 +161,7 @@ Partial Class Reservations
         '
         'TextBoxSearch
         '
-        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.Snow
         Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
@@ -173,11 +174,11 @@ Partial Class Reservations
         'lblSearch
         '
         Me.lblSearch.AutoSize = True
-        Me.lblSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblSearch.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
         Me.lblSearch.Location = New System.Drawing.Point(25, 24)
         Me.lblSearch.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.lblSearch.Name = "lblSearch"
-        Me.lblSearch.Size = New System.Drawing.Size(58, 19)
+        Me.lblSearch.Size = New System.Drawing.Size(46, 15)
         Me.lblSearch.TabIndex = 0
         Me.lblSearch.Text = "Search:"
         '
@@ -301,7 +302,7 @@ Partial Class Reservations
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
         Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.Label1.Location = New System.Drawing.Point(865, 26)
+        Me.Label1.Location = New System.Drawing.Point(863, 29)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(107, 15)
         Me.Label1.TabIndex = 12
@@ -310,12 +311,17 @@ Partial Class Reservations
         'cboRecordsPerPage
         '
         Me.cboRecordsPerPage.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboRecordsPerPage.BackColor = System.Drawing.Color.Snow
+        Me.cboRecordsPerPage.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
         Me.cboRecordsPerPage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboRecordsPerPage.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.cboRecordsPerPage.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.cboRecordsPerPage.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.cboRecordsPerPage.FormattingEnabled = True
-        Me.cboRecordsPerPage.Location = New System.Drawing.Point(978, 23)
+        Me.cboRecordsPerPage.ItemHeight = 24
+        Me.cboRecordsPerPage.Location = New System.Drawing.Point(975, 20)
         Me.cboRecordsPerPage.Name = "cboRecordsPerPage"
-        Me.cboRecordsPerPage.Size = New System.Drawing.Size(91, 23)
+        Me.cboRecordsPerPage.Size = New System.Drawing.Size(91, 30)
         Me.cboRecordsPerPage.TabIndex = 11
         '
         'btnViewAll
@@ -460,14 +466,14 @@ Partial Class Reservations
         Me.Reservation.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.Reservation.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.Reservation.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
-        DataGridViewCellStyle6.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        DataGridViewCellStyle6.ForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
-        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.Reservation.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Reservation.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         Me.Reservation.ColumnHeadersHeight = 40
         Me.Reservation.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.Reservation.Dock = System.Windows.Forms.DockStyle.Fill
@@ -533,6 +539,7 @@ Partial Class Reservations
         Me.Controls.Add(Me.Panel3)
         Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.Panel1)
+        Me.DoubleBuffered = True
         Me.Margin = New System.Windows.Forms.Padding(2)
         Me.MinimumSize = New System.Drawing.Size(686, 522)
         Me.Name = "Reservations"
@@ -543,6 +550,8 @@ Partial Class Reservations
         Me.Panel1.PerformLayout()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
+        Me.txtSearch.ResumeLayout(False)
+        Me.txtSearch.PerformLayout()
         Me.Panel3.ResumeLayout(False)
         Me.Panel3.PerformLayout()
         CType(Me.Reservation, System.ComponentModel.ISupportInitialize).EndInit()

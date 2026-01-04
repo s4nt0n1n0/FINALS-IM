@@ -1532,4 +1532,13 @@ Public Class Orders
         UpdateFilterLabel()
         LoadOrdersAsync(BuildCombinedFilter())
     End Sub
+    Private Sub ComboBox_DrawItem(sender As Object, e As DrawItemEventArgs) _
+       Handles cboRecordsPerPage.DrawItem
+
+        If e.Index < 0 Then Return
+        Dim cmb As ComboBox = DirectCast(sender, ComboBox)
+        e.DrawBackground()
+        e.Graphics.DrawString(cmb.Items(e.Index).ToString(), cmb.Font, Brushes.Black, e.Bounds)
+        e.DrawFocusRectangle()
+    End Sub
 End Class

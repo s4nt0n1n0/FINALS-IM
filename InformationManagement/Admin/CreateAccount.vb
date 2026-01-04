@@ -10,11 +10,26 @@ Public Class CreateAccount
     End Sub
     
 
-    Public Sub LoadEmployeeData(id As Integer, name As String, role As String)
+    Public Sub LoadEmployeeData(id As Integer, name As String, role As String, email As String)
         LinkedEmployeeID = id
         txtFullName.Text = name
         
-        ' Pre-select role if valid, otherwise default to Employee or whatever is appropriate
+        ' Use email as username, fallback to EmployeeID if no email is provided
+        txtUsername.Text = If(Not String.IsNullOrEmpty(email), email.Trim(), "user_" & id)
+        
+        ' Hide username fields as they are now automated
+        LabelUser.Visible = False
+        txtUsername.Visible = False
+        
+        ' Shift other controls up to fill the gap
+        LabelPass.Top -= 60
+        txtPassword.Top -= 60
+        LabelRole.Top -= 60
+        cmbRole.Top -= 60
+        chkShowPass.Top -= 60
+        btnCreate.Top -= 60
+        btnCancel.Top -= 60
+        Me.Height -= 60
         If role = "Staff" OrElse role = "Employee" Then
             cmbRole.SelectedItem = role
         Else
