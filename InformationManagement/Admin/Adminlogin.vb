@@ -43,9 +43,13 @@ Public Class Adminlogin
         Dim encryptedPass As String = Encrypt(pass)
 
         ' Query using original schema (lowercase column names)
-        Dim query As String = "SELECT * FROM user_accounts WHERE username=@user AND password=@pass LIMIT 1"
+        Dim query As String = "SELECT * FROM user_accounts WHERE username=@user AND password=@pass AND type=0 LIMIT 1"
 
         Try
+
+
+
+
             openConn()
             cmd = New MySqlCommand(query, conn)
             cmd.Parameters.AddWithValue("@user", user)

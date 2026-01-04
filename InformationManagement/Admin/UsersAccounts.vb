@@ -228,11 +228,11 @@ Public Class UsersAccounts
         ' Add hidden columns for data handling
         If Not UsersAccountData.Columns.Contains("colUsername") Then
             UsersAccountData.Columns.Add("colUsername", "Username")
-            UsersAccountData.Columns("colUsername").Visible = True
+            UsersAccountData.Columns("colUsername").Visible = False
             If Not UsersAccountData.Columns.Contains("colPassword") Then
                 UsersAccountData.Columns.Add("colPassword", "Password")
             End If
-            UsersAccountData.Columns("colPassword").Visible = True
+            UsersAccountData.Columns("colPassword").Visible = False
         End If
 
         If Not UsersAccountData.Columns.Contains("colEmployeeID") Then
@@ -298,8 +298,8 @@ Public Class UsersAccounts
             ' Configure Columns for Staff Mode
             If UsersAccountData.Columns.Contains("colEdit") Then UsersAccountData.Columns("colEdit").Visible = True
             If UsersAccountData.Columns.Contains("colDelete") Then UsersAccountData.Columns("colDelete").Visible = True
-            If UsersAccountData.Columns.Contains("colUsername") Then UsersAccountData.Columns("colUsername").Visible = True
-            If UsersAccountData.Columns.Contains("colPassword") Then UsersAccountData.Columns("colPassword").Visible = True
+            If UsersAccountData.Columns.Contains("colUsername") Then UsersAccountData.Columns("colUsername").Visible = False
+            If UsersAccountData.Columns.Contains("colPassword") Then UsersAccountData.Columns("colPassword").Visible = False
             If UsersAccountData.Columns.Contains("colCreateAccount") Then UsersAccountData.Columns("colCreateAccount").Visible = False
 
             openConn()
