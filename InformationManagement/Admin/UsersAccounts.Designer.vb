@@ -46,22 +46,26 @@ Partial Class UsersAccounts
         Me.DataGridViewImageColumn2 = New System.Windows.Forms.DataGridViewImageColumn()
         Me.txtSearch = New InformationManagement.RoundedPane2()
         Me.TextBoxSearch = New System.Windows.Forms.TextBox()
+        Me.paneDateFilter = New InformationManagement.RoundedPane2()
+        Me.cmbDateFilter = New System.Windows.Forms.ComboBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.UsersAccountData, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane22.SuspendLayout()
         Me.RoundedPane26.SuspendLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PaginationPanel.SuspendLayout()
         Me.txtSearch.SuspendLayout()
+        Me.paneDateFilter.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Segoe UI", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
-        Me.Label1.Location = New System.Drawing.Point(31, 7)
+        Me.Label1.Font = New System.Drawing.Font("Segoe UI", 21.75!, System.Drawing.FontStyle.Bold)
+        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.Label1.Location = New System.Drawing.Point(22, 21)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(180, 32)
+        Me.Label1.Size = New System.Drawing.Size(219, 40)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Staff Members"
         '
@@ -115,7 +119,6 @@ Partial Class UsersAccounts
         Me.UsersAccountData.RowsDefaultCellStyle = DataGridViewCellStyle4
         Me.UsersAccountData.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White
         Me.UsersAccountData.RowTemplate.Height = 40
-        Me.UsersAccountData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.UsersAccountData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.UsersAccountData.Size = New System.Drawing.Size(1051, 413)
         Me.UsersAccountData.TabIndex = 9
@@ -183,9 +186,9 @@ Partial Class UsersAccounts
         Me.RoundedPane22.Controls.Add(Me.Label6)
         Me.RoundedPane22.CornerRadius = 15
         Me.RoundedPane22.FillColor = System.Drawing.Color.FromArgb(CType(CType(59, Byte), Integer), CType(CType(130, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.RoundedPane22.Location = New System.Drawing.Point(30, 57)
+        Me.RoundedPane22.Location = New System.Drawing.Point(28, 89)
         Me.RoundedPane22.Name = "RoundedPane22"
-        Me.RoundedPane22.Size = New System.Drawing.Size(280, 90)
+        Me.RoundedPane22.Size = New System.Drawing.Size(280, 102)
         Me.RoundedPane22.TabIndex = 12
         '
         'RoundedPane26
@@ -217,7 +220,7 @@ Partial Class UsersAccounts
         Me.lblStaffs.BackColor = System.Drawing.Color.Transparent
         Me.lblStaffs.Font = New System.Drawing.Font("Segoe UI", 20.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblStaffs.ForeColor = System.Drawing.Color.White
-        Me.lblStaffs.Location = New System.Drawing.Point(23, 44)
+        Me.lblStaffs.Location = New System.Drawing.Point(28, 49)
         Me.lblStaffs.Name = "lblStaffs"
         Me.lblStaffs.Size = New System.Drawing.Size(33, 37)
         Me.lblStaffs.TabIndex = 3
@@ -358,7 +361,7 @@ Partial Class UsersAccounts
         Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.txtSearch.Location = New System.Drawing.Point(397, 109)
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(657, 38)
+        Me.txtSearch.Size = New System.Drawing.Size(350, 38)
         Me.txtSearch.TabIndex = 17
         '
         'TextBoxSearch
@@ -373,12 +376,51 @@ Partial Class UsersAccounts
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search staff..."
         '
+        'paneDateFilter
+        '
+        Me.paneDateFilter.BackColor = System.Drawing.Color.Transparent
+        Me.paneDateFilter.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.paneDateFilter.BorderThickness = 1
+        Me.paneDateFilter.Controls.Add(Me.cmbDateFilter)
+        Me.paneDateFilter.CornerRadius = 10
+        Me.paneDateFilter.FillColor = System.Drawing.Color.White
+        Me.paneDateFilter.Location = New System.Drawing.Point(851, 109)
+        Me.paneDateFilter.Name = "paneDateFilter"
+        Me.paneDateFilter.Size = New System.Drawing.Size(180, 38)
+        Me.paneDateFilter.TabIndex = 18
+        '
+        'cmbDateFilter
+        '
+        Me.cmbDateFilter.BackColor = System.Drawing.Color.White
+        Me.cmbDateFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbDateFilter.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.cmbDateFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.cmbDateFilter.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.cmbDateFilter.FormattingEnabled = True
+        Me.cmbDateFilter.Items.AddRange(New Object() {"All Dates", "Today", "This Week", "This Month", "This Year"})
+        Me.cmbDateFilter.Location = New System.Drawing.Point(10, 6)
+        Me.cmbDateFilter.Name = "cmbDateFilter"
+        Me.cmbDateFilter.Size = New System.Drawing.Size(160, 25)
+        Me.cmbDateFilter.TabIndex = 0
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(775, 120)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(70, 19)
+        Me.Label2.TabIndex = 19
+        Me.Label2.Text = "Hire Date:"
+        '
         'UsersAccounts
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(245, Byte), Integer), CType(CType(248, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1121, 698)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.paneDateFilter)
         Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.lblSearch)
         Me.Controls.Add(Me.PaginationPanel)
@@ -400,6 +442,7 @@ Partial Class UsersAccounts
         Me.PaginationPanel.PerformLayout()
         Me.txtSearch.ResumeLayout(False)
         Me.txtSearch.PerformLayout()
+        Me.paneDateFilter.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -429,4 +472,7 @@ Partial Class UsersAccounts
     Friend WithEvents PictureBox2 As PictureBox
     Friend WithEvents txtSearch As RoundedPane2
     Friend WithEvents TextBoxSearch As TextBox
+    Friend WithEvents paneDateFilter As RoundedPane2
+    Friend WithEvents cmbDateFilter As ComboBox
+    Friend WithEvents Label2 As Label
 End Class

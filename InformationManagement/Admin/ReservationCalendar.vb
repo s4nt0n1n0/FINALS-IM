@@ -254,22 +254,17 @@ Public Class ReservationCalendar
             ' Create popup form
             Dim popupForm As New Form()
             popupForm.Text = $"Reservations for {selectedDate:MMMM dd, yyyy}"
-            popupForm.Size = New Size(800, 550)
+            popupForm.Size = New Size(800, 600)
             popupForm.StartPosition = FormStartPosition.CenterParent
-            popupForm.FormBorderStyle = FormBorderStyle.None ' Remove title bar
+            popupForm.FormBorderStyle = FormBorderStyle.None
             popupForm.MaximizeBox = False
             popupForm.MinimizeBox = False
+            popupForm.BackColor = Color.White
 
             ' Add paint handler for border
             AddHandler popupForm.Paint, Sub(sender As Object, e As PaintEventArgs)
-                                            Dim borderColor As Color = Color.LightGray
-                                            Dim borderThickness As Integer = 1
-                                            Dim rect As Rectangle = popupForm.ClientRectangle
-                                            rect.Width -= borderThickness
-                                            rect.Height -= borderThickness
-                                            Using pen As New Pen(borderColor, borderThickness)
-                                                e.Graphics.DrawRectangle(pen, rect)
-                                            End Using
+                                            Dim borderColor As Color = Color.FromArgb(100, 100, 100)
+                                            ControlPaint.DrawBorder(e.Graphics, popupForm.ClientRectangle, borderColor, ButtonBorderStyle.Solid)
                                         End Sub
 
             ' Header panel
@@ -298,116 +293,106 @@ Public Class ReservationCalendar
             lblHeader.TextAlign = ContentAlignment.MiddleCenter
             headerPanel.Controls.Add(lblHeader)
 
-            ' Scrollable panel replaced with FlowLayoutPanel for auto-fit grid
+            ' Scrollable FlowLayoutPanel (List Layout)
             Dim flowPanel As New FlowLayoutPanel()
             flowPanel.Dock = DockStyle.Fill
             flowPanel.AutoScroll = True
-            ' Add enough top padding to clear the Header (60px) + Extra spacing
-            ' Add bottom padding to clear the Footer (60px)
-            flowPanel.Padding = New Padding(20, 80, 20, 80)
+            flowPanel.Padding = New Padding(20)
+            flowPanel.FlowDirection = FlowDirection.TopDown
+            flowPanel.WrapContents = False ' Forces vertical stacking
             flowPanel.BackColor = Color.White
-            flowPanel.WrapContents = True
-            flowPanel.FlowDirection = FlowDirection.LeftToRight
-
+            
             For Each res In dayReservations
-                ' Determine if this reservation is completed
                 Dim isCompleted As Boolean = (res.ReservationStatus = "Completed")
                 
-                ' Reservation card panel - SQUARE STYLE
+                ' Reservation card panel - WIDE ROW STYLE
                 Dim cardPanel As New Panel()
-                cardPanel.Size = New Size(250, 250) ' Square size
-                cardPanel.Margin = New Padding(10)
+                cardPanel.Size = New Size(720, 120) ' Wide and fixed height rows
+                cardPanel.Margin = New Padding(0, 0, 0, 15)
                 cardPanel.BorderStyle = BorderStyle.FixedSingle
-                cardPanel.BackColor = If(isCompleted, Color.FromArgb(245, 245, 245), Color.FromArgb(240, 248, 255))
-                cardPanel.Padding = New Padding(10)
-
-                ' Time label (large and prominent) - Convert to 12-hour format
+                cardPanel.BackColor = If(isCompleted, Color.FromArgb(245, 245, 245), Color.FromArgb(243, 248, 255))
+                
+                ' Time label (Left)
                 Dim lblTime As New Label()
                 Dim timeDisplay As String = res.EventTime.ToString()
                 Try
-                    ' Try to parse and format to 12-hour
                     Dim timeParsed As DateTime
                     If DateTime.TryParse(res.EventTime, timeParsed) Then
                         timeDisplay = timeParsed.ToString("h:mm tt")
                     End If
                 Catch
-                    ' If parsing fails, use original
                 End Try
                 lblTime.Text = timeDisplay
-                lblTime.Location = New Point(10, 10)
-                lblTime.Size = New Size(100, 30)
+                lblTime.Location = New Point(15, 15)
+                lblTime.Size = New Size(110, 30)
                 lblTime.Font = New Font("Segoe UI", 14, FontStyle.Bold)
-                lblTime.ForeColor = If(isCompleted, Color.FromArgb(108, 117, 125), Color.FromArgb(52, 152, 219))
+                lblTime.ForeColor = If(isCompleted, Color.Gray, Color.FromArgb(52, 152, 219))
                 cardPanel.Controls.Add(lblTime)
                 
-                ' Status badge
+                ' Status Badge (Under Time)
+                Dim lblStatus As New Label()
                 If isCompleted Then
-                    Dim lblStatus As New Label()
-                    lblStatus.Text = "✓ COMPLETED"
-                    lblStatus.Location = New Point(120, 10)
-                    lblStatus.Size = New Size(100, 20)
-                    lblStatus.Font = New Font("Segoe UI", 8, FontStyle.Bold)
-                    lblStatus.ForeColor = Color.White
-                    lblStatus.BackColor = Color.FromArgb(108, 117, 125)
-                    lblStatus.TextAlign = ContentAlignment.MiddleCenter
-                    cardPanel.Controls.Add(lblStatus)
+                    lblStatus.Text = "COMPLETED"
+                    lblStatus.BackColor = Color.Gray
+                Else
+                    lblStatus.Text = "CONFIRMED"
+                    lblStatus.BackColor = Color.FromArgb(40, 167, 69)
                 End If
+                lblStatus.Location = New Point(15, 55)
+                lblStatus.Size = New Size(100, 22)
+                lblStatus.Font = New Font("Segoe UI", 8, FontStyle.Bold)
+                lblStatus.ForeColor = Color.White
+                lblStatus.TextAlign = ContentAlignment.MiddleCenter
+                cardPanel.Controls.Add(lblStatus)
 
-                ' Reservation details
+                ' Reservation details (Middle Area - Wide)
                 Dim lblDetails As New Label()
                 lblDetails.Text = $"Customer: {res.CustomerName}" & vbCrLf &
                             $"Event: {res.EventType}" & vbCrLf &
                             $"Guests: {res.NumberOfGuests}   |   Contact: {res.ContactNumber}"
-                lblDetails.Location = New Point(If(isCompleted, 100, 120), If(isCompleted, 10, 35))
-                lblDetails.Size = New Size(520, 60)
-                lblDetails.Font = New Font("Segoe UI", 9)
+                
+                If res.SpecialRequests <> "None" AndAlso Not String.IsNullOrWhiteSpace(res.SpecialRequests) Then
+                     lblDetails.Text &= vbCrLf & $"Note: {res.SpecialRequests}"
+                End If
+
+                lblDetails.Location = New Point(140, 15)
+                lblDetails.Size = New Size(450, 90) ' Much wider text area
+                lblDetails.Font = New Font("Segoe UI", 10)
                 lblDetails.ForeColor = Color.FromArgb(52, 73, 94)
                 cardPanel.Controls.Add(lblDetails)
 
-                ' Special requests (if any)
-                If res.SpecialRequests <> "None" AndAlso Not String.IsNullOrWhiteSpace(res.SpecialRequests) Then
-                    Dim lblSpecial As New Label()
-                    lblSpecial.Text = "📝 " & res.SpecialRequests
-                    lblSpecial.Location = New Point(100, 75)
-                    lblSpecial.Size = New Size(520, 25)
-                    lblSpecial.Font = New Font("Segoe UI", 8, FontStyle.Italic)
-                    lblSpecial.ForeColor = Color.FromArgb(149, 165, 166)
-                    cardPanel.Controls.Add(lblSpecial)
-                End If
-
-                ' View details button (only for confirmed reservations)
+                ' View details button (Right Side)
                 If Not isCompleted Then
                     Dim btnViewDetails As New Button()
                     btnViewDetails.Text = "View Details"
-                    btnViewDetails.Location = New Point(10, 75)
-                    btnViewDetails.Size = New Size(80, 25)
+                    btnViewDetails.Location = New Point(600, 45) ' Positioned on the right
+                    btnViewDetails.Size = New Size(100, 30)
                     btnViewDetails.BackColor = Color.FromArgb(52, 152, 219)
                     btnViewDetails.ForeColor = Color.White
                     btnViewDetails.FlatStyle = FlatStyle.Flat
                     btnViewDetails.FlatAppearance.BorderSize = 0
-                    btnViewDetails.Font = New Font("Segoe UI", 8)
+                    btnViewDetails.Font = New Font("Segoe UI", 9)
                     btnViewDetails.Cursor = Cursors.Hand
 
                     Dim resId As Integer = res.ReservationID
-                    AddHandler btnViewDetails.Click, Sub()
-                                                         ShowReservationDetails(resId)
-                                                     End Sub
+                    AddHandler btnViewDetails.Click, Sub() ShowReservationDetails(resId)
+                    
                     cardPanel.Controls.Add(btnViewDetails)
                 End If
 
                 flowPanel.Controls.Add(cardPanel)
             Next
 
-            ' Close button panel (Footer) for margin/spacing
+            ' Footer Panel with Normal Close Button
             Dim footerPanel As New Panel()
             footerPanel.Dock = DockStyle.Bottom
             footerPanel.Height = 60
-            footerPanel.BackColor = Color.Transparent ' Or match form background
-            footerPanel.Padding = New Padding(10)
-
+            footerPanel.BackColor = Color.WhiteSmoke
+            
             Dim btnClose As New Button()
             btnClose.Text = "Close"
-            btnClose.Dock = DockStyle.Fill
+            btnClose.Size = New Size(150, 35) ' Standard button size
+            btnClose.Location = New Point((popupForm.Width - 150) \ 2, 12) ' Centered
             btnClose.BackColor = Color.FromArgb(108, 117, 125)
             btnClose.ForeColor = Color.White
             btnClose.FlatStyle = FlatStyle.Flat
@@ -415,19 +400,17 @@ Public Class ReservationCalendar
             btnClose.Font = New Font("Segoe UI", 10, FontStyle.Bold)
             btnClose.Cursor = Cursors.Hand
             AddHandler btnClose.Click, Sub() popupForm.Close()
-
+            
             footerPanel.Controls.Add(btnClose)
 
-            ' Add controls to form (explicit Z-order: Edge first, Fill last)
-            popupForm.Controls.Add(footerPanel) ' Dock Bottom
-            popupForm.Controls.Add(headerPanel) ' Dock Top
-            popupForm.Controls.Add(flowPanel)   ' Dock Fill
+            ' Add controls to form
+            popupForm.Controls.Add(flowPanel)
+            popupForm.Controls.Add(headerPanel)
+            popupForm.Controls.Add(footerPanel)
             
-            ' Explicitly set Z-Order
-            footerPanel.BringToFront()
+            ' Order: Header top, Footer bottom, Flow fill
             headerPanel.BringToFront()
-            flowPanel.SendToBack()
-
+            footerPanel.BringToFront()
 
             ' Show popup
             popupForm.ShowDialog()

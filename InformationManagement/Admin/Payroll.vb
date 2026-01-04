@@ -153,17 +153,14 @@ Public Class Payroll
                 Dim hours As Decimal = If(row("TotalHours") IsNot DBNull.Value, Convert.ToDecimal(row("TotalHours")), 0)
                 Dim hourlyRate As Decimal = If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0)
                 Dim status As String = row("Status").ToString()
-                
+
                 Dim basicSalary As Decimal = 0
                 Dim overtimePay As Decimal = 0
                 Dim netPay As Decimal = 0
                 Dim deductions As Decimal = 0
 
-                If status <> "No Record" Then
-                    ' Use existing payroll record values
-                    basicSalary = If(row("BasicSalary") IsNot DBNull.Value AndAlso Convert.ToDecimal(row("BasicSalary")) >= 0, Convert.ToDecimal(row("BasicSalary")), 0)
-                    overtimePay = If(row("Overtime") IsNot DBNull.Value, Convert.ToDecimal(row("Overtime")), 0)
-                    deductions = If(row("Deductions") IsNot DBNull.Value, Convert.ToDecimal(row("Deductions")), 0)
+                If row("Status").ToString() <> "No Record" Then
+                    basicSalary = If(row("BasicSalary") IsNot DBNull.Value, Convert.ToDecimal(row("BasicSalary")), 0)
                     netPay = If(row("NetPay") IsNot DBNull.Value, Convert.ToDecimal(row("NetPay")), 0)
                 Else
                     ' Calculate Estimates
@@ -178,12 +175,12 @@ Public Class Payroll
 
                     basicSalary = regularHours * hourlyRate
                     overtimePay = overtimeHours * (hourlyRate * 1.5D)
-                    
+
                     ' Deductions (Placeholder logic - can be expanded if attendance status is available)
-                    deductions = 0 
-                    
+                    deductions = 0
+
                     netPay = basicSalary + overtimePay - deductions
-                    
+
                     ' Update row with calculated estimates for display if needed (or just keep them for the Tag)
                 End If
 
@@ -191,8 +188,8 @@ Public Class Payroll
                 totalNet += netPay
                 sumHours += hours
             Next
-
-             ' Update summary labels
+            ' Update summary labels
+            lblTotalGrossPay.Text = FormatPeso(totalGross)
             lblTotalGrossPay.Text = FormatPeso(totalGross)
             lblTotalNetPay.Text = FormatPeso(totalNet)
             TotalHours.Text = sumHours.ToString("F2") & " hrs"
@@ -280,23 +277,23 @@ Public Class Payroll
             ' Get hours from attendance
             Dim hours As Decimal = If(row("TotalHours") IsNot DBNull.Value, Convert.ToDecimal(row("TotalHours")), 0)
             Dim hourlyRate As Decimal = If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0)
-            
+
             newRow.Cells("Hours").Value = If(hours > 0, hours.ToString("F2"), "-")
             newRow.Cells("HourlyRate").Value = If(hourlyRate > 0, FormatPeso(hourlyRate), "-")
 
             ' --- Calculation Logic for Row Display ---
-            
+
             ' Check working days context from ComboBox if possible, or recalculate range 
             ' (Assuming standard calculation for display similar to LoadEmployees)
             ' Note: We don't have direct access to range here easily without passing it, 
             ' but we can assume the calculations are needed for 'Status = No Record'.
-            
+
             Dim status As String = row("Status").ToString()
             Dim basicSalary As Decimal = 0
             Dim overtimePay As Decimal = 0
             Dim netPay As Decimal = 0
             Dim deductions As Decimal = 0
-            
+
             If status <> "No Record" Then
                 ' Saved values
                 basicSalary = If(row("BasicSalary") IsNot DBNull.Value AndAlso Convert.ToDecimal(row("BasicSalary")) >= 0, Convert.ToDecimal(row("BasicSalary")), 0)
@@ -306,27 +303,27 @@ Public Class Payroll
                 ' Calculate on the fly for display
                 Dim currentPeriod As PayPeriodItem = TryCast(ComboBox1.SelectedItem, PayPeriodItem)
                 Dim maxRegularHours As Decimal = 80 ' Fallback
-                
+
                 If currentPeriod.StartDate <> Nothing Then
                     Dim wDays As Integer = GetWorkingDays(currentPeriod.StartDate, currentPeriod.EndDate)
                     maxRegularHours = wDays * 8
                 End If
-                
+
                 Dim regularHours As Decimal = hours
                 Dim overtimeHours As Decimal = 0
-                
+
                 If hours > maxRegularHours Then
                     regularHours = maxRegularHours
                     overtimeHours = hours - maxRegularHours
                 End If
-                
+
                 basicSalary = regularHours * hourlyRate
                 overtimePay = overtimeHours * (hourlyRate * 1.5D)
                 netPay = basicSalary + overtimePay ' Deductions assumed 0 for estimate
             End If
 
             newRow.Cells("Overtime").Value = If(overtimePay > 0, FormatPeso(overtimePay), "-")
-            
+
             Dim gross As Decimal = basicSalary + overtimePay
             newRow.Cells("GrossPay").Value = If(gross > 0, FormatPeso(gross), "-")
             newRow.Cells("NetPay").Value = If(netPay > 0, FormatPeso(netPay), "-")
@@ -411,7 +408,7 @@ Public Class Payroll
                     Dim payrollID As Integer = If(tagData.PayrollID IsNot Nothing, tagData.PayrollID, 0)
                     Dim hours As Decimal = If(tagData.Hours IsNot Nothing, tagData.Hours, 0)
                     Dim rate As Decimal = If(tagData.Rate IsNot Nothing, tagData.Rate, 0)
-                    
+
                     Dim basicSalary As Decimal = If(tagData.BasicSalary IsNot Nothing, tagData.BasicSalary, 0)
                     Dim overtimePay As Decimal = If(tagData.OvertimePay IsNot Nothing, tagData.OvertimePay, 0)
                     Dim netPay As Decimal = If(tagData.NetPay IsNot Nothing, tagData.NetPay, 0)
@@ -526,14 +523,14 @@ Public Class Payroll
             ' Use selected period or fallback to current month
             Dim periodStart As Date
             Dim periodEnd As Date
-            
+
             If ComboBox1.SelectedItem IsNot Nothing AndAlso TypeOf ComboBox1.SelectedItem Is PayPeriodItem Then
                 Dim period = DirectCast(ComboBox1.SelectedItem, PayPeriodItem)
                 periodStart = period.StartDate
                 periodEnd = period.EndDate
             Else
-                 periodStart = New Date(DateTime.Now.Year, DateTime.Now.Month, 1)
-                 periodEnd = periodStart.AddMonths(1).AddDays(-1)
+                periodStart = New Date(DateTime.Now.Year, DateTime.Now.Month, 1)
+                periodEnd = periodStart.AddMonths(1).AddDays(-1)
             End If
 
             Dim net As Decimal = basic + overtime ' No deductions yet

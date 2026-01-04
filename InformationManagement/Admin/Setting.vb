@@ -22,14 +22,14 @@ Public Class Setting
             ' Load the current logged-in admin's data
             txtName.Text = CurrentLoggedUser.name
             txtUsername.Text = CurrentLoggedUser.username
-            
+
             ' Populate current password (decrypted)
             If Not String.IsNullOrEmpty(CurrentLoggedUser.password) Then
                 txtCurrentPassword.Text = Decrypt(CurrentLoggedUser.password)
             Else
                 txtCurrentPassword.Text = ""
             End If
-            
+
             txtNewPassword.Text = ""
         Catch ex As Exception
             MessageBox.Show("Error loading user data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -57,32 +57,39 @@ Public Class Setting
         If view = "Admin" Then
             pnlAdminInfo.Visible = True
             pnlDBConfig.Visible = False
-            
+            lblTitle.Text = "Admin Information"
+
             ' Active Style
-            btnViewAdmin.BackColor = Color.White
-            btnViewAdmin.ForeColor = Color.FromArgb(41, 128, 185)
-            
+            btnViewAdmin.BackColor = Color.FromArgb(41, 128, 185)
+            btnViewAdmin.ForeColor = Color.White
+
             ' Inactive Style
-            btnViewDB.BackColor = Color.Transparent
+            btnViewDB.BackColor = Color.FromArgb(41, 128, 185)
             btnViewDB.ForeColor = Color.White
         Else
             pnlAdminInfo.Visible = False
             pnlDBConfig.Visible = True
-            
+            lblTitle.Text = "Database Configuration"
+
             ' Active Style
-            btnViewDB.BackColor = Color.White
-            btnViewDB.ForeColor = Color.FromArgb(41, 128, 185)
-            
+            btnViewDB.BackColor = Color.FromArgb(41, 128, 185)
+            btnViewDB.ForeColor = Color.White
+
             ' Inactive Style
-            btnViewAdmin.BackColor = Color.Transparent
+            btnViewAdmin.BackColor = Color.FromArgb(41, 128, 185)
             btnViewAdmin.ForeColor = Color.White
         End If
     End Sub
 
     Private Sub chkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
-        ' Toggle password visibility
-        txtCurrentPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
-        txtNewPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
+        ' Toggle password visibility for RoundedTextBox
+        If chkShowPassword.Checked Then
+            txtCurrentPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
+            txtNewPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
+        Else
+            txtCurrentPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)  ' Asterisk *
+            txtNewPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)  ' Asterisk *
+        End If
     End Sub
 
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click

@@ -17,20 +17,20 @@ Partial Class MenuItems
 
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnExport = New System.Windows.Forms.Button()
+
         Me.AddMenuItemsbtn = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.txtSearch = New InformationManagement.RoundedPane2()
         Me.TextBoxSearch = New System.Windows.Forms.TextBox()
-        Me.btnCheckIngredients = New System.Windows.Forms.Button()
         Me.lblFilter = New System.Windows.Forms.Label()
         Me.lblSearch = New System.Windows.Forms.Label()
         Me.Category = New System.Windows.Forms.ComboBox()
+        Me.btnCheckIngredients = New System.Windows.Forms.Button()
         Me.btnRefresh = New System.Windows.Forms.Button()
         Me.btnToggleAvailability = New System.Windows.Forms.Button()
         Me.Edit = New System.Windows.Forms.Button()
@@ -49,6 +49,8 @@ Partial Class MenuItems
         '
         Me.Panel1.BackColor = System.Drawing.Color.GhostWhite
         Me.Panel1.Controls.Add(Me.Label1)
+
+        Me.Panel1.Controls.Add(Me.AddMenuItemsbtn)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
@@ -65,21 +67,7 @@ Partial Class MenuItems
         Me.Label1.Size = New System.Drawing.Size(373, 40)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Menu Items Management"
-        '
-        'btnExport
-        '
-        Me.btnExport.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(123, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.btnExport.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExport.FlatAppearance.BorderSize = 0
-        Me.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExport.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me.btnExport.ForeColor = System.Drawing.Color.White
-        Me.btnExport.Location = New System.Drawing.Point(1199, 10)
-        Me.btnExport.Name = "btnExport"
-        Me.btnExport.Size = New System.Drawing.Size(130, 35)
-        Me.btnExport.TabIndex = 6
-        Me.btnExport.Text = " Export CSV"
-        Me.btnExport.UseVisualStyleBackColor = False
+
         '
         'AddMenuItemsbtn
         '
@@ -89,7 +77,7 @@ Partial Class MenuItems
         Me.AddMenuItemsbtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.AddMenuItemsbtn.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me.AddMenuItemsbtn.ForeColor = System.Drawing.Color.White
-        Me.AddMenuItemsbtn.Location = New System.Drawing.Point(1024, 54)
+        Me.AddMenuItemsbtn.Location = New System.Drawing.Point(1047, 32)
         Me.AddMenuItemsbtn.Name = "AddMenuItemsbtn"
         Me.AddMenuItemsbtn.Size = New System.Drawing.Size(154, 35)
         Me.AddMenuItemsbtn.TabIndex = 3
@@ -100,12 +88,10 @@ Partial Class MenuItems
         '
         Me.Panel2.BackColor = System.Drawing.Color.GhostWhite
         Me.Panel2.Controls.Add(Me.txtSearch)
-        Me.Panel2.Controls.Add(Me.btnCheckIngredients)
-        Me.Panel2.Controls.Add(Me.btnExport)
         Me.Panel2.Controls.Add(Me.lblFilter)
-        Me.Panel2.Controls.Add(Me.AddMenuItemsbtn)
         Me.Panel2.Controls.Add(Me.lblSearch)
         Me.Panel2.Controls.Add(Me.Category)
+        Me.Panel2.Controls.Add(Me.btnCheckIngredients)
         Me.Panel2.Controls.Add(Me.btnRefresh)
         Me.Panel2.Controls.Add(Me.btnToggleAvailability)
         Me.Panel2.Controls.Add(Me.Edit)
@@ -125,8 +111,7 @@ Partial Class MenuItems
         Me.txtSearch.BorderThickness = 1
         Me.txtSearch.Controls.Add(Me.TextBoxSearch)
         Me.txtSearch.CornerRadius = 10
-        Me.txtSearch.FillColor = System.Drawing.Color.Snow
-        Me.txtSearch.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.txtSearch.Location = New System.Drawing.Point(108, 9)
         Me.txtSearch.Name = "txtSearch"
         Me.txtSearch.Size = New System.Drawing.Size(657, 38)
@@ -134,7 +119,7 @@ Partial Class MenuItems
         '
         'TextBoxSearch
         '
-        Me.TextBoxSearch.BackColor = System.Drawing.Color.Snow
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
@@ -144,27 +129,12 @@ Partial Class MenuItems
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search orders..."
         '
-        'btnCheckIngredients
-        '
-        Me.btnCheckIngredients.BackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(219, Byte), Integer))
-        Me.btnCheckIngredients.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnCheckIngredients.FlatAppearance.BorderSize = 0
-        Me.btnCheckIngredients.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnCheckIngredients.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me.btnCheckIngredients.ForeColor = System.Drawing.Color.White
-        Me.btnCheckIngredients.Location = New System.Drawing.Point(851, 54)
-        Me.btnCheckIngredients.Name = "btnCheckIngredients"
-        Me.btnCheckIngredients.Size = New System.Drawing.Size(166, 35)
-        Me.btnCheckIngredients.TabIndex = 2
-        Me.btnCheckIngredients.Text = "Check Ingredients"
-        Me.btnCheckIngredients.UseVisualStyleBackColor = False
-        '
         'lblFilter
         '
-        Me.lblFilter.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
-        Me.lblFilter.Location = New System.Drawing.Point(794, 21)
+        Me.lblFilter.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblFilter.Location = New System.Drawing.Point(34, 60)
         Me.lblFilter.Name = "lblFilter"
-        Me.lblFilter.Size = New System.Drawing.Size(100, 23)
+        Me.lblFilter.Size = New System.Drawing.Size(113, 23)
         Me.lblFilter.TabIndex = 0
         Me.lblFilter.Text = "Filter Category:"
         '
@@ -179,15 +149,27 @@ Partial Class MenuItems
         '
         'Category
         '
-        Me.Category.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
         Me.Category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.Category.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Category.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.Category.ItemHeight = 29
-        Me.Category.Location = New System.Drawing.Point(900, 10)
+        Me.Category.Location = New System.Drawing.Point(153, 57)
         Me.Category.Name = "Category"
-        Me.Category.Size = New System.Drawing.Size(270, 35)
+        Me.Category.Size = New System.Drawing.Size(258, 25)
         Me.Category.TabIndex = 1
+        '
+        'btnCheckIngredients
+        '
+        Me.btnCheckIngredients.BackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(219, Byte), Integer))
+        Me.btnCheckIngredients.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnCheckIngredients.FlatAppearance.BorderSize = 0
+        Me.btnCheckIngredients.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnCheckIngredients.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me.btnCheckIngredients.ForeColor = System.Drawing.Color.White
+        Me.btnCheckIngredients.Location = New System.Drawing.Point(884, 6)
+        Me.btnCheckIngredients.Name = "btnCheckIngredients"
+        Me.btnCheckIngredients.Size = New System.Drawing.Size(180, 35)
+        Me.btnCheckIngredients.TabIndex = 2
+        Me.btnCheckIngredients.Text = "🥘 Check Ingredients"
+        Me.btnCheckIngredients.UseVisualStyleBackColor = False
         '
         'btnRefresh
         '
@@ -197,11 +179,11 @@ Partial Class MenuItems
         Me.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnRefresh.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me.btnRefresh.ForeColor = System.Drawing.Color.White
-        Me.btnRefresh.Location = New System.Drawing.Point(37, 56)
+        Me.btnRefresh.Location = New System.Drawing.Point(1070, 6)
         Me.btnRefresh.Name = "btnRefresh"
         Me.btnRefresh.Size = New System.Drawing.Size(110, 35)
         Me.btnRefresh.TabIndex = 4
-        Me.btnRefresh.Text = "Refresh"
+        Me.btnRefresh.Text = "🔄 Refresh"
         Me.btnRefresh.UseVisualStyleBackColor = False
         '
         'btnToggleAvailability
@@ -212,7 +194,7 @@ Partial Class MenuItems
         Me.btnToggleAvailability.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnToggleAvailability.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me.btnToggleAvailability.ForeColor = System.Drawing.Color.White
-        Me.btnToggleAvailability.Location = New System.Drawing.Point(1184, 54)
+        Me.btnToggleAvailability.Location = New System.Drawing.Point(1191, 6)
         Me.btnToggleAvailability.Name = "btnToggleAvailability"
         Me.btnToggleAvailability.Size = New System.Drawing.Size(146, 35)
         Me.btnToggleAvailability.TabIndex = 5
@@ -227,11 +209,11 @@ Partial Class MenuItems
         Me.Edit.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Edit.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
         Me.Edit.ForeColor = System.Drawing.Color.White
-        Me.Edit.Location = New System.Drawing.Point(154, 56)
+        Me.Edit.Location = New System.Drawing.Point(1047, 51)
         Me.Edit.Name = "Edit"
         Me.Edit.Size = New System.Drawing.Size(133, 35)
         Me.Edit.TabIndex = 7
-        Me.Edit.Text = "Edit Selected"
+        Me.Edit.Text = "✏️ Edit Selected"
         Me.Edit.UseVisualStyleBackColor = False
         '
         'Delete
@@ -242,11 +224,11 @@ Partial Class MenuItems
         Me.Delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Delete.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
         Me.Delete.ForeColor = System.Drawing.Color.White
-        Me.Delete.Location = New System.Drawing.Point(293, 56)
+        Me.Delete.Location = New System.Drawing.Point(1191, 51)
         Me.Delete.Name = "Delete"
         Me.Delete.Size = New System.Drawing.Size(146, 35)
         Me.Delete.TabIndex = 8
-        Me.Delete.Text = "Delete Selected"
+        Me.Delete.Text = "🗑 Delete Selected"
         Me.Delete.UseVisualStyleBackColor = False
         '
         'DataGridMenu
@@ -257,31 +239,31 @@ Partial Class MenuItems
         Me.DataGridMenu.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.DataGridMenu.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
         Me.DataGridMenu.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(73, Byte), Integer), CType(CType(94, Byte), Integer))
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DataGridMenu.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(73, Byte), Integer), CType(CType(94, Byte), Integer))
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        DataGridViewCellStyle4.ForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DataGridMenu.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.DataGridMenu.ColumnHeadersHeight = 45
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(219, Byte), Integer))
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DataGridMenu.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(219, Byte), Integer))
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DataGridMenu.DefaultCellStyle = DataGridViewCellStyle5
         Me.DataGridMenu.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DataGridMenu.Location = New System.Drawing.Point(0, 179)
         Me.DataGridMenu.MultiSelect = False
         Me.DataGridMenu.Name = "DataGridMenu"
         Me.DataGridMenu.ReadOnly = True
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DataGridMenu.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DataGridMenu.RowHeadersDefaultCellStyle = DataGridViewCellStyle6
         Me.DataGridMenu.RowHeadersVisible = False
         Me.DataGridMenu.RowHeadersWidth = 45
         Me.DataGridMenu.RowTemplate.Height = 80
@@ -340,7 +322,7 @@ Partial Class MenuItems
     Friend WithEvents AddMenuItemsbtn As Button
     Friend WithEvents btnRefresh As Button
     Friend WithEvents btnToggleAvailability As Button
-    Friend WithEvents btnExport As Button
+
     Friend WithEvents btnCheckIngredients As Button
     Friend WithEvents Edit As Button
     Friend WithEvents Delete As Button

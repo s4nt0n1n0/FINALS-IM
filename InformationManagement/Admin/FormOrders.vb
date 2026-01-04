@@ -243,7 +243,7 @@ Public Class FormOrders
     ' =======================================================================
     ' DATAGRIDVIEW CELL FORMATTING - FOR BADGES AND COLORS
     ' =======================================================================
-    Private Sub DataGridView1_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DataGridView1.CellFormatting
+    Private Sub DataGridView1_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
         Try
             If e.Value Is Nothing Then Return
 

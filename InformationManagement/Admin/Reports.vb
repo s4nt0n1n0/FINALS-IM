@@ -152,7 +152,10 @@ Public Class Reports
         years.Reverse()
 
         For Each y In years
-            cmbYear.Items.Add(y)
+            ' User Requested Exclusion of 2024 and 2027
+            If y <> 2024 AndAlso y <> 2027 Then
+                cmbYear.Items.Add(y)
+            End If
         Next
 
         If cmbYear.Items.Count > 0 Then
