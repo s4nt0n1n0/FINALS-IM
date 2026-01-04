@@ -11,6 +11,16 @@ Public Class Payroll
 
     Private _lastSearchText As String = ""
     Private isInitializing As Boolean = True
+
+    Private Structure PayPeriodItem
+        Dim StartDate As Date
+        Dim EndDate As Date
+        Dim DisplayText As String
+
+        Public Overrides Function ToString() As String
+            Return DisplayText
+        End Function
+    End Structure
     Private Sub Payroll_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Hide the Add New Payroll Record button
         If Me.Controls.Contains(AddNewPayrollRecordbtn) Then
@@ -21,9 +31,16 @@ Public Class Payroll
         ConfigureResponsiveGrid()
 
         InitializeSearchBox()
+        PopulatePayPeriods()
+
         isInitializing = False
 
-        LoadEmployees()
+        ' Select current period by default
+        If ComboBox1.Items.Count > 0 Then
+            ComboBox1.SelectedIndex = 0
+        Else
+            LoadEmployees()
+        End If
     End Sub
 
     Private Sub ConfigureResponsiveGrid()
@@ -73,25 +90,25 @@ Public Class Payroll
         Return ChrW(&H20B1) & amount.ToString("N2")
     End Function
 
-    Public Sub LoadEmployees()
+    Public Sub LoadEmployees(Optional startDate As Date? = Nothing, Optional endDate As Date? = Nothing)
         Try
             openConn()
 
-            ' Get current month's date range for attendance
-            Dim startOfMonth As Date = New Date(DateTime.Now.Year, DateTime.Now.Month, 1)
-            Dim endOfMonth As Date = startOfMonth.AddMonths(1).AddDays(-1)
+            ' Get date range
+            Dim startRange As Date = If(startDate.HasValue, startDate.Value, New Date(DateTime.Now.Year, DateTime.Now.Month, 1))
+            Dim endRange As Date = If(endDate.HasValue, endDate.Value, startRange.AddMonths(1).AddDays(-1))
 
-            ' Load all employees with attendance hours for current month
+            ' Load only employees with staff accounts (user_accounts)
             Dim query As String = "SELECT 
                 e.EmployeeID,
                 CONCAT(e.FirstName, ' ', e.LastName) AS EmployeeName,
                 e.Position,
                 e.Salary,
-                -- Calculate total hours from attendance for current month
-                IFNULL(SUM(CASE WHEN a.AttendanceDate BETWEEN @startDate AND @endDate THEN a.WorkHours ELSE 0 END), 0) as TotalHours,
-                -- Calculate hourly rate from monthly salary (assuming 160 hours/month)
-                IFNULL(e.Salary / 160, 0) as HourlyRate,
-                -- Get latest payroll info
+                -- Total hours for THIS specific period
+                IFNULL(attn.TotalHours, 0) as TotalHours,
+                -- Use Salary column as HourlyRate
+                IFNULL(e.Salary, 0) as HourlyRate,
+                -- Get payroll info for THIS specific period
                 IFNULL(p.BasicSalary, 0) as BasicSalary,
                 IFNULL(p.Overtime, 0) as Overtime,
                 IFNULL(p.Deductions, 0) as Deductions,
@@ -100,30 +117,28 @@ Public Class Payroll
                 IFNULL(p.Status, 'No Record') as Status,
                 p.PayrollID
                 FROM employee e
-                LEFT JOIN employee_attendance a ON e.EmployeeID = a.EmployeeID
+                INNER JOIN user_accounts u ON e.EmployeeID = u.employee_id
                 LEFT JOIN (
-                    SELECT p1.*
-                    FROM payroll p1
-                    INNER JOIN (
-                        SELECT EmployeeID, MAX(CreatedDate) as MaxDate
-                        FROM payroll
-                        GROUP BY EmployeeID
-                    ) p2 ON p1.EmployeeID = p2.EmployeeID AND p1.CreatedDate = p2.MaxDate
-                ) p ON e.EmployeeID = p.EmployeeID
+                    SELECT EmployeeID, SUM(WorkHours) as TotalHours
+                    FROM employee_attendance
+                    WHERE AttendanceDate BETWEEN @startDate AND @endDate
+                    GROUP BY EmployeeID
+                ) attn ON e.EmployeeID = attn.EmployeeID
+                LEFT JOIN payroll p ON e.EmployeeID = p.EmployeeID 
+                    AND p.PayPeriodStart = @startDate 
+                    AND p.PayPeriodEnd = @endDate
                 WHERE e.EmploymentStatus = 'Active'
-                GROUP BY e.EmployeeID, e.FirstName, e.LastName, e.Position, e.Salary, 
-                         p.BasicSalary, p.Overtime, p.Deductions, p.Bonuses, p.NetPay, p.Status, p.PayrollID
                 ORDER BY e.FirstName, e.LastName"
 
             Dim cmd As New MySqlCommand(query, conn)
-            cmd.Parameters.AddWithValue("@startDate", startOfMonth)
-            cmd.Parameters.AddWithValue("@endDate", endOfMonth)
+            cmd.Parameters.AddWithValue("@startDate", startRange)
+            cmd.Parameters.AddWithValue("@endDate", endRange)
 
             Dim adapter As New MySqlDataAdapter(cmd)
             allPayrollData = New DataTable()
             adapter.Fill(allPayrollData)
 
-            ' Calculate totals from all data
+            ' Calculate totals from filtered data
             Dim totalGross As Decimal = 0
             Dim totalNet As Decimal = 0
             Dim sumHours As Decimal = 0
@@ -131,18 +146,26 @@ Public Class Payroll
             For Each row As DataRow In allPayrollData.Rows
                 Dim hours As Decimal = If(row("TotalHours") IsNot DBNull.Value, Convert.ToDecimal(row("TotalHours")), 0)
                 Dim overtime As Decimal = If(row("Overtime") IsNot DBNull.Value, Convert.ToDecimal(row("Overtime")), 0)
-                Dim basicSalary As Decimal = If(row("BasicSalary") IsNot DBNull.Value AndAlso Convert.ToDecimal(row("BasicSalary")) > 0,
-                                                Convert.ToDecimal(row("BasicSalary")),
-                                                hours * If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0))
-                Dim gross As Decimal = basicSalary + overtime
-                Dim netPay As Decimal = If(row("NetPay") IsNot DBNull.Value, Convert.ToDecimal(row("NetPay")), basicSalary)
+                Dim hourlyRate As Decimal = If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0)
+                
+                ' If there's a payroll record, use its values
+                Dim basicSalary As Decimal = 0
+                Dim netPay As Decimal = 0
+                
+                If row("Status").ToString() <> "No Record" Then
+                    basicSalary = If(row("BasicSalary") IsNot DBNull.Value, Convert.ToDecimal(row("BasicSalary")), 0)
+                    netPay = If(row("NetPay") IsNot DBNull.Value, Convert.ToDecimal(row("NetPay")), 0)
+                Else
+                    ' Calculate estimate for display
+                    basicSalary = hours * hourlyRate
+                    netPay = basicSalary
+                End If
 
-                totalGross += If(gross > 0, gross, basicSalary)
+                totalGross += (basicSalary + overtime)
                 totalNet += netPay
                 sumHours += hours
             Next
-
-            ' Update summary labels
+              ' Update summary labels
             lblTotalGrossPay.Text = FormatPeso(totalGross)
             lblTotalNetPay.Text = FormatPeso(totalNet)
             TotalHours.Text = sumHours.ToString("F2") & " hrs"
@@ -211,65 +234,65 @@ Public Class Payroll
             Dim rowIndex As Integer = DataGridView1.Rows.Add()
             Dim newRow As DataGridViewRow = DataGridView1.Rows(rowIndex)
 
-                newRow.Cells("Employee").Value = row("EmployeeName").ToString()
-                newRow.Cells("Position").Value = row("Position").ToString()
+            newRow.Cells("Employee").Value = row("EmployeeName").ToString()
+            newRow.Cells("Position").Value = row("Position").ToString()
 
-                ' Get hours from attendance
-                Dim hours As Decimal = If(row("TotalHours") IsNot DBNull.Value, Convert.ToDecimal(row("TotalHours")), 0)
-                Dim rate As Decimal = If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0)
+            ' Get hours from attendance
+            Dim hours As Decimal = If(row("TotalHours") IsNot DBNull.Value, Convert.ToDecimal(row("TotalHours")), 0)
+            Dim rate As Decimal = If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0)
 
-                newRow.Cells("Hours").Value = If(hours > 0, hours.ToString("F2"), "-")
-                newRow.Cells("HourlyRate").Value = If(rate > 0, FormatPeso(rate), "-")
+            newRow.Cells("Hours").Value = If(hours > 0, hours.ToString("F2"), "-")
+            newRow.Cells("HourlyRate").Value = If(rate > 0, FormatPeso(rate), "-")
 
-                ' Calculate pay from attendance hours
-                Dim calculatedPay As Decimal = hours * rate
+            ' Calculate pay from attendance hours
+            Dim calculatedPay As Decimal = hours * rate
 
-                Dim overtime As Decimal = If(row("Overtime") IsNot DBNull.Value, Convert.ToDecimal(row("Overtime")), 0)
-                newRow.Cells("Overtime").Value = If(overtime > 0, FormatPeso(overtime), "-")
+            Dim overtime As Decimal = If(row("Overtime") IsNot DBNull.Value, Convert.ToDecimal(row("Overtime")), 0)
+            newRow.Cells("Overtime").Value = If(overtime > 0, FormatPeso(overtime), "-")
 
-                ' Use calculated pay if no payroll record, otherwise use payroll record
-                Dim basicSalary As Decimal = If(row("BasicSalary") IsNot DBNull.Value AndAlso Convert.ToDecimal(row("BasicSalary")) > 0,
+            ' Use calculated pay if no payroll record, otherwise use payroll record
+            Dim basicSalary As Decimal = If(row("BasicSalary") IsNot DBNull.Value AndAlso Convert.ToDecimal(row("BasicSalary")) > 0,
                                                 Convert.ToDecimal(row("BasicSalary")),
                                                 calculatedPay)
 
-                Dim gross As Decimal = basicSalary + overtime
-                newRow.Cells("GrossPay").Value = If(gross > 0, FormatPeso(gross), If(calculatedPay > 0, FormatPeso(calculatedPay), "-"))
+            Dim gross As Decimal = basicSalary + overtime
+            newRow.Cells("GrossPay").Value = If(gross > 0, FormatPeso(gross), If(calculatedPay > 0, FormatPeso(calculatedPay), "-"))
 
-                Dim netPay As Decimal = If(row("NetPay") IsNot DBNull.Value, Convert.ToDecimal(row("NetPay")), calculatedPay)
-                newRow.Cells("NetPay").Value = If(netPay > 0, FormatPeso(netPay), "-")
+            Dim netPay As Decimal = If(row("NetPay") IsNot DBNull.Value, Convert.ToDecimal(row("NetPay")), calculatedPay)
+            newRow.Cells("NetPay").Value = If(netPay > 0, FormatPeso(netPay), "-")
 
-                Dim status As String = row("Status").ToString()
-                newRow.Cells("Status").Value = status
+            Dim status As String = row("Status").ToString()
+            newRow.Cells("Status").Value = status
 
-                ' Color code rows based on status
-                Select Case status.ToLower()
-                    Case "paid"
-                        newRow.DefaultCellStyle.BackColor = Color.LightGreen
-                    Case "pending", "approved"
-                        newRow.DefaultCellStyle.BackColor = Color.LightYellow
-                    Case "no record"
-                        If hours > 0 Then
-                            newRow.DefaultCellStyle.BackColor = Color.LightCoral ' Has hours but no payroll
-                        End If
-                End Select
+            ' Color code rows based on status
+            Select Case status.ToLower()
+                Case "paid"
+                    newRow.DefaultCellStyle.BackColor = Color.LightGreen
+                Case "pending", "approved"
+                    newRow.DefaultCellStyle.BackColor = Color.LightYellow
+                Case "no record"
+                    If hours > 0 Then
+                        newRow.DefaultCellStyle.BackColor = Color.LightCoral ' Has hours but no payroll
+                    End If
+            End Select
 
-                ' Smart Actions button based on status
-                Dim actionText As String = "View"
-                Select Case status.ToLower()
-                    Case "no record"
-                        actionText = If(hours > 0, "Generate", "-")
-                    Case "pending"
-                        actionText = "Edit | Approve"
-                    Case "approved"
-                        actionText = "Mark as Paid"
-                    Case "paid"
-                        actionText = "Completed"
-                End Select
+            ' Smart Actions button based on status
+            Dim actionText As String = "View"
+            Select Case status.ToLower()
+                Case "no record"
+                    actionText = If(hours > 0, "Generate", "-")
+                Case "pending"
+                    actionText = "Edit | Approve"
+                Case "approved"
+                    actionText = "Mark as Paid"
+                Case "paid"
+                    actionText = "Completed"
+            End Select
 
-                newRow.Cells("Actions").Value = actionText
+            newRow.Cells("Actions").Value = actionText
 
-                ' Store EmployeeID and PayrollID in Tag
-                newRow.Tag = New With {
+            ' Store EmployeeID and PayrollID in Tag
+            newRow.Tag = New With {
                     .EmployeeID = row("EmployeeID"),
                     .PayrollID = If(row("PayrollID") IsNot DBNull.Value, Convert.ToInt32(row("PayrollID")), 0),
                     .Hours = hours,
@@ -578,4 +601,53 @@ Public Class Payroll
         TextBoxSearch.Text = "Search payroll..."
         TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
     End Sub
+
+    Private Sub PopulatePayPeriods()
+        ComboBox1.Items.Clear()
+
+        ' Add current month periods
+        Dim today As Date = DateTime.Now
+        AddPeriod(today.Year, today.Month, 16, Date.DaysInMonth(today.Year, today.Month)) ' 16-End
+        AddPeriod(today.Year, today.Month, 1, 15) ' 1-15
+
+        ' Add last month periods
+        Dim lastMonth As Date = today.AddMonths(-1)
+        AddPeriod(lastMonth.Year, lastMonth.Month, 16, Date.DaysInMonth(lastMonth.Year, lastMonth.Month))
+        AddPeriod(lastMonth.Year, lastMonth.Month, 1, 15)
+
+        ' Add month before last
+        Dim monthBefore As Date = today.AddMonths(-2)
+        AddPeriod(monthBefore.Year, monthBefore.Month, 16, Date.DaysInMonth(monthBefore.Year, monthBefore.Month))
+        AddPeriod(monthBefore.Year, monthBefore.Month, 1, 15)
+    End Sub
+
+    Private Sub AddPeriod(year As Integer, month As Integer, dayStart As Integer, dayEnd As Integer)
+        Dim startDate As New Date(year, month, dayStart)
+        Dim endDate As New Date(year, month, dayEnd)
+        Dim item As New PayPeriodItem With {
+            .StartDate = startDate,
+            .EndDate = endDate,
+            .DisplayText = startDate.ToString("MMM d") & "-" & endDate.Day & ", " & startDate.Year
+        }
+        ComboBox1.Items.Add(item)
+    End Sub
+
+    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
+        If isInitializing Then Return
+
+        If ComboBox1.SelectedItem IsNot Nothing AndAlso TypeOf ComboBox1.SelectedItem Is PayPeriodItem Then
+            Dim period = DirectCast(ComboBox1.SelectedItem, PayPeriodItem)
+            LoadEmployees(period.StartDate, period.EndDate)
+        End If
+    End Sub
+    Private Sub ComboBox_DrawItem(sender As Object, e As DrawItemEventArgs) _
+        Handles ComboBox1.DrawItem
+
+        If e.Index < 0 Then Return
+        Dim cmb As ComboBox = DirectCast(sender, ComboBox)
+        e.DrawBackground()
+        e.Graphics.DrawString(cmb.Items(e.Index).ToString(), cmb.Font, Brushes.Black, e.Bounds)
+        e.DrawFocusRectangle()
+    End Sub
+
 End Class
