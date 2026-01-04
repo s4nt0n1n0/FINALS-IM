@@ -39,11 +39,6 @@ Public Class FormReservationStatus
                 Chart1.ChartAreas(0).BackColor = Color.White
             End If
 
-            ' Set label colors
-            lblPending.ForeColor = Color.FromArgb(255, 165, 0) ' Orange
-            lblConfirmed.ForeColor = Color.FromArgb(34, 197, 94) ' Green
-            lblCancelled.ForeColor = Color.FromArgb(239, 68, 68) ' Red
-
             ' Set initial values to prevent blank display
             lblTotalReservations.Text = "0"
             lblPending.Text = "0"

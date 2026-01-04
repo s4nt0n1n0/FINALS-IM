@@ -139,7 +139,11 @@ Public Class Adminlogin
             MessageBox.Show(ex.Message)
         End Try
     End Sub
+    Private Sub AdminLogin_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        Application.Exit()
+
+    End Sub
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs)
     End Sub
 End Class

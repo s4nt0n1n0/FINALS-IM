@@ -147,11 +147,11 @@ Public Class Payroll
                 Dim hours As Decimal = If(row("TotalHours") IsNot DBNull.Value, Convert.ToDecimal(row("TotalHours")), 0)
                 Dim overtime As Decimal = If(row("Overtime") IsNot DBNull.Value, Convert.ToDecimal(row("Overtime")), 0)
                 Dim hourlyRate As Decimal = If(row("HourlyRate") IsNot DBNull.Value, Convert.ToDecimal(row("HourlyRate")), 0)
-                
+
                 ' If there's a payroll record, use its values
                 Dim basicSalary As Decimal = 0
                 Dim netPay As Decimal = 0
-                
+
                 If row("Status").ToString() <> "No Record" Then
                     basicSalary = If(row("BasicSalary") IsNot DBNull.Value, Convert.ToDecimal(row("BasicSalary")), 0)
                     netPay = If(row("NetPay") IsNot DBNull.Value, Convert.ToDecimal(row("NetPay")), 0)
@@ -165,7 +165,7 @@ Public Class Payroll
                 totalNet += netPay
                 sumHours += hours
             Next
-              ' Update summary labels
+            ' Update summary labels
             lblTotalGrossPay.Text = FormatPeso(totalGross)
             lblTotalNetPay.Text = FormatPeso(totalNet)
             TotalHours.Text = sumHours.ToString("F2") & " hrs"

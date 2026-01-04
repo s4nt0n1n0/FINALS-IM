@@ -481,6 +481,7 @@ Partial Class Inventory
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Splitter1)
+        Me.DoubleBuffered = True
         Me.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Margin = New System.Windows.Forms.Padding(2)
         Me.Name = "Inventory"

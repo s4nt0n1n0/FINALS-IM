@@ -378,10 +378,6 @@ Partial Class Customer
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.ReadOnly = True
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.Color.Empty
-        DataGridViewCellStyle2.ForeColor = System.Drawing.Color.Empty
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Empty
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Empty
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle2
         Me.DataGridView1.RowHeadersVisible = False
@@ -589,6 +585,7 @@ Partial Class Customer
         Me.Controls.Add(Me.RoundedPane23)
         Me.Controls.Add(Me.RoundedPane22)
         Me.Controls.Add(Me.RoundedPane21)
+        Me.DoubleBuffered = True
         Me.Name = "Customer"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Customer Management"
