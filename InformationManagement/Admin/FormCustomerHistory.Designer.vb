@@ -33,8 +33,6 @@ Partial Class FormCustomerHistory
         Me.lblPageStatus = New System.Windows.Forms.Label()
         Me.SearchContainer = New InformationManagement.RoundedPane2()
         Me.txtSearch = New System.Windows.Forms.TextBox()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
         Me.Label1 = New System.Windows.Forms.Label()
 
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
@@ -81,8 +79,6 @@ Partial Class FormCustomerHistory
         Me.RoundedPane21.BorderThickness = 1
         Me.RoundedPane21.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane21.Controls.Add(Me.SearchContainer)
-        Me.RoundedPane21.Controls.Add(Me.dtpFilter)
-        Me.RoundedPane21.Controls.Add(Me.btnExportPdf)
 
         Me.RoundedPane21.Controls.Add(Me.Label1)
         Me.RoundedPane21.Controls.Add(Me.DataGridView1)
@@ -168,37 +164,8 @@ Partial Class FormCustomerHistory
         Me.txtSearch.TabIndex = 0
         Me.txtSearch.Text = ""
         '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("Export.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(1347, 22)
-        Me.btnExportPdf.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(139, 40)
-        Me.btnExportPdf.TabIndex = 10
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(840, 27)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(200, 30)
-        Me.dtpFilter.TabIndex = 20
-        Me.dtpFilter.Visible = False
-        '
+
+
         'Label1
         '
         Me.Label1.AutoSize = True
@@ -317,7 +284,7 @@ Partial Class FormCustomerHistory
     Friend WithEvents RoundedPane21 As RoundedPane2
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Label1 As Label
-    Friend WithEvents btnExportPdf As Button
+
     Friend WithEvents PaginationContainer As Panel
     Friend WithEvents btnNext As Button
     Friend WithEvents btnPrev As Button
@@ -330,6 +297,6 @@ Partial Class FormCustomerHistory
     Friend WithEvents Items As DataGridViewTextBoxColumn
     Friend WithEvents Amount As DataGridViewTextBoxColumn
     Friend WithEvents Status As DataGridViewTextBoxColumn
-    Friend WithEvents dtpFilter As DateTimePicker
+
 End Class
 

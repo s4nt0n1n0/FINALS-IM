@@ -8,7 +8,6 @@ Public Class FormReservationStatus
     Private filterPeriod As String = "Monthly" ' Daily, Weekly, Monthly, Yearly
     Private reservationData As New Dictionary(Of String, Integer)
     Private isInitializing As Boolean = True
-    Private _lastSearchText As String = ""
 
 
     ' =======================================================================
@@ -17,8 +16,8 @@ Public Class FormReservationStatus
     Private Sub FormReservationStatus_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
             InitializeForm()
-            InitializeDetailsGrid()
-            ConfigureDateFilter()
+            ConfigureChart()
+            'ConfigureDateFilter()
             LoadReservationData()
             isInitializing = False
 
@@ -35,7 +34,10 @@ Public Class FormReservationStatus
             filterPeriod = Reports.SelectedPeriod
 
             ' Configure chart colors
-
+            Chart1.BackColor = Color.White
+            If Chart1.ChartAreas.Count > 0 Then
+                Chart1.ChartAreas(0).BackColor = Color.White
+            End If
 
             ' Set label colors
             lblPending.ForeColor = Color.FromArgb(255, 165, 0) ' Orange
@@ -56,6 +58,30 @@ Public Class FormReservationStatus
     ' =======================================================================
     ' CONFIGURE PIE CHART
     ' =======================================================================
+    Private Sub ConfigureChart()
+        With Chart1
+            .ChartAreas(0).BackColor = Color.Transparent
+            .BackColor = Color.Transparent
+
+            ' Configure series
+            .Series("ReservationStatus").ChartType = SeriesChartType.Pie
+            .Series("ReservationStatus").IsValueShownAsLabel = True
+            .Series("ReservationStatus")("PieLabelStyle") = "Inside"
+            .Series("ReservationStatus")("PieLineColor") = "Gray"
+            .Series("ReservationStatus").Font = New Font("Segoe UI", 10, FontStyle.Bold)
+
+            ' Enable 3D effect
+            .ChartAreas(0).Area3DStyle.Enable3D = True
+            .ChartAreas(0).Area3DStyle.Inclination = 15
+            .ChartAreas(0).Area3DStyle.Rotation = 10
+
+            ' Add legend
+            .Legends(0).Enabled = True
+            .Legends(0).Docking = Docking.Right
+            .Legends(0).Font = New Font("Segoe UI", 10)
+            .Legends(0).BackColor = Color.Transparent
+        End With
+    End Sub
 
     ' =======================================================================
     ' LOAD RESERVATION DATA FROM DATABASE
@@ -110,7 +136,7 @@ Public Class FormReservationStatus
 
             ' Update UI with data
             UpdateStatisticsCards()
-            LoadDetailedReservations()
+            UpdateChart()
 
         Catch ex As MySqlException
             MessageBox.Show($"Database Error: {ex.Message}{vbCrLf}Make sure the 'reservations' table exists with 'ReservationStatus' and 'ReservationDate' columns.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -131,7 +157,7 @@ Public Class FormReservationStatus
         reservationData("Cancelled") = 0
 
         UpdateStatisticsCards()
-
+        UpdateChart()
     End Sub
 
     ' =======================================================================
@@ -148,10 +174,10 @@ Public Class FormReservationStatus
 
         Select Case filterPeriod
             Case "Daily"
-                filter = $"DATE(EventDate) = '{dtpFilter.Value:yyyy-MM-dd}'"
+                filter = $"DATE(EventDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
 
             Case "Weekly"
-                filter = $"YEARWEEK(EventDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
+                filter = $"YEARWEEK(EventDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
 
 
             Case "Monthly"
@@ -206,17 +232,60 @@ Public Class FormReservationStatus
     ' =======================================================================
     ' UPDATE PIE CHART
     ' =======================================================================
+    Private Sub UpdateChart()
+        Try
+            Chart1.Series("ReservationStatus").Points.Clear()
 
-    ' =======================================================================
-    ' EXPORT PDF
-    ' =======================================================================
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
+            Dim pending As Integer = reservationData("Pending")
+            Dim confirmed As Integer = reservationData("Confirmed")
+            Dim cancelled As Integer = reservationData("Cancelled")
+
+            ' Only add points if there's data
+            If pending > 0 Then
+                Dim point1 As New DataPoint(0, pending)
+                point1.AxisLabel = "Pending"
+                point1.Label = $"Pending ({pending})"
+                point1.LegendText = $"Pending ({pending})"
+                point1.Color = Color.FromArgb(245, 158, 11) ' Orange
+                point1.LabelForeColor = Color.White
+                Chart1.Series("ReservationStatus").Points.Add(point1)
+            End If
+
+            If confirmed > 0 Then
+                Dim point2 As New DataPoint(0, confirmed)
+                point2.AxisLabel = "Confirmed"
+                point2.Label = $"Confirmed ({confirmed})"
+                point2.LegendText = $"Confirmed ({confirmed})"
+                point2.Color = Color.FromArgb(34, 197, 94) ' Green
+                point2.LabelForeColor = Color.White
+                Chart1.Series("ReservationStatus").Points.Add(point2)
+            End If
+
+            If cancelled > 0 Then
+                Dim point3 As New DataPoint(0, cancelled)
+                point3.AxisLabel = "Cancelled"
+                point3.Label = $"Cancelled ({cancelled})"
+                point3.LegendText = $"Cancelled ({cancelled})"
+                point3.Color = Color.FromArgb(239, 68, 68) ' Red
+                point3.LabelForeColor = Color.White
+                Chart1.Series("ReservationStatus").Points.Add(point3)
+            End If
+
+            ' Show message if no data
+            If pending = 0 AndAlso confirmed = 0 AndAlso cancelled = 0 Then
+                Dim emptyPoint As New DataPoint(0, 1)
+                emptyPoint.AxisLabel = "No Data"
+                emptyPoint.Label = "No Reservations"
+                emptyPoint.Color = Color.LightGray
+                Chart1.Series("ReservationStatus").Points.Add(emptyPoint)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show($"Error updating chart: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
+
+
 
     ' =======================================================================
     ' GET DETAILED RESERVATION STATISTICS
@@ -361,28 +430,16 @@ Public Class FormReservationStatus
         filterPeriod = Reports.SelectedPeriod
         currentYear = Reports.SelectedYear
         currentMonth = Reports.SelectedMonth
-
-        ConfigureDateFilter()
+        
+        'ConfigureDateFilter()
         LoadReservationData()
     End Sub
 
     Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
-
-        Select Case filterPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-                dtpFilter.CustomFormat = "MMMM dd, yyyy"
-                dtpFilter.Format = DateTimePickerFormat.Custom
-            Case Else
-                dtpFilter.Visible = False
-        End Select
+        ' Logic handled in Reports.vb
     End Sub
 
-    Private Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If isInitializing Then Return
-        LoadReservationData()
-    End Sub
+
 
 
     ' =======================================================================
@@ -404,189 +461,7 @@ Public Class FormReservationStatus
         End If
     End Sub
 
-    ' =======================================================================
-    ' DETAILS GRID LOGIC
-    ' =======================================================================
-    Private Sub InitializeDetailsGrid()
-        With dgvDetails
-            .AutoGenerateColumns = False
-            .AllowUserToAddRows = False
-            .AllowUserToDeleteRows = False
-            .ReadOnly = True
-            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            .RowHeadersVisible = False
-            .BackgroundColor = Color.White
-            .BorderStyle = BorderStyle.None
-            .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-            .GridColor = Color.FromArgb(241, 245, 249)
-            .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-            .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
-            .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-            .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
-            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
-            .ColumnHeadersHeight = 50
-            .RowTemplate.Height = 50
-            .EnableHeadersVisualStyles = False
-        End With
-    End Sub
-
-    Private Sub LoadDetailedReservations(Optional searchText As String = "")
-        Try
-            If conn Is Nothing OrElse conn.State <> ConnectionState.Open Then openConn()
-
-            Dim dateFilter = GetDateFilter()
-            Dim searchFilter = ""
-            If Not String.IsNullOrEmpty(searchText) Then
-                searchFilter = $" AND (FullName LIKE @search OR ReservationID LIKE @search OR ContactNumber LIKE @search)"
-            End If
-
-            ' SQL to match the requested columns as closely as possible
-            Dim sql = $"
-                SELECT 
-                    CONCAT('RES-', LPAD(ReservationID, 4, '0')) as ID,
-                    FullName as Customer,
-                    ContactNumber,
-                    EventDate,
-                    TIME_FORMAT(EventTime, '%h:%i %p') as `Time`,
-                    NumberOfGuests as Guests,
-                    'T-' as `Table`, 
-                    ReservationStatus as Status,
-                    ReservationDate as Created,
-                    UpdatedDate as Confirmed,
-                    NULL as Seated
-                FROM reservations
-                WHERE {dateFilter} {searchFilter}
-                ORDER BY ReservationID DESC
-            "
-
-            Dim dt As New DataTable()
-            Using cmd As New MySqlCommand(sql, conn)
-                If Not String.IsNullOrEmpty(searchText) Then
-                    cmd.Parameters.AddWithValue("@search", "%" & searchText & "%")
-                End If
-                Using adapter As New MySqlDataAdapter(cmd)
-                    adapter.Fill(dt)
-                End Using
-            End Using
-
-            dgvDetails.DataSource = dt
-            ConfigureDetailsColumns()
-
-        Catch ex As Exception
-            ' Console.WriteLine(ex.Message)
-        End Try
-    End Sub
-
-    Private Sub ConfigureDetailsColumns()
-        Try
-            With dgvDetails
-                ' Column Visibility & Formatting
-                If .Columns.Contains("ContactNumber") Then .Columns("ContactNumber").Visible = False
-
-                ' ID Column - Blue Text
-                If .Columns.Contains("ID") Then
-                    .Columns("ID").HeaderText = "ID"
-                    .Columns("ID").Width = 80
-                    .Columns("ID").DefaultCellStyle.ForeColor = Color.FromArgb(59, 130, 246)
-                    .Columns("ID").DefaultCellStyle.Font = New Font("Segoe UI Semibold", 9.0!)
-                End If
-
-                ' Customer Column - Bold
-                If .Columns.Contains("Customer") Then
-                    .Columns("Customer").HeaderText = "Customer"
-                    .Columns("Customer").Width = 180
-                    .Columns("Customer").DefaultCellStyle.Font = New Font("Segoe UI Bold", 9.5!)
-                End If
-
-                ' Date/Time
-                If .Columns.Contains("EventDate") Then
-                    .Columns("EventDate").HeaderText = "Date/Time"
-                    .Columns("EventDate").Width = 120
-                    .Columns("EventDate").DefaultCellStyle.Format = "yyyy-MM-dd"
-                End If
-
-                If .Columns.Contains("Guests") Then
-                    .Columns("Guests").Width = 80
-                    .Columns("Guests").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-                End If
-
-                If .Columns.Contains("Table") Then
-                    .Columns("Table").Width = 80
-                End If
-
-                If .Columns.Contains("Status") Then
-                    .Columns("Status").Width = 100
-                End If
-
-                ' Created/Confirmed Dates
-                If .Columns.Contains("Created") Then
-                    .Columns("Created").DefaultCellStyle.Format = "MMM d, h:mm tt"
-                    .Columns("Created").Width = 130
-                End If
-
-                If .Columns.Contains("Confirmed") Then
-                    .Columns("Confirmed").DefaultCellStyle.Format = "MMM d, h:mm tt"
-                    .Columns("Confirmed").Width = 130
-                End If
-
-                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            End With
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
-        If isInitializing Then Return
-
-        Dim currentSearch = TextBoxSearch.Text.Trim()
-        If currentSearch = "Search reservation..." Then currentSearch = ""
-
-        ' Only refresh if the actual search criteria changed
-        If currentSearch = _lastSearchText Then Return
-
-        _lastSearchText = currentSearch
-        LoadDetailedReservations(currentSearch)
-    End Sub
-
-    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
-        If TextBoxSearch.Text = "Search orders..." Then
-            TextBoxSearch.Text = ""
-            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
-            searchTextBox1.BorderColor = Color.FromArgb(99, 102, 241)
-        End If
-    End Sub
-
-    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
-        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
-            TextBoxSearch.Text = "Search orders..."
-            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
-            searchTextBox1.BorderColor = Color.FromArgb(226, 232, 240)
-        End If
-    End Sub
-
-    Private Sub dgvDetails_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles dgvDetails.CellFormatting
-        If dgvDetails.Columns(e.ColumnIndex).Name = "Status" AndAlso e.Value IsNot Nothing Then
-            Dim status = e.Value.ToString().Trim()
-            Select Case status
-                Case "Confirmed"
-                    e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74) ' Green
-                Case "Pending"
-                    e.CellStyle.ForeColor = Color.FromArgb(217, 119, 6) ' Amber
-                Case "Cancelled"
-                    e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38) ' Red
-                Case "Completed"
-                    e.CellStyle.ForeColor = Color.FromArgb(71, 85, 105) ' Slate
-                Case "Seated"
-                    e.CellStyle.ForeColor = Color.FromArgb(99, 102, 241) ' Indigo
-                Case "No-Show"
-                    e.CellStyle.ForeColor = Color.FromArgb(249, 115, 22) ' Orange/Red
-            End Select
-            e.CellStyle.Font = New Font("Segoe UI Semibold", 9.0!)
-        End If
-    End Sub
-
-    Private Sub RoundedPane25_Paint(sender As Object, e As PaintEventArgs)
+    Private Sub RoundedPane25_Paint(sender As Object, e As PaintEventArgs) Handles RoundedPane25.Paint
 
     End Sub
 End Class

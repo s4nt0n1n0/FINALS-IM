@@ -41,8 +41,6 @@ Partial Class FormOrders
         Dim DataPoint9 As System.Windows.Forms.DataVisualization.Charting.DataPoint = New System.Windows.Forms.DataVisualization.Charting.DataPoint(0R, 20.0R)
         Dim DataPoint10 As System.Windows.Forms.DataVisualization.Charting.DataPoint = New System.Windows.Forms.DataVisualization.Charting.DataPoint(0R, 10.0R)
         Dim Title1 As System.Windows.Forms.DataVisualization.Charting.Title = New System.Windows.Forms.DataVisualization.Charting.Title()
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.RoundedPane25 = New InformationManagement.RoundedPane2()
         Me.Label13 = New System.Windows.Forms.Label()
@@ -72,35 +70,8 @@ Partial Class FormOrders
         Me.RoundedPane21.SuspendLayout()
         CType(Me.OrderCategoriesGraph, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(916, 15)
-        Me.dtpFilter.Margin = New System.Windows.Forms.Padding(4)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(265, 30)
-        Me.dtpFilter.TabIndex = 20
-        Me.dtpFilter.Visible = False
-        '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(1209, 10)
-        Me.btnExportPdf.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(167, 46)
-        Me.btnExportPdf.TabIndex = 10
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
+
+
         '
         'DataGridView1
         '
@@ -382,8 +353,6 @@ Partial Class FormOrders
         Me.Controls.Add(Me.RoundedPane23)
         Me.Controls.Add(Me.RoundedPane22)
         Me.Controls.Add(Me.RoundedPane21)
-        Me.Controls.Add(Me.dtpFilter)
-        Me.Controls.Add(Me.btnExportPdf)
         Me.Controls.Add(Me.DataGridView1)
         Me.DoubleBuffered = True
         Me.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
@@ -411,8 +380,7 @@ Partial Class FormOrders
     Friend WithEvents OrderCategoriesGraph As DataVisualization.Charting.Chart
     Friend WithEvents MonthlyChartOrder As DataVisualization.Charting.Chart
     Friend WithEvents RoundedPane22 As RoundedPane2
-    Friend WithEvents dtpFilter As DateTimePicker
-    Friend WithEvents btnExportPdf As Button
+
 
     Friend WithEvents Label7 As Label
     Friend WithEvents Label4 As Label

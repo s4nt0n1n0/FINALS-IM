@@ -30,7 +30,6 @@ Partial Class FormCateringReservations
         Me.Label4 = New System.Windows.Forms.Label()
         Me.LabelHeader = New System.Windows.Forms.Label()
         Me.LabelSubHeader = New System.Windows.Forms.Label()
-        Me.btnExportPdf = New InformationManagement.RoundedButton()
         Me.LabelSubtitle1 = New System.Windows.Forms.Label()
         Me.LabelSubtitle2 = New System.Windows.Forms.Label()
         Me.LabelSubtitle3 = New System.Windows.Forms.Label()
@@ -139,22 +138,7 @@ Partial Class FormCateringReservations
         Me.LabelSubHeader.Size = New System.Drawing.Size(406, 19)
         Me.LabelSubHeader.TabIndex = 12
         Me.LabelSubHeader.Text = "Detailed overview of reservation patterns and event performance"
-        '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.White
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
-        Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(888, 15)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(130, 40)
-        Me.btnExportPdf.TabIndex = 7
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
+
         '
         'LabelSubtitle1
         '
@@ -351,7 +335,6 @@ Partial Class FormCateringReservations
         Me.RoundedPane24.BorderColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
         Me.RoundedPane24.BorderThickness = 1
         Me.RoundedPane24.Controls.Add(Me.DataGridView1)
-        Me.RoundedPane24.Controls.Add(Me.btnExportPdf)
         Me.RoundedPane24.Controls.Add(Me.Label4)
         Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane24.CornerRadius = 15
@@ -524,7 +507,7 @@ Partial Class FormCateringReservations
     Friend WithEvents Reservations As DataGridViewTextBoxColumn
     Friend WithEvents TotalGuests As DataGridViewTextBoxColumn
     Friend WithEvents TotalAmount As DataGridViewTextBoxColumn
-    Friend WithEvents btnExportPdf As RoundedButton
+
     Friend WithEvents RoundedPane21 As RoundedPane2
     Friend WithEvents RoundedPane22 As RoundedPane2
     Friend WithEvents RoundedPane23 As RoundedPane2

@@ -24,7 +24,6 @@ Public Class FormOrders
             LoadOrdersTrendChart()
             LoadCategoriesChart()
             
-            ConfigureDateFilter()
             isInitializing = False
 
         Catch ex As Exception
@@ -48,9 +47,9 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    periodFilter = $" WHERE DATE(OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                    periodFilter = $" WHERE DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 Case "Weekly"
-                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
                 Case "Monthly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
@@ -318,9 +317,9 @@ Public Class FormOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                 periodFilter = $" AND DATE(o.OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                 periodFilter = $" AND DATE(o.OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
             Case "Weekly"
-                 periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                 periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
             Case "Monthly"
                 If selectedMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
@@ -374,7 +373,7 @@ Public Class FormOrders
     ' =======================================================================
     Public Sub RefreshData()
         Try
-            ConfigureDateFilter()
+             
 
             ' Reload statistics
             UpdateStatisticsFromDatabase()
@@ -431,27 +430,9 @@ Public Class FormOrders
     ' =======================================================================
     Private Sub InitializeFilters()
         ' Add filter initialization if needed
-        RoundCorners(dtpFilter, 5)
     End Sub
 
-    Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
-
-        Dim currentPeriod As String = Reports.SelectedPeriod
-        Select Case currentPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-                dtpFilter.CustomFormat = "MMMM dd, yyyy"
-                dtpFilter.Format = DateTimePickerFormat.Custom
-            Case Else
-                dtpFilter.Visible = False
-        End Select
-    End Sub
-
-    Private Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If isInitializing Then Return
-        RefreshData()
-    End Sub
+    ' Private Sub ConfigureDateFilter()
 
     Private Sub RoundCorners(control As Control, radius As Integer)
         Dim path As New System.Drawing.Drawing2D.GraphicsPath()
@@ -558,17 +539,9 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    If selectedYear = DateTime.Now.Year Then
-                        periodFilter = " WHERE DATE(OrderDate) = CURDATE() "
-                    Else
-                        periodFilter = $" WHERE DATE(OrderDate) = '{selectedYear}-12-31' "
-                    End If
+                    periodFilter = $" WHERE DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 Case "Weekly"
-                    If selectedYear = DateTime.Now.Year Then
-                        periodFilter = " WHERE YEARWEEK(OrderDate, 1) = YEARWEEK(CURDATE(), 1) "
-                    Else
-                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND WEEK(OrderDate, 1) = 52 "
-                    End If
+                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
                 Case "Monthly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
@@ -625,17 +598,9 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    If selectedYear = DateTime.Now.Year Then
-                        periodFilter = " WHERE DATE(OrderDate) = CURDATE() "
-                    Else
-                        periodFilter = $" WHERE DATE(OrderDate) = '{selectedYear}-12-31' "
-                    End If
+                    periodFilter = $" WHERE DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 Case "Weekly"
-                    If selectedYear = DateTime.Now.Year Then
-                        periodFilter = " WHERE YEARWEEK(OrderDate, 1) = YEARWEEK(CURDATE(), 1) "
-                    Else
-                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND WEEK(OrderDate, 1) = 52 "
-                    End If
+                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
                 Case "Monthly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
@@ -735,11 +700,5 @@ Public Class FormOrders
             Console.WriteLine($"Error loading categories chart: {ex.Message}")
         End Try
     End Sub
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
+
 End Class

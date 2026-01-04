@@ -21,6 +21,7 @@ Public Class FormProductPerformance
     ' REFRESH DATA
     ' =======================================================================
     Public Sub RefreshData()
+        ' Update any local state if needed
         LoadProductPerformance()
     End Sub
 
@@ -40,9 +41,7 @@ Public Class FormProductPerformance
     End Sub
 
     Private Sub InitializeSummaryTiles()
-        If dtpFilter IsNot Nothing Then
-             AddHandler dtpFilter.ValueChanged, AddressOf DtpFilter_ValueChanged
-        End If
+
 
         summaryTiles = New List(Of SummaryTile) From {
             New SummaryTile With {.NameLabel = Label2, .DetailLabel = Label3},
@@ -151,9 +150,7 @@ Public Class FormProductPerformance
         LoadProductPerformance()
     End Sub
 
-    Private Sub DtpFilter_ValueChanged(sender As Object, e As EventArgs)
-        LoadProductPerformance()
-    End Sub
+
 
     Private Sub ConfigureChart()
         Chart1.Series.Clear()
@@ -243,24 +240,11 @@ Public Class FormProductPerformance
 
         Select Case periodFilter
             Case "Daily"
-                If dtpFilter IsNot Nothing Then
-                    whereClauseReservations = $" AND DATE({dateColumnReservations}) = '{dtpFilter.Value:yyyy-MM-dd}'"
-                    whereClauseOrders = $" AND DATE({dateColumnOrders}) = '{dtpFilter.Value:yyyy-MM-dd}'"
-                ElseIf selectedYear = DateTime.Now.Year Then
-                    whereClauseReservations = $" AND DATE({dateColumnReservations}) = CURDATE()"
-                    whereClauseOrders = $" AND DATE({dateColumnOrders}) = CURDATE()"
-                Else
-                    whereClauseReservations = $" AND DATE({dateColumnReservations}) = '{selectedYear}-12-31'"
-                    whereClauseOrders = $" AND DATE({dateColumnOrders}) = '{selectedYear}-12-31'"
-                End If
+                whereClauseReservations = $" AND DATE({dateColumnReservations}) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
+                whereClauseOrders = $" AND DATE({dateColumnOrders}) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
             Case "Weekly"
-                If dtpFilter IsNot Nothing Then
-                    whereClauseReservations = $" AND YEARWEEK({dateColumnReservations}, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
-                    whereClauseOrders = $" AND YEARWEEK({dateColumnOrders}, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
-                Else
-                    whereClauseReservations = $" AND YEARWEEK({dateColumnReservations}, 1) = YEARWEEK(CURDATE(), 1)"
-                    whereClauseOrders = $" AND YEARWEEK({dateColumnOrders}, 1) = YEARWEEK(CURDATE(), 1)"
-                End If
+                whereClauseReservations = $" AND YEARWEEK({dateColumnReservations}, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
+                whereClauseOrders = $" AND YEARWEEK({dateColumnOrders}, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
             Case "Monthly"
                 If selectedMonth = 0 Then
                     whereClauseReservations = $" AND YEAR({dateColumnReservations}) = {selectedYear}"
@@ -386,8 +370,8 @@ $"SELECT DisplayName,
         End If
 
         Dim periodPart As String = ""
-        If Reports.SelectedPeriod = "Daily" AndAlso dtpFilter IsNot Nothing Then
-            periodPart = $" ({dtpFilter.Value:MMM dd, yyyy})"
+        If Reports.SelectedPeriod = "Daily" Then
+            periodPart = $" ({Reports.GlobalFilterDate:MMM dd, yyyy})"
         ElseIf Reports.SelectedPeriod = "Monthly" AndAlso Reports.SelectedMonth > 0 Then
             periodPart = $" ({System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Reports.SelectedMonth)} {Reports.SelectedYear})"
         Else
@@ -422,15 +406,5 @@ $"SELECT DisplayName,
         Next
     End Sub
 
-    ' =======================================================================
-    ' EXPORT PDF
-    ' =======================================================================
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
 
 End Class

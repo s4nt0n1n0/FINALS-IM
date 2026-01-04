@@ -48,8 +48,6 @@ Partial Class FormSales
         Dim DataPoint18 As System.Windows.Forms.DataVisualization.Charting.DataPoint = New System.Windows.Forms.DataVisualization.Charting.DataPoint(0R, 1300000.0R)
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.RoundedPane24 = New InformationManagement.RoundedPane2()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Chart1 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.RoundedPane23 = New InformationManagement.RoundedPane2()
@@ -97,8 +95,6 @@ Partial Class FormSales
         Me.RoundedPane24.BackColor = System.Drawing.Color.Transparent
         Me.RoundedPane24.BorderColor = System.Drawing.Color.LightGray
         Me.RoundedPane24.BorderThickness = 1
-        Me.RoundedPane24.Controls.Add(Me.btnExportPdf)
-        Me.RoundedPane24.Controls.Add(Me.dtpFilter)
         Me.RoundedPane24.Controls.Add(Me.Label1)
         Me.RoundedPane24.Controls.Add(Me.Chart1)
         Me.RoundedPane24.CornerRadius = 15
@@ -109,35 +105,8 @@ Partial Class FormSales
         Me.RoundedPane24.Name = "RoundedPane24"
         Me.RoundedPane24.Size = New System.Drawing.Size(1393, 476)
         Me.RoundedPane24.TabIndex = 10
-        '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(1036, 23)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(188, 45)
-        Me.btnExportPdf.TabIndex = 10
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(777, 30)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(223, 30)
-        Me.dtpFilter.TabIndex = 11
-        Me.dtpFilter.Visible = False
-        '
+
+
         'Label1
         '
         Me.Label1.AutoSize = True
@@ -462,7 +431,6 @@ Partial Class FormSales
     Friend WithEvents Chart1 As DataVisualization.Charting.Chart
     Friend WithEvents RoundedPane24 As RoundedPane2
     Friend WithEvents Label1 As Label
-    Friend WithEvents btnExportPdf As Button
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Label11 As Label
     Friend WithEvents Label10 As Label
@@ -473,6 +441,5 @@ Partial Class FormSales
     Friend WithEvents PictureBox11 As PictureBox
     Friend WithEvents RoundedPane25 As RoundedPane2
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents dtpFilter As DateTimePicker
 
 End Class

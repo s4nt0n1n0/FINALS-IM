@@ -54,8 +54,7 @@ Partial Class FormProductPerformance
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.PictureBox2 = New System.Windows.Forms.PictureBox()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
+
         Me.Label1 = New System.Windows.Forms.Label()
         Me.RoundedPane21.SuspendLayout()
         Me.RoundedPane28.SuspendLayout()
@@ -87,8 +86,8 @@ Partial Class FormProductPerformance
         Me.RoundedPane21.Controls.Add(Me.RoundedPane22)
         Me.RoundedPane21.Controls.Add(Me.RoundedPane23)
         Me.RoundedPane21.Controls.Add(Me.RoundedPane23)
-        Me.RoundedPane21.Controls.Add(Me.btnExportPdf)
-        Me.RoundedPane21.Controls.Add(Me.dtpFilter)
+
+
         Me.RoundedPane21.Controls.Add(Me.Label1)
         Me.RoundedPane21.CornerRadius = 20
         Me.RoundedPane21.FillColor = System.Drawing.Color.White
@@ -473,34 +472,8 @@ Partial Class FormProductPerformance
         Me.PictureBox2.TabIndex = 0
         Me.PictureBox2.TabStop = False
         '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("Button1.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(1200, 15)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(160, 48)
-        Me.btnExportPdf.TabIndex = 10
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(980, 23)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(180, 30)
-        Me.dtpFilter.TabIndex = 15
-        '
+
+
         'Label1
         '
         Me.Label1.AutoSize = True
@@ -553,8 +526,8 @@ Partial Class FormProductPerformance
 
     Friend WithEvents RoundedPane21 As RoundedPane2
     Friend WithEvents Label1 As Label
-    Friend WithEvents dtpFilter As DateTimePicker
-    Friend WithEvents btnExportPdf As Button
+
+
     Friend WithEvents RoundedPane23 As RoundedPane2
     Friend WithEvents Label3 As Label
     Friend WithEvents Label2 As Label

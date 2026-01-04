@@ -27,28 +27,14 @@ Public Class FormTakeOutOrders
         Await RefreshOrdersAsync()
         isInitialLoad = False
         Await RefreshOrdersAsync()
-        ConfigureDateFilter()
+        'ConfigureDateFilter()
         isInitialLoad = False
-        ConfigureDateFilter()
+        'ConfigureDateFilter()
     End Sub
 
-    Private Async Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If Not isInitialLoad Then
-            _currentPage = 1
-            Await RefreshOrdersAsync()
-        End If
-    End Sub
 
-    Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
 
-        Select Case Reports.SelectedPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-            Case Else
-                dtpFilter.Visible = False
-        End Select
-    End Sub
+
 
 
     Private Sub InitializePaginationControls()
@@ -147,10 +133,10 @@ Public Class FormTakeOutOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                periodFilter = $" AND o.OrderDate = '{dtpFilter.Value:yyyy-MM-dd}' "
+                periodFilter = $" AND o.OrderDate = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
 
             Case "Weekly"
-                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
             Case "Monthly"
                 If sMonth = 0 Then
@@ -187,10 +173,10 @@ Public Class FormTakeOutOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                periodFilter = $" AND o.OrderDate = '{dtpFilter.Value:yyyy-MM-dd}' "
+                periodFilter = $" AND o.OrderDate = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
 
             Case "Weekly"
-                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
             Case "Monthly"
                 If sMonth = 0 Then
@@ -249,10 +235,10 @@ Public Class FormTakeOutOrders
 
                                Select Case Reports.SelectedPeriod
                                    Case "Daily"
-                                       periodFilter = $" AND o.OrderDate = '{dtpFilter.Value:yyyy-MM-dd}' "
+                                       periodFilter = $" AND o.OrderDate = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
 
                                    Case "Weekly"
-                                       periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                                       periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
                                    Case "Monthly"
                                        If sMonth = 0 Then
@@ -299,14 +285,6 @@ Public Class FormTakeOutOrders
         End Try
     End Function
 
-    ' =============================
-    ' REFRESH DATA
-    ' =============================
-    Public Async Sub RefreshData()
-        ConfigureDateFilter()
-        _currentPage = 1
-        Await RefreshOrdersAsync()
-    End Sub
 
 
     Private Sub UpdateSummaryTiles(dt As DataTable)
@@ -356,7 +334,7 @@ Public Class FormTakeOutOrders
         Try
             Me.UseWaitCursor = isLoading
             DataGridView1.Enabled = Not isLoading
-            btnExportPdf.Enabled = Not isLoading
+
 
             ' Update pagination buttons based on loading state AND current page position
             If btnPrev IsNot Nothing Then
@@ -510,13 +488,12 @@ Public Class FormTakeOutOrders
         Handles DataGridView1.DataError
         e.ThrowException = False
     End Sub
-
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
+    ' =======================================================================
+    ' REFRESH DATA
+    ' =======================================================================
+    Public Async Sub RefreshData()
+        ' ConfigureDateFilter()
+        Await RefreshOrdersAsync(True)
     End Sub
 
 End Class
