@@ -473,17 +473,18 @@ Public Class InventoryMovementHistory
         Try
             openConn()
 
-            ' Calculate OVERALL TOTAL COST from ALL active batches in inventory_batches table
+            ' Calculate TOTAL MOVEMENT COST from movement logs (resets when history is cleared)
             Dim sqlOverall As String = "
                 SELECT 
-                    COALESCE(SUM(StockQuantity * CostPerUnit), 0) AS OverallTotalCost
-                FROM inventory_batches
-                WHERE BatchStatus = 'Active'
+                    COALESCE(SUM(ABS(iml.QuantityChanged) * ib.CostPerUnit), 0) AS TotalMovementCost
+                FROM inventory_movement_log iml
+                INNER JOIN inventory_batches ib ON iml.BatchID = ib.BatchID
+                WHERE 1=1
             "
 
             ' Add ingredient filter if viewing specific ingredient
             If _ingredientID > 0 Then
-                sqlOverall &= " AND IngredientID = @ingredientID"
+                sqlOverall &= " AND iml.IngredientID = @ingredientID"
             End If
 
             Dim cmdOverall As New MySqlCommand(sqlOverall, conn)
@@ -492,12 +493,12 @@ Public Class InventoryMovementHistory
                 cmdOverall.Parameters.AddWithValue("@ingredientID", _ingredientID)
             End If
 
-            Dim overallTotalCost As Decimal = Convert.ToDecimal(cmdOverall.ExecuteScalar())
+            Dim totalMovementCost As Decimal = Convert.ToDecimal(cmdOverall.ExecuteScalar())
 
             ' Display in the label next to close button
             If Me.Controls.Find("lblOverallTotalCost", True).Length > 0 Then
                 Dim lblOverallCost As Label = CType(Me.Controls.Find("lblOverallTotalCost", True)(0), Label)
-                lblOverallCost.Text = "Overall Total Cost: ₱" & overallTotalCost.ToString("#,##0.00")
+                lblOverallCost.Text = "Total Movement Cost: ₱" & totalMovementCost.ToString("#,##0.00")
                 lblOverallCost.Font = New Font("Segoe UI", 14, FontStyle.Bold)
                 lblOverallCost.ForeColor = Color.DarkGreen
             End If
@@ -606,25 +607,25 @@ Public Class InventoryMovementHistory
 
             openConn()
 
-            Dim cmd As New MySqlCommand("CALL ClearMovementHistory(@ingredientID, @beforeDate)", conn)
+            ' Use direct DELETE to ensure ALL types are cleared, not just ADD
+            Dim sqlDelete As String = "DELETE FROM inventory_movement_log WHERE MovementDate <= @beforeDate"
+
+            ' Apply ingredient filter if specific ingredient is active
+            If _ingredientID > 0 Then
+                sqlDelete &= " AND IngredientID = @ingredientID"
+            End If
+
+            Dim cmd As New MySqlCommand(sqlDelete, conn)
+
+            ' Use current date/time as the cutoff (clears everything up to NOW)
+            cmd.Parameters.AddWithValue("@beforeDate", Date.Now)
 
             If _ingredientID > 0 Then
                 cmd.Parameters.AddWithValue("@ingredientID", _ingredientID)
-            Else
-                cmd.Parameters.AddWithValue("@ingredientID", DBNull.Value)
             End If
 
-            ' Use current date as the cutoff (clears everything before today)
-            cmd.Parameters.AddWithValue("@beforeDate", Date.Now.Date)
-
-            Dim reader As MySqlDataReader = cmd.ExecuteReader()
-            Dim rowsDeleted As Integer = 0
-
-            If reader.Read() Then
-                rowsDeleted = reader.GetInt32("RowsDeleted")
-            End If
-
-            reader.Close()
+            ' ExecuteNonQuery returns the number of rows affected (deleted)
+            Dim rowsDeleted As Integer = cmd.ExecuteNonQuery()
 
             MessageBox.Show(
                 "History cleared successfully!" & vbCrLf & vbCrLf &
