@@ -157,6 +157,7 @@ Public Class Payroll
                 Dim basicSalary As Decimal = 0
                 Dim overtimePay As Decimal = 0
                 Dim netPay As Decimal = 0
+                Dim deductions As Decimal = 0
 
                 If row("Status").ToString() <> "No Record" Then
                     basicSalary = If(row("BasicSalary") IsNot DBNull.Value, Convert.ToDecimal(row("BasicSalary")), 0)
