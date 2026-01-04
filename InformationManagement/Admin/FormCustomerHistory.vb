@@ -20,7 +20,7 @@ Public Class FormCustomerHistory
         _baseTitle = Label1.Text
         ConfigureGrid()
         _currentPage = 1
-        ConfigureDateFilter()
+        'ConfigureDateFilter()
         BeginLoadCustomerHistory()
         isInitializing = False
 
@@ -67,9 +67,9 @@ Public Class FormCustomerHistory
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                 periodFilter = $" AND DATE(OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                 periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
             Case "Weekly"
-                 periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                 periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
             Case "Monthly"
                 If sMonth = 0 Then
@@ -99,9 +99,9 @@ Public Class FormCustomerHistory
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                 periodFilter = $" AND DATE(o.OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                 periodFilter = $" AND DATE(o.OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
             Case "Weekly"
-                 periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                 periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
             Case "Monthly"
                 If sMonth = 0 Then
@@ -167,7 +167,7 @@ Public Class FormCustomerHistory
         Try
             Me.UseWaitCursor = isLoading
             DataGridView1.Enabled = Not isLoading
-            btnExportPdf.Enabled = Not isLoading
+
             If btnPrev IsNot Nothing Then btnPrev.Enabled = Not isLoading AndAlso _currentPage > 1
             If btnNext IsNot Nothing Then btnNext.Enabled = Not isLoading AndAlso _currentPage < _totalPages
 
@@ -213,42 +213,14 @@ Public Class FormCustomerHistory
     End Sub
 
     ' =======================================================================
-    ' EXPORT PDF
-    ' =======================================================================
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
-    ' =======================================================================
     ' REFRESH DATA
     ' =======================================================================
     Public Sub RefreshData()
         _currentPage = 1
-        ConfigureDateFilter()
+        'ConfigureDateFilter()
         BeginLoadCustomerHistory()
     End Sub
 
-    Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
 
-        Dim currentPeriod As String = Reports.SelectedPeriod
-        Select Case currentPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-                dtpFilter.CustomFormat = "MMMM dd, yyyy"
-                dtpFilter.Format = DateTimePickerFormat.Custom
-            Case Else
-                dtpFilter.Visible = False
-        End Select
-    End Sub
-
-    Private Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If isInitializing Then Return
-        _currentPage = 1
-        BeginLoadCustomerHistory()
-    End Sub
 
 End Class

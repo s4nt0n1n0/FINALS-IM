@@ -29,7 +29,7 @@ Partial Class FormReservationStatus
         Dim DataPoint1 As System.Windows.Forms.DataVisualization.Charting.DataPoint = New System.Windows.Forms.DataVisualization.Charting.DataPoint(0R, 12.0R)
         Dim DataPoint2 As System.Windows.Forms.DataVisualization.Charting.DataPoint = New System.Windows.Forms.DataVisualization.Charting.DataPoint(0R, 28.0R)
         Dim DataPoint3 As System.Windows.Forms.DataVisualization.Charting.DataPoint = New System.Windows.Forms.DataVisualization.Charting.DataPoint(0R, 5.0R)
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
+
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -55,7 +55,6 @@ Partial Class FormReservationStatus
         Me.PictureBox3 = New System.Windows.Forms.PictureBox()
         Me.lblCancelled = New System.Windows.Forms.Label()
         Me.RoundedPane25 = New InformationManagement.RoundedPane2()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
         Me.Chart1 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Panel1 = New System.Windows.Forms.Panel()
@@ -74,18 +73,7 @@ Partial Class FormReservationStatus
         Me.RoundedPane25.SuspendLayout()
         CType(Me.Chart1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(933, 17)
-        Me.dtpFilter.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(265, 30)
-        Me.dtpFilter.TabIndex = 20
-        Me.dtpFilter.Visible = False
-        '
+
         'Label2
         '
         Me.Label2.AutoSize = True
@@ -413,8 +401,6 @@ Partial Class FormReservationStatus
         Me.RoundedPane25.BackColor = System.Drawing.Color.White
         Me.RoundedPane25.BorderColor = System.Drawing.Color.LightGray
         Me.RoundedPane25.BorderThickness = 1
-        Me.RoundedPane25.Controls.Add(Me.btnExportPdf)
-        Me.RoundedPane25.Controls.Add(Me.dtpFilter)
         Me.RoundedPane25.Controls.Add(Me.Chart1)
         Me.RoundedPane25.Controls.Add(Me.Label4)
         Me.RoundedPane25.CornerRadius = 15
@@ -425,25 +411,7 @@ Partial Class FormReservationStatus
         Me.RoundedPane25.Name = "RoundedPane25"
         Me.RoundedPane25.Size = New System.Drawing.Size(1393, 415)
         Me.RoundedPane25.TabIndex = 10
-        '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(1206, 17)
-        Me.btnExportPdf.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(157, 37)
-        Me.btnExportPdf.TabIndex = 9
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
+
         '
         'Chart1
         '
@@ -559,8 +527,8 @@ Partial Class FormReservationStatus
     Friend WithEvents RoundedPane25 As RoundedPane2
     Friend WithEvents Chart1 As DataVisualization.Charting.Chart
     Friend WithEvents Label4 As Label
-    Friend WithEvents btnExportPdf As Button
-    Friend WithEvents dtpFilter As DateTimePicker
+
+
     Friend WithEvents Panel1 As Panel
 
     Friend WithEvents RoundedPane27 As RoundedPane2

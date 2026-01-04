@@ -4,6 +4,7 @@ Imports MySqlConnector
 Public Class FormSales
 
     Private currentYear As Integer = DateTime.Now.Year
+    Private currentMonth As Integer = DateTime.Now.Month
     Private salesData As New Dictionary(Of String, (Revenue As Decimal, Expenses As Decimal, Profit As Decimal))
     Private currentPeriod As String = "Daily"
     Private isInitializing As Boolean = True
@@ -19,21 +20,19 @@ Public Class FormSales
                 Panel1.SendToBack()
             End If
 
-            RoundCorners(dtpFilter, 5)
+            
 
             RoundedPane21.BringToFront()
             RoundedPane22.BringToFront()
             RoundedPane23.BringToFront()
             RoundedPane24.BringToFront()
 
-            ' Get the selected period from Reports form
+            ' Synchronize with Reports global filters
             currentPeriod = Reports.SelectedPeriod
+            currentYear = Reports.SelectedYear
+            currentMonth = Reports.SelectedMonth
 
-            ' Check if current year has data, if not use the latest year with data
-            currentYear = GetLatestYearWithData()
-
-            ' Configure dtpFilter visibility
-            ConfigureDateFilter()
+        ' ConfigureDateFilter()
 
             ConfigureChart()
             LoadAndDisplaySalesData()
@@ -50,25 +49,7 @@ Public Class FormSales
         End Try
     End Sub
 
-    ' =======================================================================
-    ' CONFIGURE DATE FILTER
-    ' =======================================================================
-    Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
 
-        Select Case currentPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-                If currentPeriod = "Daily" Then
-                    dtpFilter.CustomFormat = "MMMM dd, yyyy"
-                Else
-                    dtpFilter.CustomFormat = "MMMM dd, yyyy" ' Can't easily format week, just show date
-                End If
-                dtpFilter.Format = DateTimePickerFormat.Custom
-            Case Else
-                dtpFilter.Visible = False
-        End Select
-    End Sub
     Private Function GetLatestYearWithData() As Integer
         Try
             ' Try to open connection if not already open
@@ -96,7 +77,7 @@ Public Class FormSales
 
             ' Also check payments if orders is empty
             If TableExists("payments") Then
-                sql = "SELECT MAX(YEAR(PaymentDate)) FROM payments WHERE PaymentDate IS NOT NULL"
+                sql = "SELECT MAX(YEAR(PaymentDate)) FROM payments WHERE PaymentDate IS NOT NULL AND ReservationID IS NOT NULL"
                 Using cmd As New MySqlCommand(sql, conn)
                     Dim result = cmd.ExecuteScalar()
                     If result IsNot Nothing AndAlso Not IsDBNull(result) Then
@@ -138,7 +119,7 @@ Public Class FormSales
 
             ' Check payments if available
             If TableExists("payments") Then
-                sql = "SELECT COUNT(*) FROM payments WHERE YEAR(PaymentDate) = @Year"
+                sql = "SELECT COUNT(*) FROM payments WHERE YEAR(PaymentDate) = @Year AND ReservationID IS NOT NULL"
                 Using cmd As New MySqlCommand(sql, conn)
                     cmd.Parameters.AddWithValue("@Year", year)
                     If Convert.ToInt32(cmd.ExecuteScalar()) > 0 Then
@@ -246,6 +227,7 @@ Public Class FormSales
 
             Using cmd As New MySqlCommand(sql, conn)
                 cmd.Parameters.AddWithValue("@Year", currentYear)
+                cmd.Parameters.AddWithValue("@Month", currentMonth)
 
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
                     InitializeChartData()
@@ -351,33 +333,51 @@ Public Class FormSales
 
         ' ORDERS TABLE - Revenue (Matches Dashboard Logic)
         Dim orderDateGrouping As String = GetDateGroupingForColumn("OrderDate")
+        Dim orderMonthFilter As String = ""
+        If currentPeriod = "Daily" Then
+            orderMonthFilter = " AND MONTH(OrderDate) = @Month "
+        End If
+
         q.Add($"
             SELECT {orderDateGrouping} AS PeriodGroup, TotalAmount AS Amount, 'Revenue' AS Type
             FROM orders
             WHERE OrderStatus = 'Completed'
             AND YEAR(OrderDate) = @Year
+            {orderMonthFilter}
         ")
 
-        ' PAYMENTS TABLE - Revenue
+        ' PAYMENTS TABLE - Revenue (Only for Reservations/Catering to avoid double-counting POS)
         If TableExists("payments") Then
             Dim resDateGrouping As String = GetDateGroupingForColumn("PaymentDate")
+            Dim resMonthFilter As String = ""
+            If currentPeriod = "Daily" Then
+                resMonthFilter = " AND MONTH(PaymentDate) = @Month "
+            End If
+
             q.Add($"
                 SELECT {resDateGrouping} AS PeriodGroup, AmountPaid AS Amount, 'Revenue' AS Type
                 FROM payments
-                WHERE PaymentStatus IN ('Paid','Completed')
+                WHERE ReservationID IS NOT NULL 
+                AND PaymentStatus = 'Completed'
                 AND YEAR(PaymentDate) = @Year
+                {resMonthFilter}
             ")
         End If
 
         ' INVENTORY_BATCHES TABLE - Expenses
         If TableExists("inventory_batches") Then
             Dim purchaseDateGrouping As String = GetDateGroupingForColumn("PurchaseDate")
+            Dim purchaseMonthFilter As String = ""
+            If currentPeriod = "Daily" Then
+                purchaseMonthFilter = " AND MONTH(PurchaseDate) = @Month "
+            End If
 
             q.Add($"
                 SELECT {purchaseDateGrouping} AS PeriodGroup, TotalCost AS Amount, 'Expenses' AS Type
                 FROM inventory_batches
                 WHERE BatchStatus = 'Active'
                 AND YEAR(PurchaseDate) = @Year
+                {purchaseMonthFilter}
             ")
         End If
 
@@ -559,7 +559,8 @@ Public Class FormSales
                 q.Add($"
                     SELECT COALESCE(SUM(AmountPaid), 0) AS Amount
                     FROM payments
-                    WHERE PaymentStatus IN ('Paid','Completed')
+                    WHERE ReservationID IS NOT NULL 
+                    AND PaymentStatus = 'Completed'
                     {whereClause}
                 ")
             End If
@@ -628,20 +629,20 @@ Public Class FormSales
     Private Function GetPeriodWhereClause(dateColumn As String) As String
         Select Case currentPeriod
             Case "Daily"
-                ' Use dtpFilter value
-                Return $"AND DATE({dateColumn}) = '{dtpFilter.Value:yyyy-MM-dd}'"
+                ' Show breakdown of days in the selected month
+                If Reports.SelectedMonth > 0 Then
+                    Return $"AND YEAR({dateColumn}) = @Year AND MONTH({dateColumn}) = @Month"
+                Else
+                    Return $"AND YEAR({dateColumn}) = @Year"
+                End If
 
             Case "Weekly"
-                ' Use dtpFilter value for the specific week
-                Return $"AND YEARWEEK({dateColumn}, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
+                ' Show breakdown of weeks in the selected year
+                Return $"AND YEAR({dateColumn}) = @Year"
 
             Case "Monthly"
-                Dim selectedMonth As Integer = Reports.SelectedMonth
-                If selectedMonth = 0 Then
-                    Return $"AND YEAR({dateColumn}) = @Year"
-                Else
-                    Return $"AND YEAR({dateColumn}) = @Year AND MONTH({dateColumn}) = {selectedMonth}"
-                End If
+                ' Show breakdown of months in the selected year (ignore selected month filter so we see the trend)
+                Return $"AND YEAR({dateColumn}) = @Year"
 
 
             Case "Yearly"
@@ -655,21 +656,8 @@ Public Class FormSales
     ' =======================================================================
     ' FILTER CHANGE EVENT
     ' =======================================================================
-    Private Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If isInitializing Then Return
-        LoadAndDisplaySalesData()
-        UpdateSummaryCards()
-        UpdateHeaderLabel()
-    End Sub
-
     Private Sub RoundCorners(control As Control, radius As Integer)
-        Dim path As New System.Drawing.Drawing2D.GraphicsPath()
-        path.AddArc(0, 0, radius, radius, 180, 90)
-        path.AddArc(control.Width - radius, 0, radius, radius, 270, 90)
-        path.AddArc(control.Width - radius, control.Height - radius, radius, radius, 0, 90)
-        path.AddArc(0, control.Height - radius, radius, radius, 90, 90)
-        path.CloseFigure()
-        control.Region = New Region(path)
+        ' Helper for controls
     End Sub
 
 
@@ -680,29 +668,23 @@ Public Class FormSales
         If Not cmd.Parameters.Contains("@Year") Then
             cmd.Parameters.AddWithValue("@Year", currentYear)
         End If
-    End Sub
-
-
-
-    ' =======================================================================
-    ' EXPORT PDF
-    ' =======================================================================
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        If Not cmd.Parameters.Contains("@Month") Then
+            cmd.Parameters.AddWithValue("@Month", currentMonth)
         End If
     End Sub
+
 
     ' =======================================================================
     ' REFRESH DATA
     ' =======================================================================
     Public Sub RefreshData()
         currentPeriod = Reports.SelectedPeriod
-        currentYear = Reports.SelectedYear
         
-        ConfigureDateFilter()
+        ' Use the global selected Year and Month
+        currentYear = Reports.SelectedYear
+        currentMonth = Reports.SelectedMonth
+        
+        ' ConfigureDateFilter()
         
         ' Update header
         UpdateHeaderLabel()

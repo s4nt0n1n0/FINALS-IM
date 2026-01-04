@@ -39,9 +39,15 @@ Partial Class FormAddNewPayrollRecord
         Me.cmbPayperiod = New System.Windows.Forms.ComboBox()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.RoundedTextBox1 = New InformationManagement.RoundedTextBox()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.NumericUpDown4 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown5 = New System.Windows.Forms.NumericUpDown()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown4, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Label1
@@ -82,7 +88,7 @@ Partial Class FormAddNewPayrollRecord
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(97, 17)
         Me.Label4.TabIndex = 6
-        Me.Label4.Text = "Hours Worked"
+        Me.Label4.Text = "Days Worked"
         '
         'Label5
         '
@@ -92,7 +98,7 @@ Partial Class FormAddNewPayrollRecord
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(113, 17)
         Me.Label5.TabIndex = 7
-        Me.Label5.Text = "Overtimed Hours"
+        Me.Label5.Text = "Overtime Hours"
         '
         'Label6
         '
@@ -102,7 +108,7 @@ Partial Class FormAddNewPayrollRecord
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(80, 17)
         Me.Label6.TabIndex = 8
-        Me.Label6.Text = "Hourly Rate"
+        Me.Label6.Text = "Daily Rate"
         '
         'Label7
         '
@@ -114,12 +120,32 @@ Partial Class FormAddNewPayrollRecord
         Me.Label7.TabIndex = 9
         Me.Label7.Text = "Pay Period"
         '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label8.Location = New System.Drawing.Point(18, 405)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(76, 17)
+        Me.Label8.TabIndex = 21
+        Me.Label8.Text = "Deductions"
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label9.Location = New System.Drawing.Point(245, 405)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(74, 17)
+        Me.Label9.TabIndex = 22
+        Me.Label9.Text = "Bonuses"
+        '
         'btnCancel
         '
         Me.btnCancel.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer))
         Me.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnCancel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnCancel.Location = New System.Drawing.Point(226, 416)
+        Me.btnCancel.Location = New System.Drawing.Point(226, 480)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(87, 33)
         Me.btnCancel.TabIndex = 12
@@ -133,7 +159,7 @@ Partial Class FormAddNewPayrollRecord
         Me.btnCreateRecord.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnCreateRecord.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnCreateRecord.ForeColor = System.Drawing.Color.White
-        Me.btnCreateRecord.Location = New System.Drawing.Point(328, 416)
+        Me.btnCreateRecord.Location = New System.Drawing.Point(328, 480)
         Me.btnCreateRecord.Name = "btnCreateRecord"
         Me.btnCreateRecord.Size = New System.Drawing.Size(144, 33)
         Me.btnCreateRecord.TabIndex = 13
@@ -196,6 +222,28 @@ Partial Class FormAddNewPayrollRecord
         Me.cmbPayperiod.Size = New System.Drawing.Size(440, 36)
         Me.cmbPayperiod.TabIndex = 19
         '
+        'NumericUpDown4
+        '
+        Me.NumericUpDown4.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.NumericUpDown4.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.NumericUpDown4.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.NumericUpDown4.Location = New System.Drawing.Point(21, 425)
+        Me.NumericUpDown4.Name = "NumericUpDown4"
+        Me.NumericUpDown4.Size = New System.Drawing.Size(185, 25)
+        Me.NumericUpDown4.TabIndex = 23
+        Me.NumericUpDown4.Maximum = 100000
+        '
+        'NumericUpDown5
+        '
+        Me.NumericUpDown5.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.NumericUpDown5.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.NumericUpDown5.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.NumericUpDown5.Location = New System.Drawing.Point(248, 425)
+        Me.NumericUpDown5.Name = "NumericUpDown5"
+        Me.NumericUpDown5.Size = New System.Drawing.Size(213, 25)
+        Me.NumericUpDown5.TabIndex = 24
+        Me.NumericUpDown5.Maximum = 100000
+        '
         'btnClose
         '
         Me.btnClose.FlatAppearance.BorderSize = 0
@@ -230,8 +278,12 @@ Partial Class FormAddNewPayrollRecord
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
-        Me.ClientSize = New System.Drawing.Size(484, 461)
+        Me.ClientSize = New System.Drawing.Size(484, 540)
         Me.ControlBox = False
+        Me.Controls.Add(Me.NumericUpDown5)
+        Me.Controls.Add(Me.NumericUpDown4)
+        Me.Controls.Add(Me.Label9)
+        Me.Controls.Add(Me.Label8)
         Me.Controls.Add(Me.RoundedTextBox1)
         Me.Controls.Add(Me.cmbPayperiod)
         Me.Controls.Add(Me.NumericUpDown3)
@@ -257,6 +309,8 @@ Partial Class FormAddNewPayrollRecord
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -278,4 +332,8 @@ Partial Class FormAddNewPayrollRecord
     Friend WithEvents NumericUpDown3 As NumericUpDown
     Friend WithEvents cmbPayperiod As ComboBox
     Friend WithEvents RoundedTextBox1 As RoundedTextBox
+    Friend WithEvents NumericUpDown4 As NumericUpDown
+    Friend WithEvents NumericUpDown5 As NumericUpDown
+    Friend WithEvents Label8 As Label
+    Friend WithEvents Label9 As Label
 End Class

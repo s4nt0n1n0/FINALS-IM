@@ -1,6 +1,7 @@
 ﻿Imports System.Drawing.Drawing2D
 Imports System.Drawing.Printing
 Imports System.Linq
+Imports MySqlConnector
 
 Public Class Reports
     Public Shared Property Instance As Reports
@@ -8,14 +9,24 @@ Public Class Reports
     ' === SHARED PROPERTY FOR PERIOD SELECTION ===
     Public Shared Property SelectedPeriod As String = "Daily"
     Public Shared Property SelectedYear As Integer = DateTime.Now.Year
-    Public Shared Property SelectedMonth As Integer = DateTime.Now.Month
+    Public Shared SelectedMonth As Integer = DateTime.Now.Month
+    Private Shared _filterDate As DateTime = DateTime.Now
+
+    Public Shared Property GlobalFilterDate As DateTime
+        Get
+            Return _filterDate
+        End Get
+        Set(value As DateTime)
+            _filterDate = value
+        End Set
+    End Property
 
     ' === PDF EXPORT PRIVATE VARIABLES ===
     Private WithEvents prnDoc As New PrintDocument()
     Private activeGrids As New List(Of DataGridView)
     Private activeCharts As New List(Of System.Windows.Forms.DataVisualization.Charting.Chart)
     Private reportTitle As String = ""
-    
+
     ' Printing State
     Private m_PageIndex As Integer = 0
     Private m_GridIndex As Integer = 0
@@ -80,13 +91,20 @@ Public Class Reports
         Dim toMove As New List(Of Control)
         For Each ctrl As Control In Me.Controls
             If TypeOf ctrl Is Button AndAlso ctrl.Parent Is Me Then
-                toMove.Add(ctrl)
+                ' Exclude header action buttons from moving to navigation bar
+                If ctrl IsNot btnRefresh AndAlso ctrl IsNot btnExportGlobal Then
+                    toMove.Add(ctrl)
+                End If
             End If
         Next
 
         For Each ctrl As Control In toMove
             FlowLayoutPanel1.Controls.Add(ctrl)
         Next
+
+        ' Ensure header buttons stay on top
+        btnRefresh.BringToFront()
+        btnExportGlobal.BringToFront()
 
         ' Bring FlowLayoutPanel forward so buttons are visible
         FlowLayoutPanel1.BringToFront()
@@ -96,19 +114,56 @@ Public Class Reports
 
     Private Sub InitializeFilters()
         ' === INITIALIZE COMBOBOX ===
-        reportPeriod.Items.Clear()
-        reportPeriod.Items.AddRange(New String() {"Daily", "Weekly", "Monthly", "Yearly"})
         reportPeriod.SelectedIndex = 0 ' Default to "Daily"
         reportPeriod.DropDownStyle = ComboBoxStyle.DropDownList
 
-        ' === INITIALIZE YEAR COMBOBOX ===
+        ' === INITIALIZE YEAR COMBOBOX DYNAMICALLY ===
         cmbYear.Items.Clear()
+        Dim years As New List(Of Integer)
         Dim currentYear As Integer = DateTime.Now.Year
-        For y As Integer = currentYear - 2 To currentYear + 1
+
+        Try
+            If conn Is Nothing OrElse conn.State <> ConnectionState.Open Then openConn()
+
+            ' Get unique years from both orders and payments
+            Dim sql As String = "SELECT DISTINCT YEAR(OrderDate) as Yr FROM orders WHERE OrderDate IS NOT NULL " &
+                               "UNION " &
+                               "SELECT DISTINCT YEAR(PaymentDate) as Yr FROM payments WHERE PaymentDate IS NOT NULL AND ReservationID IS NOT NULL " &
+                               "ORDER BY Yr DESC"
+
+            Using cmd As New MySqlConnector.MySqlCommand(sql, conn)
+                Using reader = cmd.ExecuteReader()
+                    While reader.Read()
+                        If Not IsDBNull(reader("Yr")) Then
+                            years.Add(Convert.ToInt32(reader("Yr")))
+                        End If
+                    End While
+                End Using
+            End Using
+        Catch ex As Exception
+            ' Fallback to recent years if query fails
+            years.Add(currentYear)
+            years.Add(currentYear - 1)
+        End Try
+
+        ' Ensure current year is at least available
+        If Not years.Contains(currentYear) Then years.Add(currentYear)
+        years.Sort()
+        years.Reverse()
+
+        For Each y In years
             cmbYear.Items.Add(y)
         Next
-        cmbYear.SelectedItem = currentYear
-        SelectedYear = currentYear
+
+        If cmbYear.Items.Count > 0 Then
+            If cmbYear.Items.Contains(currentYear) Then
+                cmbYear.SelectedItem = currentYear
+                SelectedYear = currentYear
+            Else
+                cmbYear.SelectedIndex = 0
+                SelectedYear = Convert.ToInt32(cmbYear.SelectedItem)
+            End If
+        End If
 
         ' === INITIALIZE MONTH COMBOBOX ===
         cmbMonth.Items.Clear()
@@ -218,6 +273,23 @@ Public Class Reports
     Private Sub cmbYear_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbYear.SelectedIndexChanged
         If cmbYear.SelectedItem IsNot Nothing Then
             SelectedYear = Convert.ToInt32(cmbYear.SelectedItem)
+
+            ' Synchronize with DatePicker if in Daily/Weekly mode
+            If SelectedPeriod = "Daily" OrElse SelectedPeriod = "Weekly" Then
+                Try
+                    ' Only update if year is different to avoid recursive loops/redundant refreshes
+                    If _filterDate.Year <> SelectedYear Then
+                        _filterDate = New DateTime(SelectedYear, _filterDate.Month, _filterDate.Day)
+                    End If
+                Catch
+                    ' Fallback for invalid dates (e.g. Feb 29 in non-leap year)
+                    Try
+                        _filterDate = New DateTime(SelectedYear, _filterDate.Month, 1)
+                    Catch
+                    End Try
+                End Try
+            End If
+
             RefreshCurrentlyLoadedForm()
         End If
     End Sub
@@ -227,19 +299,40 @@ Public Class Reports
         RefreshCurrentlyLoadedForm()
     End Sub
 
+    ' === SHARED PROPERTY FOR GLOBAL DATE FILTER ===
+
+
     Private Sub UpdateFilterVisibility()
-        ' Month selection is only critical for "Monthly" and "Daily" (if we want to jump to a day in a month)
-        ' For now, enable it only for Monthly
+        ' Month selection is only critical for "Monthly"
         Dim isMonthly As Boolean = (SelectedPeriod = "Monthly")
         cmbMonth.Enabled = isMonthly
         lblMonth.Enabled = isMonthly
+
+        ' Date Picker is needed for Daily and Weekly
+        Dim isDateSpecific As Boolean = (SelectedPeriod = "Daily" OrElse SelectedPeriod = "Weekly")
+
+        ' Year is usually relevant for Monthly and Yearly, or as context for Daily/Weekly if needed
+        ' But for Daily/Weekly, the DatePicker value is the source of truth.
+        ' However, we keep it enabled to allow quick shifting if the child form uses it.
+        cmbYear.Enabled = True
+        lblYear.Enabled = True
     End Sub
+
+    Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        RefreshCurrentlyLoadedForm()
+    End Sub
+
+    Private Sub btnExportGlobal_Click(sender As Object, e As EventArgs) Handles btnExportGlobal.Click
+        ExportCurrentReport()
+    End Sub
+
+
 
     Private Sub RefreshCurrentlyLoadedForm()
         ' Reload the current form data to apply the new filters
         If Panel1.Controls.Count > 0 Then
             Dim currentForm = Panel1.Controls(0)
-            
+
             ' Try to call RefreshData method using reflection
             Try
                 Dim mi = currentForm.GetType().GetMethod("RefreshData")
@@ -257,7 +350,7 @@ Public Class Reports
                 If TypeOf ctrl Is Button Then
                     Dim btn As Button = CType(ctrl, Button)
                     ' White background indicates the active report button in our UI
-                    If btn.BackColor = Color.White Then 
+                    If btn.BackColor = Color.White Then
                         Select Case btn.Name
                             Case "btnSales" : LoadFormIntoPanel(New FormSales())
                             Case "btnOrders" : LoadFormIntoPanel(New FormOrders())
@@ -790,5 +883,9 @@ Public Class Reports
             FlowLayoutPanel1.Width = Me.ClientSize.Width - 40
             ApplyRoundedCorners(FlowLayoutPanel1, 35)
         End If
+    End Sub
+
+    Private Sub Panel1_Paint(sender As Object, e As PaintEventArgs) Handles Panel1.Paint
+
     End Sub
 End Class

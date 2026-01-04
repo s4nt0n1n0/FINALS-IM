@@ -47,17 +47,9 @@ Public Class FormCateringReservations
 
                                     Select Case Reports.SelectedPeriod
                                         Case "Daily"
-                                            If selectedYear = DateTime.Now.Year Then
-                                                periodFilter = " WHERE DATE(EventDate) = CURDATE() "
-                                            Else
-                                                periodFilter = $" WHERE DATE(EventDate) = '{selectedYear}-12-31' "
-                                            End If
+                                            periodFilter = $" WHERE DATE(EventDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                                         Case "Weekly"
-                                            If selectedYear = DateTime.Now.Year Then
-                                                periodFilter = " WHERE YEARWEEK(EventDate, 1) = YEARWEEK(CURDATE(), 1) "
-                                            Else
-                                                periodFilter = $" WHERE YEAR(EventDate) = {selectedYear} AND WEEK(EventDate, 1) = 52 "
-                                            End If
+                                            periodFilter = $" WHERE YEARWEEK(EventDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
                                         Case "Monthly"
                                             If selectedMonth = 0 Then
                                                 periodFilter = $" WHERE YEAR(EventDate) = {selectedYear} "
@@ -273,14 +265,6 @@ Public Class FormCateringReservations
         End If
     End Sub
 
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        ' Call the global export button on the Reports form
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
 
     Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
 

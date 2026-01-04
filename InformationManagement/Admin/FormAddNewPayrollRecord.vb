@@ -16,6 +16,10 @@ Public Class FormAddNewPayrollRecord
 
         ' Hide the original textbox
         RoundedTextBox1.Visible = False
+        
+        ' DEFAULT VALUES
+        NumericUpDown3.Value = 800 ' Default Daily Rate
+        NumericUpDown3.Maximum = 100000
 
         LoadEmployees()
         LoadPayPeriods()
@@ -78,14 +82,20 @@ Public Class FormAddNewPayrollRecord
 
         Try
             Dim employeeID As Integer = Convert.ToInt32(cmbEmployee.SelectedValue)
-            Dim hoursWorked As Decimal = NumericUpDown1.Value
-            Dim overtimeHours As Decimal = NumericUpDown2.Value
-            Dim hourlyRate As Decimal = NumericUpDown3.Value
-            Dim deductions As Decimal = If(Me.Controls.ContainsKey("NumericUpDown4"), CType(Me.Controls("NumericUpDown4"), NumericUpDown).Value, 0)
-            Dim bonuses As Decimal = If(Me.Controls.ContainsKey("NumericUpDown5"), CType(Me.Controls("NumericUpDown5"), NumericUpDown).Value, 0)
+            Dim daysWorked As Decimal = NumericUpDown1.Value ' Treated as DAYS
+            Dim overtimeHours As Decimal = NumericUpDown2.Value ' Treated as HOURS
+            Dim dailyRate As Decimal = NumericUpDown3.Value ' Treated as DAILY RATE
+            Dim hourlyRate As Decimal = dailyRate / 8
+            Dim deductions As Decimal = NumericUpDown4.Value
+            Dim bonuses As Decimal = NumericUpDown5.Value
 
-            Dim basicSalary As Decimal = hoursWorked * hourlyRate
-            Dim overtimePay As Decimal = overtimeHours * hourlyRate * 1.5D ' 1.5x overtime rate
+            ' CALCULATION LOGIC
+            ' Basic Salary = Days * Daily Rate
+            Dim basicSalary As Decimal = daysWorked * dailyRate
+            
+            ' Overtime Rate = (Daily Rate / 8 hours) * 1.5
+
+            Dim overtimePay As Decimal = overtimeHours * hourlyRate * 1.5D 
 
             ' Parse Pay Period dates
             Dim periodStr As String = cmbPayperiod.Text
@@ -111,17 +121,20 @@ Public Class FormAddNewPayrollRecord
             Dim cmd As New MySqlCommand()
             cmd.Connection = conn
 
+            ' NOTE: Storing 'Days' in 'HoursWorked' column to avoid schema change
+            ' NOTE: Storing 'DailyRate' in 'HourlyRate' column
             If hasNewColumns Then
                 query = "INSERT INTO payroll 
                     (EmployeeID, PayPeriodStart, PayPeriodEnd, HoursWorked, HourlyRate, BasicSalary, Overtime, Deductions, Bonuses, Status, CreatedDate) 
-                    VALUES (@empID, @start, @end, @hours, @rate, @basic, @overtime, @deductions, @bonuses, 'Pending', NOW())"
+                    VALUES (@empID, @start, @end, @days, @rate, @basic, @overtime, @deductions, @bonuses, 'Pending', NOW())"
 
-                cmd.Parameters.AddWithValue("@hours", hoursWorked)
-                cmd.Parameters.AddWithValue("@rate", hourlyRate)
+                cmd.Parameters.AddWithValue("@days", daysWorked)
+                cmd.Parameters.AddWithValue("@rate", dailyRate)
                 cmd.Parameters.AddWithValue("@deductions", deductions)
                 cmd.Parameters.AddWithValue("@bonuses", bonuses)
             Else
-                query = "INSERT INTO payroll 
+                ' Fallback (unlikely)
+                 query = "INSERT INTO payroll 
                     (EmployeeID, PayPeriodStart, PayPeriodEnd, BasicSalary, Overtime, Deductions, Bonuses, Status, CreatedDate) 
                     VALUES (@empID, @start, @end, @basic, @overtime, 0, 0, 'Pending', NOW())"
             End If

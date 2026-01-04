@@ -188,25 +188,11 @@ Public Class FormEmployeeAttendance
         Select Case Reports.SelectedPeriod
             Case "Daily"
                 ' Filter by the specific date selected in the DateTimePicker
-                If dtpFilter IsNot Nothing Then
-                    condition = $"DATE({dateField}) = '{dtpFilter.Value:yyyy-MM-dd}'"
-                Else
-                    ' Fallback if control isn't ready
-                    condition = $"DATE({dateField}) = CURDATE()"
-                End If
+                condition = $"DATE({dateField}) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
 
             Case "Monthly"
                 ' Start with Year filter
                 condition = $"YEAR({dateField}) = {Reports.SelectedYear}"
-
-                ' Add Month filter if meaningful (Reports.SelectedMonth 0 might mean 'All' or Jan, checking Reports.vb logic)
-                ' In Reports.vb: 0 = "All Months"?, 1=Jan? 
-                ' Let's check Reports.vb init: 
-                ' cmbMonth.Items.Add("All Months") ' Index 0
-                ' So Index 0 is All Months. Index 1 is January? 
-                ' The loop: For i = 0 To 11 ... items.Add(monthname). 
-                ' So "All Months" is index 0. January is index 1.
-                ' Reports.SelectedMonth is simply `cmbMonth.SelectedIndex`.
 
                 If Reports.SelectedMonth > 0 Then
                     condition &= $" AND MONTH({dateField}) = {Reports.SelectedMonth}"
@@ -214,11 +200,7 @@ Public Class FormEmployeeAttendance
 
             Case "Weekly"
                 ' Show week containing the selected date in date picker
-                If dtpFilter IsNot Nothing Then
-                    condition = $"YEARWEEK({dateField}, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
-                Else
-                    condition = $"YEARWEEK({dateField}, 1) = YEARWEEK(CURDATE(), 1)"
-                End If
+                condition = $"YEARWEEK({dateField}, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
 
             Case "Yearly"
                 condition = $"YEAR({dateField}) = {Reports.SelectedYear}"
@@ -391,8 +373,8 @@ Public Class FormEmployeeAttendance
             ' For now, I'll assume 3 cards as per existing code structure.
             
             Dim headerText As String = $"Attendance Tracking - {Reports.SelectedPeriod}"
-            If Reports.SelectedPeriod = "Daily" AndAlso dtpFilter IsNot Nothing Then
-                headerText &= $" ({dtpFilter.Value:MMM dd, yyyy})"
+            If Reports.SelectedPeriod = "Daily" Then
+                headerText &= $" ({Reports.GlobalFilterDate:MMM dd, yyyy})"
             End If
             LabelHeader.Text = headerText
         Catch ex As Exception
@@ -486,7 +468,7 @@ Public Class FormEmployeeAttendance
         Try
             Me.UseWaitCursor = isLoading
             DataGridView1.Enabled = Not isLoading
-            btnExportPdf.Enabled = Not isLoading
+
             TextBoxSearch.Enabled = Not isLoading
             If btnPrev IsNot Nothing Then btnPrev.Enabled = Not isLoading AndAlso _currentPage > 1
             If btnNext IsNot Nothing Then btnNext.Enabled = Not isLoading AndAlso _currentPage < _totalPages
@@ -563,42 +545,18 @@ Public Class FormEmployeeAttendance
     '====================================
     ' DATE FILTER CHANGED
     '====================================
-    Private Async Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If Not isInitialLoad Then
-            Await RefreshAttendanceAsync(True)
-        End If
-    End Sub
-
-    Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
-
-        Select Case Reports.SelectedPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-            Case Else
-                dtpFilter.Visible = False
-        End Select
-    End Sub
 
 
-    '====================================
-    ' EXPORT PDF
-    '====================================
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
+
 
     '====================================
     ' REFRESH DATA (PUBLIC METHOD)
     '====================================
     Public Async Sub RefreshData()
-        ConfigureDateFilter()
         Await RefreshAttendanceAsync(True)
     End Sub
+
+
 
 
 

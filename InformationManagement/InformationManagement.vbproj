@@ -250,7 +250,9 @@
     <Compile Include="Admin\Customer.Designer.vb">
       <DependentUpon>Customer.vb</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Customer.vb" />
+    <Compile Include="Admin\Customer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Admin\Dashboard.Designer.vb">
       <DependentUpon>Dashboard.vb</DependentUpon>
     </Compile>
@@ -273,11 +275,15 @@
     <Compile Include="Admin\Employee.Designer.vb">
       <DependentUpon>Employee.vb</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Employee.vb" />
+    <Compile Include="Admin\Employee.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Admin\Feedback.Designer.vb">
       <DependentUpon>Feedback.vb</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Feedback.vb" />
+    <Compile Include="Admin\Feedback.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Admin\FormAddUser.Designer.vb">
       <DependentUpon>FormAddUser.vb</DependentUpon>
     </Compile>

@@ -25,9 +25,8 @@ Partial Class FormPayroll
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormPayroll))
 
         Me.RoundedPane24 = New InformationManagement.RoundedPane2()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
         Me.Label10 = New System.Windows.Forms.Label()
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
+
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.btnProcessPayout = New System.Windows.Forms.Button()
         Me.labelHeader = New System.Windows.Forms.Label()
@@ -73,10 +72,8 @@ Partial Class FormPayroll
         Me.RoundedPane24.BorderThickness = 1
         Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane24.Controls.Add(Me.btnProcessPayout)
-        Me.RoundedPane24.Controls.Add(Me.dtpFilter)
         Me.RoundedPane24.Controls.Add(Me.DataGridView1)
         Me.RoundedPane24.Controls.Add(Me.labelHeader)
-        Me.RoundedPane24.Controls.Add(Me.btnExportPdf)
         Me.RoundedPane24.CornerRadius = 15
         Me.RoundedPane24.FillColor = System.Drawing.Color.White
         Me.RoundedPane24.Location = New System.Drawing.Point(30, 197)
@@ -84,24 +81,7 @@ Partial Class FormPayroll
         Me.RoundedPane24.Size = New System.Drawing.Size(1045, 393)
         Me.RoundedPane24.TabIndex = 7
         '
-        '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("Button1.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(920, 20)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(104, 30)
-        Me.btnExportPdf.TabIndex = 10
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
+
         '
         'Label10
         '
@@ -129,17 +109,7 @@ Partial Class FormPayroll
         Me.btnProcessPayout.TabIndex = 8
         Me.btnProcessPayout.Text = "Process Payout"
         Me.btnProcessPayout.UseVisualStyleBackColor = False
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(595, 20)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(180, 30)
-        Me.dtpFilter.TabIndex = 15
-        '
+
         'DataGridView1
         '
         Me.DataGridView1.AllowUserToAddRows = False
@@ -482,8 +452,7 @@ Partial Class FormPayroll
 
     Friend WithEvents RoundedPane24 As RoundedPane2
     Friend WithEvents Label10 As Label
-    Friend WithEvents btnExportPdf As Button
-    Friend WithEvents dtpFilter As DateTimePicker
+
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents btnProcessPayout As Button
     Friend WithEvents labelHeader As Label

@@ -39,15 +39,33 @@ Public Class FormPayroll
             .SelectionMode = DataGridViewSelectionMode.FullRowSelect
             
             .Columns.Clear()
-            .Columns.Add(CreateColumn("EmployeeName", "Employee", 200))
-            .Columns.Add(CreateColumn("Position", "Role/Type", 120))
+            .Columns.Clear()
+            .Columns.Add(CreateColumn("PayrollID", "ID", 0))
+            .Columns("PayrollID").Visible = False
+            .Columns.Add(CreateColumn("EmployeeID", "Code", 80))
+            .Columns.Add(CreateColumn("EmployeeName", "Employee", 180))
+            .Columns.Add(CreateColumn("Position", "Position", 120))
+            ' Pay Period (Constructed from dates)
+            .Columns.Add(CreateColumn("PayPeriod", "Pay Period", 180))
+
+            .Columns.Add(CreateColumn("HoursWorked", "Days", 70))
+            .Columns.Add(CreateColumn("HourlyRate", "Daily Rate", 100, "₱#,##0"))
+
             .Columns.Add(CreateColumn("BasicSalary", "Basic Pay", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("Overtime", "OT Pay", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("Bonuses", "Tips/Bonus", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("GrossPay", "Gross", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("Deductions", "Deductions", 100, "₱#,##0"))
+            .Columns.Add(CreateColumn("Overtime", "Overtime", 90, "₱#,##0"))
+            .Columns.Add(CreateColumn("Bonuses", "Bonuses", 90, "₱#,##0"))
+            .Columns.Add(CreateColumn("Deductions", "Deductions", 90, "₱#,##0"))
             .Columns.Add(CreateColumn("NetPay", "Net Pay", 100, "₱#,##0"))
-            ' Status column or Action button could be added here
+            .Columns.Add(CreateColumn("Status", "Status", 90))
+
+            ' Add Action Button
+            Dim btnCol As New DataGridViewButtonColumn()
+            btnCol.Name = "Action"
+            btnCol.HeaderText = "Action"
+            btnCol.Text = "View"
+            btnCol.UseColumnTextForButtonValue = True
+            btnCol.Width = 80
+            .Columns.Add(btnCol)
         End With
     End Sub
 
@@ -85,17 +103,17 @@ Public Class FormPayroll
                                              $"WHERE Status = 'Paid' "
 
                 ' Date Filter Logic
-                If Reports.SelectedPeriod = "Daily" AndAlso dtpFilter IsNot Nothing Then
-                     querySummary &= $"AND DATE(PayPeriodStart) = '{dtpFilter.Value:yyyy-MM-dd}'"
+                If Reports.SelectedPeriod = "Daily" Then
+                    querySummary &= $"AND DATE(PayPeriodStart) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
                 ElseIf Reports.SelectedPeriod = "Monthly" Then
-                     querySummary &= $"AND MONTH(PayPeriodStart) = {sMonth} AND YEAR(PayPeriodStart) = {sYear}"
-                ElseIf Reports.SelectedPeriod = "Weekly" AndAlso dtpFilter IsNot Nothing Then
-                     querySummary &= $"AND YEARWEEK(PayPeriodStart, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
+                    querySummary &= $"AND MONTH(PayPeriodStart) = {sMonth} AND YEAR(PayPeriodStart) = {sYear}"
+                ElseIf Reports.SelectedPeriod = "Weekly" Then
+                    querySummary &= $"AND YEARWEEK(PayPeriodStart, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
                 ElseIf Reports.SelectedPeriod = "Yearly" Then
-                     querySummary &= $"AND YEAR(PayPeriodStart) = {sYear}"
+                    querySummary &= $"AND YEAR(PayPeriodStart) = {sYear}"
                 Else
-                     ' Default to year if unknown
-                     querySummary &= $"AND YEAR(PayPeriodStart) = {sYear}"
+                    ' Default to year if unknown
+                    querySummary &= $"AND YEAR(PayPeriodStart) = {sYear}"
                 End If
 
                 Using cmd As New MySqlCommand(querySummary, conn)
@@ -119,33 +137,37 @@ Public Class FormPayroll
 
                 ' --- 2. PAGINATION & GRID DATA ---
                 FetchTotalCount(conn, sMonth, sYear)
-                
+
                 Dim offset As Integer = (_currentPage - 1) * _pageSize
 
                 Dim queryGrid As String = "SELECT " &
                                           "p.PayrollID, " &
+                                          "e.EmployeeID, " &
                                           "CONCAT(e.FirstName, ' ', e.LastName) as EmployeeName, " &
                                           "e.Position, " &
+                                          "CONCAT(DATE_FORMAT(p.PayPeriodStart, '%b %d'), ' - ', DATE_FORMAT(p.PayPeriodEnd, '%b %d %Y')) as PayPeriod, " &
+                                          "p.HoursWorked, " &
+                                          "p.HourlyRate, " &
                                           "p.BasicSalary, " &
                                           "p.Overtime, " &
                                           "p.Bonuses, " &
-                                          "(-IFNULL(p.Deductions, 0)) as Deductions, " &
+                                          "p.Deductions, " &
                                           "p.NetPay, " &
-                                          "(p.BasicSalary + p.Overtime + p.Bonuses) as GrossPay " &
+                                          "p.Status " &
                                           "FROM payroll p " &
                                           "JOIN employee e ON p.EmployeeID = e.EmployeeID " &
                                           "WHERE 1=1 "
 
-                If Reports.SelectedPeriod = "Daily" AndAlso dtpFilter IsNot Nothing Then
-                     queryGrid &= $"AND DATE(p.PayPeriodStart) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                If Reports.SelectedPeriod = "Daily" Then
+                    queryGrid &= $"AND DATE(p.PayPeriodStart) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 ElseIf Reports.SelectedPeriod = "Monthly" Then
-                     queryGrid &= $"AND MONTH(p.PayPeriodStart) = {sMonth} AND YEAR(p.PayPeriodStart) = {sYear} "
-                ElseIf Reports.SelectedPeriod = "Weekly" AndAlso dtpFilter IsNot Nothing Then
-                     queryGrid &= $"AND YEARWEEK(p.PayPeriodStart, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                    queryGrid &= $"AND MONTH(p.PayPeriodStart) = {sMonth} AND YEAR(p.PayPeriodStart) = {sYear} "
+                ElseIf Reports.SelectedPeriod = "Weekly" Then
+                    queryGrid &= $"AND YEARWEEK(p.PayPeriodStart, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
                 ElseIf Reports.SelectedPeriod = "Yearly" Then
-                     queryGrid &= $"AND YEAR(p.PayPeriodStart) = {sYear} "
+                    queryGrid &= $"AND YEAR(p.PayPeriodStart) = {sYear} "
                 Else
-                     queryGrid &= $"AND YEAR(p.PayPeriodStart) = {sYear} "
+                    queryGrid &= $"AND YEAR(p.PayPeriodStart) = {sYear} "
                 End If
 
                 queryGrid &= "ORDER BY p.PayPeriodStart DESC, e.FirstName ASC " &
@@ -157,7 +179,7 @@ Public Class FormPayroll
                     DataGridView1.DataSource = dt
                     FormatGrid()
                 End Using
-                
+
                 UpdatePaginationUI()
 
             End Using
@@ -165,20 +187,20 @@ Public Class FormPayroll
             MessageBox.Show("Error loading payroll: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
-    
+
     Private Sub FetchTotalCount(conn As MySqlConnection, sMonth As Integer, sYear As Integer)
         Dim query As String = "SELECT COUNT(*) FROM payroll p WHERE 1=1 "
-        
-        If Reports.SelectedPeriod = "Daily" AndAlso dtpFilter IsNot Nothing Then
-             query &= $"AND DATE(p.PayPeriodStart) = '{dtpFilter.Value:yyyy-MM-dd}'"
+
+        If Reports.SelectedPeriod = "Daily" Then
+            query &= $"AND DATE(p.PayPeriodStart) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
         ElseIf Reports.SelectedPeriod = "Monthly" Then
-             query &= $"AND MONTH(p.PayPeriodStart) = {sMonth} AND YEAR(p.PayPeriodStart) = {sYear}"
-        ElseIf Reports.SelectedPeriod = "Weekly" AndAlso dtpFilter IsNot Nothing Then
-             query &= $"AND YEARWEEK(p.PayPeriodStart, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
+            query &= $"AND MONTH(p.PayPeriodStart) = {sMonth} AND YEAR(p.PayPeriodStart) = {sYear}"
+        ElseIf Reports.SelectedPeriod = "Weekly" Then
+            query &= $"AND YEARWEEK(p.PayPeriodStart, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
         ElseIf Reports.SelectedPeriod = "Yearly" Then
-             query &= $"AND YEAR(p.PayPeriodStart) = {sYear}"
+            query &= $"AND YEAR(p.PayPeriodStart) = {sYear}"
         Else
-             query &= $"AND YEAR(p.PayPeriodStart) = {sYear}"
+            query &= $"AND YEAR(p.PayPeriodStart) = {sYear}"
         End If
         Using cmd As New MySqlCommand(query, conn)
             _totalRecords = Convert.ToInt32(cmd.ExecuteScalar())
@@ -221,13 +243,6 @@ Public Class FormPayroll
         Next
     End Sub
 
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
 
     Private Sub Label2_Click(sender As Object, e As EventArgs) Handles Label2.Click
     End Sub
@@ -242,8 +257,18 @@ Public Class FormPayroll
         LoadPayrollData()
     End Sub
 
-    Private Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        RefreshData()
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+        If e.RowIndex >= 0 AndAlso DataGridView1.Columns(e.ColumnIndex).Name = "Action" Then
+            Dim id As Integer = Convert.ToInt32(DataGridView1.Rows(e.RowIndex).Cells("PayrollID").Value)
+            Dim empID As Integer = Convert.ToInt32(DataGridView1.Rows(e.RowIndex).Cells("EmployeeID").Value)
+            Dim empName As String = DataGridView1.Rows(e.RowIndex).Cells("EmployeeName").Value.ToString()
+
+            Dim frm As New FormEditPayroll(id, empID, empName)
+            frm.ShowDialog()
+            LoadPayrollData() ' Refresh after edit
+        End If
     End Sub
+
+
 
 End Class

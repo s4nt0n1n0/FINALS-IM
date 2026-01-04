@@ -46,8 +46,7 @@ Partial Class FormTakeOutOrders
         Me.lblPageStatus = New System.Windows.Forms.Label()
         Me.SearchContainer = New InformationManagement.RoundedPane2()
         Me.TextBoxSearch = New System.Windows.Forms.TextBox()
-        Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
+
 
         Me.Label10 = New System.Windows.Forms.Label()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
@@ -257,8 +256,6 @@ Partial Class FormTakeOutOrders
         Me.RoundedPane24.BorderThickness = 1
         Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane24.Controls.Add(Me.SearchContainer)
-        Me.RoundedPane24.Controls.Add(Me.dtpFilter)
-        Me.RoundedPane24.Controls.Add(Me.btnExportPdf)
 
         Me.RoundedPane24.Controls.Add(Me.Label10)
         Me.RoundedPane24.Controls.Add(Me.DataGridView1)
@@ -342,35 +339,8 @@ Partial Class FormTakeOutOrders
         Me.TextBoxSearch.Size = New System.Drawing.Size(250, 20)
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search orders..."
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.Short
-        Me.dtpFilter.Location = New System.Drawing.Point(320, 28) ' Positioned before search
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(150, 25)
-        Me.dtpFilter.TabIndex = 11
-        Me.dtpFilter.Visible = False
-        '
-        'btnExportPdf
-        '
-        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
-        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExportPdf.FlatAppearance.BorderSize = 0
-        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("Button1.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(986, 13)
-        Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(135, 45)
-        Me.btnExportPdf.TabIndex = 10
-        Me.btnExportPdf.Text = "   Export PDF"
-        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
-        Me.btnExportPdf.UseVisualStyleBackColor = False
+
+
         '
         'Label10
         '
@@ -481,8 +451,8 @@ Partial Class FormTakeOutOrders
     Friend WithEvents RoundedPane24 As InformationManagement.RoundedPane2
     Friend WithEvents SearchContainer As InformationManagement.RoundedPane2
     Friend WithEvents TextBoxSearch As System.Windows.Forms.TextBox
-    Friend WithEvents dtpFilter As System.Windows.Forms.DateTimePicker
-    Friend WithEvents btnExportPdf As System.Windows.Forms.Button
+
+
 
     Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView

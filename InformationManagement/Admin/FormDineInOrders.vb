@@ -31,30 +31,11 @@ Public Class FormDineInOrders
         _currentPage = 1
         Await BeginLoadDineInOrders()
         isInitialLoad = False
-        _currentPage = 1
-        Await BeginLoadDineInOrders()
-        ConfigureDateFilter()
-        isInitialLoad = False
-        ConfigureDateFilter()
+        ' ConfigureDateFilter()
     End Sub
 
-    Private Async Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If Not isInitialLoad Then
-            _currentPage = 1
-            Await BeginLoadDineInOrders()
-        End If
-    End Sub
 
-    Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
 
-        Select Case Reports.SelectedPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-            Case Else
-                dtpFilter.Visible = False
-        End Select
-    End Sub
 
 
     Private Sub InitializeModernUI()
@@ -92,8 +73,6 @@ Public Class FormDineInOrders
             .AlternatingRowsDefaultCellStyle.BackColor = Color.White
         End With
 
-        ' Style the export button
-        StyleButton(btnExportPdf)
 
         ' Style the label
         Label2.Font = New Font("Segoe UI", 14, FontStyle.Bold)
@@ -163,24 +142,23 @@ Public Class FormDineInOrders
         Select Case Reports.SelectedPeriod
             Case "Daily"
                 If selectedYear = DateTime.Now.Year Then
-                    periodFilter = $" AND DATE(OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                    periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 Else
-                    periodFilter = $" AND DATE(OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' " ' Use picker date for historic daily too if desired, or keep as is.
+                    periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' " ' Use picker date for historic daily too if desired, or keep as is.
                     ' Actually, if Daily is selected, we usually want specific day regardless of year logic if we have a picker.
                     ' But to be safe and consistent with other forms:
-                    periodFilter = $" AND DATE(OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                    periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 End If
 
             Case "Weekly"
-                ' Fix Weekly Logic to use dtpFilter
-                periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
+            Case "Monthly"
                 If selectedMonth = 0 Then
                     periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
                 Else
                     periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                 End If
-
 
             Case "Yearly"
                 periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
@@ -204,10 +182,10 @@ Public Class FormDineInOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                periodFilter = $" AND DATE(o.OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                periodFilter = $" AND DATE(o.OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
 
             Case "Weekly"
-                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
             Case "Monthly"
                 If selectedMonth = 0 Then
@@ -266,10 +244,10 @@ Public Class FormDineInOrders
 
                                Select Case Reports.SelectedPeriod
                                    Case "Daily"
-                                       periodFilter = $" AND DATE(OrderDate) = '{dtpFilter.Value:yyyy-MM-dd}' "
+                                       periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
 
                                    Case "Weekly"
-                                       periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1) "
+                                       periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
 
                                    Case "Monthly"
                                        If selectedMonth = 0 Then
@@ -403,7 +381,8 @@ Public Class FormDineInOrders
         End Try
     End Sub
 
-    ' ALTERNATIVE: Use CellFormatting event for automatic color application
+
+
     Private Sub DataGridView1_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DataGridView1.CellFormatting
         Try
             If DataGridView1.Columns(e.ColumnIndex).Name = "Status" AndAlso e.Value IsNot Nothing Then
@@ -429,16 +408,12 @@ Public Class FormDineInOrders
     Private Sub SetLoadingState(isLoading As Boolean)
         Try
             Me.UseWaitCursor = isLoading
-            btnExportPdf.Enabled = Not isLoading
+
             If btnPrev IsNot Nothing Then btnPrev.Enabled = Not isLoading AndAlso _currentPage > 1
             If btnNext IsNot Nothing Then btnNext.Enabled = Not isLoading AndAlso _currentPage < _totalPages
             LabelHeader.Text = If(isLoading, _baseTitle & " (Updating...)", _baseTitle)
 
-            If isLoading Then
-                btnExportPdf.Text = "   Loading..."
-            Else
-                btnExportPdf.Text = "   Export PDF"
-            End If
+
         Catch
         End Try
     End Sub
@@ -514,13 +489,6 @@ Public Class FormDineInOrders
         End If
     End Sub
 
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
 
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
         _dataCache?.Dispose()
@@ -530,7 +498,7 @@ Public Class FormDineInOrders
     ' REFRESH DATA
     ' =======================================================================
     Public Async Sub RefreshData()
-        ConfigureDateFilter()
+        ' ConfigureDateFilter()
         _currentPage = 1
         Await BeginLoadDineInOrders()
     End Sub

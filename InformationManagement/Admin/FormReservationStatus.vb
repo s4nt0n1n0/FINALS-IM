@@ -17,7 +17,7 @@ Public Class FormReservationStatus
         Try
             InitializeForm()
             ConfigureChart()
-            ConfigureDateFilter()
+            'ConfigureDateFilter()
             LoadReservationData()
             isInitializing = False
 
@@ -174,10 +174,10 @@ Public Class FormReservationStatus
 
         Select Case filterPeriod
             Case "Daily"
-                filter = $"DATE(EventDate) = '{dtpFilter.Value:yyyy-MM-dd}'"
+                filter = $"DATE(EventDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
 
             Case "Weekly"
-                filter = $"YEARWEEK(EventDate, 1) = YEARWEEK('{dtpFilter.Value:yyyy-MM-dd}', 1)"
+                filter = $"YEARWEEK(EventDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
 
 
             Case "Monthly"
@@ -286,16 +286,6 @@ Public Class FormReservationStatus
     End Sub
 
 
-    ' =======================================================================
-    ' EXPORT PDF
-    ' =======================================================================
-    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
-        If Reports.Instance IsNot Nothing Then
-            Reports.Instance.ExportCurrentReport()
-        Else
-            MessageBox.Show("Please open the Reports screen to export.", "PDF Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
 
     ' =======================================================================
     ' GET DETAILED RESERVATION STATISTICS
@@ -441,27 +431,15 @@ Public Class FormReservationStatus
         currentYear = Reports.SelectedYear
         currentMonth = Reports.SelectedMonth
         
-        ConfigureDateFilter()
+        'ConfigureDateFilter()
         LoadReservationData()
     End Sub
 
     Private Sub ConfigureDateFilter()
-        If dtpFilter Is Nothing Then Return
-
-        Select Case filterPeriod
-            Case "Daily", "Weekly"
-                dtpFilter.Visible = True
-                dtpFilter.CustomFormat = "MMMM dd, yyyy"
-                dtpFilter.Format = DateTimePickerFormat.Custom
-            Case Else
-                dtpFilter.Visible = False
-        End Select
+        ' Logic handled in Reports.vb
     End Sub
 
-    Private Sub dtpFilter_ValueChanged(sender As Object, e As EventArgs) Handles dtpFilter.ValueChanged
-        If isInitializing Then Return
-        LoadReservationData()
-    End Sub
+
 
 
     ' =======================================================================
