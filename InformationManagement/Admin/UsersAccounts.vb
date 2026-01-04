@@ -8,6 +8,8 @@ Public Class UsersAccounts
     Private totalPages As Integer = 0
     Private allStaffData As DataTable
     Private searchText As String = ""
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
     Private initialLoadComplete As Boolean = False
     Private currentViewMode As String = "Staff" ' Types: "Staff", "Employee"
     Private WithEvents btnShowStaff As Button
@@ -20,6 +22,8 @@ Public Class UsersAccounts
         RoundPaginationButtons()
         SetupToggleButtons() ' Add toggle buttons
         ' SetupAddButton() ' Disable original Add button favor of Employee view workflow
+        InitializeSearchBox()
+        isInitializing = False
         LoadDataBasedOnMode()
         initialLoadComplete = True
         AdjustControlsToScreen()
@@ -119,12 +123,20 @@ Public Class UsersAccounts
                 UsersAccountData.Columns("colJoinDate").Width = CInt(totalWidth * 0.25) ' 25% - Join Date
             End If
 
+            If UsersAccountData.Columns.Contains("colUsername") Then
+                UsersAccountData.Columns("colUsername").Width = CInt(totalWidth * 0.15)
+            End If
+
+            If UsersAccountData.Columns.Contains("colPassword") Then
+                UsersAccountData.Columns("colPassword").Width = CInt(totalWidth * 0.15)
+            End If
+
             If UsersAccountData.Columns.Contains("colEdit") Then
-                UsersAccountData.Columns("colEdit").Width = 80 ' Fixed width
+                UsersAccountData.Columns("colEdit").Width = 60
             End If
 
             If UsersAccountData.Columns.Contains("colDelete") Then
-                UsersAccountData.Columns("colDelete").Width = 80 ' Fixed width
+                UsersAccountData.Columns("colDelete").Width = 60
             End If
 
         Catch ex As Exception
@@ -161,6 +173,36 @@ Public Class UsersAccounts
         UsersAccountData.SuspendLayout()
         UsersAccountData.Rows.Clear()
 
+        ' Column Header Styling
+        With UsersAccountData
+            .EnableHeadersVisualStyles = False
+            .RowHeadersVisible = False ' Hide the row selector column
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            
+            ' Default Cell Style
+            .DefaultCellStyle.BackColor = SystemColors.Window
+            .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+            .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+            .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+            .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+            .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End With
+
+        ' Force styles on existing columns (Fix for mismatched header styles)
+        For Each col As DataGridViewColumn In UsersAccountData.Columns
+            col.HeaderCell.Style = Nothing ' Clear individual styles so they inherit default
+        Next
+
+        ' Ensure Name column has proper header
+        If UsersAccountData.Columns.Contains("txtName") Then
+            UsersAccountData.Columns("txtName").HeaderText = "Name"
+        End If
+
         ' Add Create Account Action Column
         If Not UsersAccountData.Columns.Contains("colCreateAccount") Then
             Dim btnCol As New DataGridViewButtonColumn()
@@ -184,18 +226,17 @@ Public Class UsersAccounts
         ' Add hidden columns for data handling
         If Not UsersAccountData.Columns.Contains("colUsername") Then
             UsersAccountData.Columns.Add("colUsername", "Username")
-            UsersAccountData.Columns("colUsername").Visible = False
+            UsersAccountData.Columns("colUsername").Visible = True
+            If Not UsersAccountData.Columns.Contains("colPassword") Then
+                UsersAccountData.Columns.Add("colPassword", "Password")
+            End If
+            UsersAccountData.Columns("colPassword").Visible = True
         End If
 
         If Not UsersAccountData.Columns.Contains("colEmployeeID") Then
             UsersAccountData.Columns.Add("colEmployeeID", "EmployeeID")
             UsersAccountData.Columns("colEmployeeID").Visible = False
         End If
-
-        ' Hide the Edit column
-        'If UsersAccountData.Columns.Contains("colEdit") Then
-        '    UsersAccountData.Columns("colEdit").Visible = False
-        'End If
     End Sub
 
     Private Sub LoadDataBasedOnMode()
@@ -261,6 +302,7 @@ Public Class UsersAccounts
                     ua.id,
                     ua.name,
                     ua.username,
+                    ua.password,
                     ua.position,
                     ua.status,
                     ua.created_at as DateCreated,
@@ -400,6 +442,19 @@ Public Class UsersAccounts
 
                 If UsersAccountData.Columns.Contains("colUsername") Then
                     newRow.Cells("colUsername").Value = username
+                End If
+
+                If UsersAccountData.Columns.Contains("colPassword") Then
+                    Dim rawPass As String = If(row.Table.Columns.Contains("password") AndAlso row("password") IsNot DBNull.Value, row("password").ToString(), "")
+                    If Not String.IsNullOrEmpty(rawPass) Then
+                        Try
+                            newRow.Cells("colPassword").Value = Decrypt(rawPass)
+                        Catch
+                            newRow.Cells("colPassword").Value = "******"
+                        End Try
+                    Else
+                        newRow.Cells("colPassword").Value = ""
+                    End If
                 End If
 
                 If UsersAccountData.Columns.Contains("colEmployeeID") Then
@@ -592,12 +647,44 @@ Public Class UsersAccounts
     End Function
 
     ' Search functionality
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        searchText = txtSearch.Text.Trim()
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch As String = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search staff..." Then currentSearch = ""
+
+        ' Only reload if search term actually changed
+        If currentSearch = _lastSearchText Then Return
+        _lastSearchText = currentSearch
+
+        searchText = currentSearch
         ApplySearchFilter()
     End Sub
 
-    ' UI Helper Methods
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search staff..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42) ' Dark slate color
+        End If
+        txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        if String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search staff..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184) ' Slate-400
+        End If
+        txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
+    End Sub
+
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search staff..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+    End Sub
+      ' UI Helper Methods
     Private Sub RoundButton(btn As Button)
         Dim radius As Integer = 10
         Dim path As New Drawing2D.GraphicsPath()

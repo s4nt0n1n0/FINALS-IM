@@ -3,7 +3,8 @@
 Public Class Inventory
     Private isShowingAlerts As Boolean = False
     Private WithEvents btnInventoryAlerts As Button
-
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
     Private Sub Inventory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
             ' Set form to maximized
@@ -30,6 +31,9 @@ Public Class Inventory
 
             ' Update the alerts notification button count
             UpdateNotificationBadge()
+
+            InitializeSearchBox()
+            isInitializing = False
 
         Catch ex As Exception
             MessageBox.Show("Error loading form: " & ex.Message,
@@ -612,12 +616,22 @@ Public Class Inventory
         End Try
     End Sub
 
-    ' Search functionality
-    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+    ' =======================================================
+    ' SEARCH FUNCTIONALITY
+    ' =======================================================
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
         Try
             If InventoryGrid.DataSource IsNot Nothing Then
                 Dim dt As DataTable = DirectCast(InventoryGrid.DataSource, DataTable)
-                Dim searchText As String = TextBox1.Text.Trim()
+                Dim searchText As String = TextBoxSearch.Text.Trim()
+
+                If searchText = "Search inventory..." Then searchText = ""
+
+                ' Only filter if the actual search criteria changed
+                If searchText = _lastSearchText Then Return
+                _lastSearchText = searchText
 
                 If String.IsNullOrEmpty(searchText) Then
                     dt.DefaultView.RowFilter = ""
@@ -638,6 +652,29 @@ Public Class Inventory
         End Try
     End Sub
 
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search inventory..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
+            txtSearch.BorderColor = Color.FromArgb(99, 102, 241)
+        End If
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search inventory..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+            txtSearch.BorderColor = Color.FromArgb(226, 232, 240)
+        End If
+    End Sub
+
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search inventory..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+    End Sub
     ' Category filter
     Private Sub Category_SelectedIndexChanged(sender As Object, e As EventArgs) Handles Category.SelectedIndexChanged
         Try

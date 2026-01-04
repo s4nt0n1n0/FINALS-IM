@@ -18,6 +18,7 @@ Partial Class OrderCalendar
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.btnClose = New System.Windows.Forms.Button()
         Me.btnRefresh = New System.Windows.Forms.Button()
         Me.btnToday = New System.Windows.Forms.Button()
         Me.btnNextMonth = New System.Windows.Forms.Button()
@@ -40,6 +41,7 @@ Partial Class OrderCalendar
         'Panel1
         '
         Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(73, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.Panel1.Controls.Add(Me.btnClose)
         Me.Panel1.Controls.Add(Me.btnRefresh)
         Me.Panel1.Controls.Add(Me.btnToday)
         Me.Panel1.Controls.Add(Me.btnNextMonth)
@@ -60,12 +62,27 @@ Partial Class OrderCalendar
         Me.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnRefresh.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
         Me.btnRefresh.ForeColor = System.Drawing.Color.White
-        Me.btnRefresh.Location = New System.Drawing.Point(1070, 25)
+        Me.btnRefresh.Location = New System.Drawing.Point(964, 25)
         Me.btnRefresh.Name = "btnRefresh"
         Me.btnRefresh.Size = New System.Drawing.Size(100, 35)
         Me.btnRefresh.TabIndex = 5
         Me.btnRefresh.Text = "🔄 Refresh"
         Me.btnRefresh.UseVisualStyleBackColor = False
+        '
+        'btnClose
+        '
+        Me.btnClose.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnClose.BackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(76, Byte), Integer), CType(CType(60, Byte), Integer))
+        Me.btnClose.FlatAppearance.BorderSize = 0
+        Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnClose.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.btnClose.ForeColor = System.Drawing.Color.White
+        Me.btnClose.Location = New System.Drawing.Point(1070, 25)
+        Me.btnClose.Name = "btnClose"
+        Me.btnClose.Size = New System.Drawing.Size(100, 35)
+        Me.btnClose.TabIndex = 6
+        Me.btnClose.Text = "Close"
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'btnToday
         '
@@ -239,6 +256,7 @@ Partial Class OrderCalendar
         Me.Controls.Add(Me.pnlCalendar)
         Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.Panel1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "OrderCalendar"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Order Calendar - Confirmed Orders"
@@ -264,4 +282,5 @@ Partial Class OrderCalendar
     Friend WithEvents Label7 As Label
     Friend WithEvents pnlCalendar As Panel
     Friend WithEvents btnRefresh As Button
+    Friend WithEvents btnClose As Button
 End Class

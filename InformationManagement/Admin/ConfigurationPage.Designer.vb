@@ -30,12 +30,10 @@ Partial Class ConfigurationPage
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Label5 = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.txtDatabasename = New InformationManagement.RoundedTextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtPassword = New InformationManagement.RoundedTextBox()
-        Me.txtPort = New InformationManagement.RoundedTextBox()
         Me.btnTestConnection = New System.Windows.Forms.Button()
         Me.txtUsername = New InformationManagement.RoundedTextBox()
         Me.btnSaveAndContinue = New System.Windows.Forms.Button()
@@ -55,12 +53,10 @@ Partial Class ConfigurationPage
         Me.RoundedPane21.Controls.Add(Me.Label6)
         Me.RoundedPane21.Controls.Add(Me.Label4)
         Me.RoundedPane21.Controls.Add(Me.Label5)
-        Me.RoundedPane21.Controls.Add(Me.Label3)
         Me.RoundedPane21.Controls.Add(Me.PictureBox1)
         Me.RoundedPane21.Controls.Add(Me.txtDatabasename)
         Me.RoundedPane21.Controls.Add(Me.Label1)
         Me.RoundedPane21.Controls.Add(Me.txtPassword)
-        Me.RoundedPane21.Controls.Add(Me.txtPort)
         Me.RoundedPane21.Controls.Add(Me.btnTestConnection)
         Me.RoundedPane21.Controls.Add(Me.txtUsername)
         Me.RoundedPane21.Controls.Add(Me.btnSaveAndContinue)
@@ -95,7 +91,7 @@ Partial Class ConfigurationPage
         Me.txtServer.NormalBorderColor = System.Drawing.Color.FromArgb(CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer))
         Me.txtServer.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
         Me.txtServer.ReadOnly = False
-        Me.txtServer.Size = New System.Drawing.Size(192, 35)
+        Me.txtServer.Size = New System.Drawing.Size(314, 35)
         Me.txtServer.TabIndex = 1
         Me.txtServer.TextBoxBackColor = System.Drawing.Color.White
         Me.txtServer.TextColor = System.Drawing.Color.Black
@@ -148,18 +144,6 @@ Partial Class ConfigurationPage
         Me.Label5.Size = New System.Drawing.Size(83, 21)
         Me.Label5.TabIndex = 4
         Me.Label5.Text = "Username"
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.BackColor = System.Drawing.Color.Transparent
-        Me.Label3.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.ForeColor = System.Drawing.Color.White
-        Me.Label3.Location = New System.Drawing.Point(283, 134)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(40, 21)
-        Me.Label3.TabIndex = 2
-        Me.Label3.Text = "Port"
         '
         'PictureBox1
         '
@@ -222,25 +206,6 @@ Partial Class ConfigurationPage
         Me.txtPassword.TextBoxBackColor = System.Drawing.Color.White
         Me.txtPassword.TextColor = System.Drawing.Color.Black
         Me.txtPassword.TextFont = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(254, Byte))
-        '
-        'txtPort
-        '
-        Me.txtPort.BackColor = System.Drawing.Color.Transparent
-        Me.txtPort.FocusBorderColor = System.Drawing.Color.LightCoral
-        Me.txtPort.ForeColor = System.Drawing.Color.FromArgb(CType(CType(80, Byte), Integer), CType(CType(80, Byte), Integer), CType(CType(80, Byte), Integer))
-        Me.txtPort.Location = New System.Drawing.Point(287, 158)
-        Me.txtPort.MaxLength = 32767
-        Me.txtPort.MinimumSize = New System.Drawing.Size(50, 20)
-        Me.txtPort.Multiline = False
-        Me.txtPort.Name = "txtPort"
-        Me.txtPort.NormalBorderColor = System.Drawing.Color.FromArgb(CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer))
-        Me.txtPort.PasswordChar = Global.Microsoft.VisualBasic.ChrW(0)
-        Me.txtPort.ReadOnly = False
-        Me.txtPort.Size = New System.Drawing.Size(116, 35)
-        Me.txtPort.TabIndex = 2
-        Me.txtPort.TextBoxBackColor = System.Drawing.Color.White
-        Me.txtPort.TextColor = System.Drawing.Color.Black
-        Me.txtPort.TextFont = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(254, Byte))
         '
         'btnTestConnection
         '
@@ -313,14 +278,12 @@ Partial Class ConfigurationPage
     Friend WithEvents Label6 As Label
     Friend WithEvents Label5 As Label
     Friend WithEvents Label4 As Label
-    Friend WithEvents Label3 As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label
     Friend WithEvents txtServer As RoundedTextBox
     Friend WithEvents txtUsername As RoundedTextBox
     Friend WithEvents txtDatabasename As RoundedTextBox
     Friend WithEvents txtPassword As RoundedTextBox
-    Friend WithEvents txtPort As RoundedTextBox
     Friend WithEvents btnTestConnection As Button
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents RoundedPane21 As RoundedPane2

@@ -9,10 +9,12 @@ Module modDB
     Public cmd As MySqlCommand
     Public cmdRead As MySqlDataReader
 
-    Public db_server As String = "localhost"
+    Public db_server As String = "127.0.0.1"
     Public db_uid As String = "root"
     Public db_pwd As String = ""
     Public db_name As String = "tabeya_system"
+
+    Private iniFilePath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "db_config.ini")
 
     Public strConnection As String =
         $"Server={db_server};Port=3306;Database={db_name};Uid={db_uid};Pwd={db_pwd};AllowUserVariables=True;"
@@ -30,6 +32,8 @@ Module modDB
 
     ' ✔ Open connection
     Public Sub openConn()
+        LoadDatabaseConfig() ' Always ensure we currently have the latest config before opening
+
         Try
             ' Robust check: if connection is anything other than Closed, close it first
             If conn IsNot Nothing AndAlso conn.State <> ConnectionState.Closed Then
@@ -40,6 +44,59 @@ Module modDB
             conn.Open()
         Catch ex As Exception
             MsgBox("Connection Error: " & ex.Message, MsgBoxStyle.Critical)
+        End Try
+    End Sub
+
+    ' Update Connection String
+    Private Sub UpdateConnectionString()
+        strConnection = $"Server={db_server};Port=3306;Database={db_name};Uid={db_uid};Pwd={db_pwd};AllowUserVariables=True;"
+    End Sub
+
+    ' LOAD DB Config from INI
+    Public Sub LoadDatabaseConfig()
+        Try
+            ' Default path: Bin/Debug/db_config.ini
+            If File.Exists(iniFilePath) Then
+                Dim lines = File.ReadAllLines(iniFilePath)
+                For Each line In lines
+                    If line.StartsWith("Server=") Then
+                        db_server = line.Substring(7).Trim()
+                    ElseIf line.StartsWith("Database=") Then
+                        db_name = line.Substring(9).Trim()
+                    ElseIf line.StartsWith("Uid=") Then
+                        db_uid = line.Substring(4).Trim()
+                    ElseIf line.StartsWith("Pwd=") Then
+                        db_pwd = line.Substring(4).Trim()
+                    End If
+                Next
+                UpdateConnectionString()
+            End If
+        Catch ex As Exception
+            ' Fallback to defaults if error
+        End Try
+    End Sub
+
+    ' SAVE DB Config to INI
+    Public Sub SaveDatabaseConfig(server As String, db As String, uid As String, pwd As String)
+        Try
+            Dim sb As New StringBuilder()
+            sb.AppendLine("[Database]")
+            sb.AppendLine($"Server={server}")
+            sb.AppendLine($"Database={db}")
+            sb.AppendLine($"Uid={uid}")
+            sb.AppendLine($"Pwd={pwd}")
+
+            File.WriteAllText(iniFilePath, sb.ToString())
+            
+            ' Update runtime variables
+            db_server = server
+            db_name = db
+            db_uid = uid
+            db_pwd = pwd
+            UpdateConnectionString()
+
+        Catch ex As Exception
+            Throw New Exception("Failed to save configuration: " & ex.Message)
         End Try
     End Sub
 

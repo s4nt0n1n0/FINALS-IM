@@ -3,19 +3,80 @@
 Public Class Setting
 
     Private Sub Setting_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Default View
+        SwitchView("Admin")
+        
+        ' Load Admin Data
         LoadCurrentUserData()
+        
+        ' Load DB Data
+        LoadDBConfigData()
+
+        ' Show password by default
+        chkShowPassword.Checked = True
     End Sub
+    
 
     Private Sub LoadCurrentUserData()
         Try
             ' Load the current logged-in admin's data
             txtName.Text = CurrentLoggedUser.name
             txtUsername.Text = CurrentLoggedUser.username
-            txtCurrentPassword.Text = ""
+            
+            ' Populate current password (decrypted)
+            If Not String.IsNullOrEmpty(CurrentLoggedUser.password) Then
+                txtCurrentPassword.Text = Decrypt(CurrentLoggedUser.password)
+            Else
+                txtCurrentPassword.Text = ""
+            End If
+            
             txtNewPassword.Text = ""
         Catch ex As Exception
             MessageBox.Show("Error loading user data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    Private Sub LoadDBConfigData()
+        modDB.LoadDatabaseConfig()
+        txtServerIP.Text = modDB.db_server
+        txtDBName.Text = modDB.db_name
+        txtDBUser.Text = modDB.db_uid
+        txtDBPass.Text = modDB.db_pwd
+    End Sub
+
+    ' VIEW SWITCHING LOGIC
+    Private Sub btnViewAdmin_Click(sender As Object, e As EventArgs) Handles btnViewAdmin.Click
+        SwitchView("Admin")
+    End Sub
+
+    Private Sub btnViewDB_Click(sender As Object, e As EventArgs) Handles btnViewDB.Click
+        SwitchView("DB")
+    End Sub
+
+    Private Sub SwitchView(view As String)
+        If view = "Admin" Then
+            pnlAdminInfo.Visible = True
+            pnlDBConfig.Visible = False
+            
+            ' Active Style
+            btnViewAdmin.BackColor = Color.White
+            btnViewAdmin.ForeColor = Color.FromArgb(41, 128, 185)
+            
+            ' Inactive Style
+            btnViewDB.BackColor = Color.Transparent
+            btnViewDB.ForeColor = Color.White
+        Else
+            pnlAdminInfo.Visible = False
+            pnlDBConfig.Visible = True
+            
+            ' Active Style
+            btnViewDB.BackColor = Color.White
+            btnViewDB.ForeColor = Color.FromArgb(41, 128, 185)
+            
+            ' Inactive Style
+            btnViewAdmin.BackColor = Color.Transparent
+            btnViewAdmin.ForeColor = Color.White
+        End If
     End Sub
 
     Private Sub chkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
@@ -25,6 +86,31 @@ Public Class Setting
     End Sub
 
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
+        If pnlAdminInfo.Visible Then
+            SaveAdminInfo()
+        ElseIf pnlDBConfig.Visible Then
+            SaveDBConfig()
+        End If
+    End Sub
+
+    Private Sub SaveDBConfig()
+        Try
+            If String.IsNullOrWhiteSpace(txtServerIP.Text) OrElse String.IsNullOrWhiteSpace(txtDBName.Text) Then
+                MessageBox.Show("Server IP and Database Name are required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            modDB.SaveDatabaseConfig(txtServerIP.Text.Trim(), txtDBName.Text.Trim(), txtDBUser.Text.Trim(), txtDBPass.Text.Trim())
+
+            MessageBox.Show($"✔ These settings are stored in:{vbCrLf}db_config.ini which is in Bin/Debug folder.{vbCrLf}{vbCrLf}Configuration updated successfully!", 
+                            "Database Configuration", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        Catch ex As Exception
+             MessageBox.Show("Error saving DB config: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    Private Sub SaveAdminInfo()
         ' Validate inputs
         If String.IsNullOrWhiteSpace(txtUsername.Text) Then
             MessageBox.Show("Username cannot be empty.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)

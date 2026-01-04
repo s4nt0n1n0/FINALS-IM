@@ -9,6 +9,8 @@ Public Class Payroll
     Private allPayrollData As DataTable
     Private searchText As String = ""
 
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
     Private Sub Payroll_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Hide the Add New Payroll Record button
         If Me.Controls.Contains(AddNewPayrollRecordbtn) Then
@@ -17,6 +19,9 @@ Public Class Payroll
 
         ' Make DataGridView responsive
         ConfigureResponsiveGrid()
+
+        InitializeSearchBox()
+        isInitializing = False
 
         LoadEmployees()
     End Sub
@@ -536,8 +541,41 @@ Public Class Payroll
     End Sub
 
     ' Search functionality
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        searchText = txtSearch.Text.Trim()
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch As String = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search payroll..." Then currentSearch = ""
+
+        ' Only reload if search term actually changed
+        If currentSearch = _lastSearchText Then Return
+        _lastSearchText = currentSearch
+
+        searchText = currentSearch
         ApplySearchFilter()
+    End Sub
+
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search payroll..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42) ' Dark slate color
+        End If
+        txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search payroll..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184) ' Slate-400
+        End If
+        txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
+    End Sub
+
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search payroll..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
     End Sub
 End Class

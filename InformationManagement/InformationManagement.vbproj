@@ -106,6 +106,7 @@
       <HintPath>
         ..\packages\System.Diagnostics.DiagnosticSource.8.0.1\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
@@ -208,6 +209,12 @@
       <DependentUpon>AddNewBatch.vb</DependentUpon>
     </Compile>
     <Compile Include="Admin\AddNewBatch.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Admin\AdminInfo.Designer.vb">
+      <DependentUpon>AdminInfo.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\AdminInfo.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Admin\BatchFormModel.vb" />
@@ -548,8 +555,14 @@
     <Compile Include="RoundePanel2.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="searchTextBox.vb">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Admin\ActivityLogsForm.resx">
+      <DependentUpon>ActivityLogsForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Admin\AddEmployee.resx">
       <DependentUpon>AddEmployee.vb</DependentUpon>
     </EmbeddedResource>
@@ -664,6 +677,9 @@
     <EmbeddedResource Include="Admin\Reservations.resx">
       <DependentUpon>Reservations.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Admin\Setting.resx">
+      <DependentUpon>Setting.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Admin\UsersAccounts.resx">
       <DependentUpon>UsersAccounts.vb</DependentUpon>
     </EmbeddedResource>
@@ -686,6 +702,7 @@
   <ItemGroup>
     <None Include="Admin\generate_reservations.py" />
     <None Include="Admin\generate_reservations_fixed.py" />
+    <None Include="bin\Debug\db_config.ini" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>

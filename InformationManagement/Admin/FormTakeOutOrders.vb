@@ -410,30 +410,25 @@ Public Class FormTakeOutOrders
     ' =============================
     Private Sub FormatGrid()
         With DataGridView1
-            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .RowHeadersVisible = False
-            .ReadOnly = True
-            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            .MultiSelect = False
-            .BackgroundColor = Color.White
-            .BorderStyle = BorderStyle.None
-            .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-            .GridColor = Color.FromArgb(241, 245, 249)
-            .RowTemplate.Height = 50
-            .ColumnHeadersHeight = 50
-            .EnableHeadersVisualStyles = False
-
-            ' Header Styling
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-            .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
-            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10)
-            .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White
-
-            ' Cell Styling
-            .DefaultCellStyle.Font = New Font("Segoe UI", 10)
-            .DefaultCellStyle.ForeColor = Color.FromArgb(30, 41, 59)
-            .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-            .DefaultCellStyle.SelectionForeColor = Color.FromArgb(99, 102, 241)
+            .AutoGenerateColumns = False
+                .AllowUserToAddRows = False
+                .AllowUserToDeleteRows = False
+                .ReadOnly = True
+                .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                .RowHeadersVisible = False
+                .BackgroundColor = Color.White
+                .BorderStyle = BorderStyle.None
+                .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
+                .GridColor = Color.FromArgb(241, 245, 249)
+                .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
+                .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+                .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.White
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
+                .ColumnHeadersHeight = 50
+                .RowTemplate.Height = 50
+                .EnableHeadersVisualStyles = False
 
             If .Columns.Contains("OrderID") Then .Columns("OrderID").Visible = False
 

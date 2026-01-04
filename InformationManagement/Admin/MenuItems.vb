@@ -11,11 +11,14 @@ Public Class MenuItems
 
     ' Track if buttons already added
     Dim ButtonsAdded As Boolean = False
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
 
     Private Sub MenuItems_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadCategories()
         LoadMenuItems()
         InitializeSearchBox()
+        isInitializing = False
     End Sub
 
     ' =======================================================
@@ -41,8 +44,8 @@ Public Class MenuItems
     ' INITIALIZE SEARCH BOX
     ' =======================================================
     Private Sub InitializeSearchBox()
-        txtSearch.ForeColor = Color.Gray
-        txtSearch.Text = "Search menu items..."
+        TextBoxSearch.Text = "Search menu items..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
     End Sub
 
     ' =======================================================
@@ -167,13 +170,36 @@ Public Class MenuItems
                 imgCol.DisplayIndex = 0
             End If
 
-            ' Hide ImagePath column (used internally for fullscreen view)
             If DataGridMenu.Columns.Contains("ImagePath") Then
                 DataGridMenu.Columns("ImagePath").Visible = False
             End If
 
             ' Format other columns
             FormatColumns()
+
+            ' Column Header Styling
+            With DataGridMenu
+                .EnableHeadersVisualStyles = False
+                .RowHeadersVisible = False ' Hide the row selector column
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing ' Prevent auto-sizing overriding height
+                .ColumnHeadersHeight = 45
+                .BorderStyle = BorderStyle.None
+                
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                
+                ' Default Cell Style
+                .DefaultCellStyle.BackColor = SystemColors.Window
+                .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+                .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+                .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            End With
 
 
 
@@ -457,7 +483,7 @@ Public Class MenuItems
 
                 If editForm.ShowDialog() = DialogResult.OK Then
                     ' Refresh the data after successful edit
-                    LoadMenuItems(txtSearch.Text, Category.Text)
+                    LoadMenuItems(TextBoxSearch.Text, Category.Text)
                     MessageBox.Show("Product updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
 
@@ -658,7 +684,7 @@ Public Class MenuItems
                               "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                 ' Refresh the data grid
-                LoadMenuItems(txtSearch.Text, Category.Text)
+                LoadMenuItems(TextBoxSearch.Text, Category.Text)
             End If
 
         Catch ex As Exception
@@ -675,23 +701,32 @@ Public Class MenuItems
     ' =======================================================
     ' SEARCH FUNCTIONALITY
     ' =======================================================
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        If txtSearch.ForeColor = Color.Black Then
-            LoadMenuItems(txtSearch.Text, Category.Text)
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search menu items..." Then currentSearch = ""
+
+        ' Only refresh if the actual search criteria changed
+        If currentSearch = _lastSearchText Then Return
+
+        _lastSearchText = currentSearch
+        LoadMenuItems(currentSearch, Category.Text)
+    End Sub
+
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search menu items..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
+            txtSearch.BorderColor = Color.FromArgb(99, 102, 241)
         End If
     End Sub
 
-    Private Sub txtSearch_Enter(sender As Object, e As EventArgs) Handles txtSearch.Enter
-        If txtSearch.Text = "Search menu items..." Then
-            txtSearch.Text = ""
-            txtSearch.ForeColor = Color.Black
-        End If
-    End Sub
-
-    Private Sub txtSearch_Leave(sender As Object, e As EventArgs) Handles txtSearch.Leave
-        If String.IsNullOrWhiteSpace(txtSearch.Text) Then
-            txtSearch.Text = "Search menu items..."
-            txtSearch.ForeColor = Color.Gray
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search menu items..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+            txtSearch.BorderColor = Color.FromArgb(226, 232, 240)
         End If
     End Sub
 
@@ -699,7 +734,7 @@ Public Class MenuItems
     ' CATEGORY FILTER
     ' =======================================================
     Private Sub Category_SelectedIndexChanged(sender As Object, e As EventArgs) Handles Category.SelectedIndexChanged
-        LoadMenuItems(txtSearch.Text, Category.Text)
+        LoadMenuItems(TextBoxSearch.Text, Category.Text)
     End Sub
 
     ' =======================================================
@@ -709,14 +744,14 @@ Public Class MenuItems
         With FormAddNewmenuItem
             .StartPosition = FormStartPosition.CenterScreen
             If .ShowDialog() = DialogResult.OK Then
-                LoadMenuItems(txtSearch.Text, Category.Text)
+                LoadMenuItems(TextBoxSearch.Text, Category.Text)
             End If
         End With
     End Sub
 
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
-        txtSearch.Text = "Search menu items..."
-        txtSearch.ForeColor = Color.Gray
+        TextBoxSearch.Text = "Search menu items..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
         Category.SelectedIndex = 0
         LoadMenuItems()
         MessageBox.Show("✓ Data refreshed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -759,7 +794,7 @@ Public Class MenuItems
 
             ' Force full refresh
             DataGridMenu.DataSource = Nothing
-            LoadMenuItems(txtSearch.Text, Category.Text)
+            LoadMenuItems(TextBoxSearch.Text, Category.Text)
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -878,7 +913,7 @@ Public Class MenuItems
         editForm.LoadProductData(id)
 
         If editForm.ShowDialog() = DialogResult.OK Then
-            LoadMenuItems(txtSearch.Text, Category.Text)
+            LoadMenuItems(TextBoxSearch.Text, Category.Text)
         End If
 
     End Sub
@@ -911,7 +946,7 @@ Public Class MenuItems
                 conn.Close()
 
                 MessageBox.Show("Deleted successfully!")
-                LoadMenuItems(txtSearch.Text, Category.Text)
+                LoadMenuItems(TextBoxSearch.Text, Category.Text)
 
             Catch ex As Exception
                 MessageBox.Show("Error deleting: " & ex.Message)
@@ -919,5 +954,6 @@ Public Class MenuItems
         End If
 
     End Sub
+
 
 End Class
