@@ -15,6 +15,7 @@ Public Class ReservationCalendar
         Public Property NumberOfGuests As Integer
         Public Property ContactNumber As String
         Public Property SpecialRequests As String
+        Public Property ReservationStatus As String
     End Class
 
     Private Sub ReservationCalendar_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -24,7 +25,7 @@ Public Class ReservationCalendar
     End Sub
 
     ' ==========================================
-    ' LOAD CONFIRMED RESERVATIONS
+    ' LOAD CONFIRMED AND COMPLETED RESERVATIONS
     ' ==========================================
     Private Sub LoadReservations()
         Try
@@ -43,10 +44,11 @@ Public Class ReservationCalendar
                     r.EventTime,
                     r.NumberOfGuests,
                     COALESCE(r.ContactNumber, c.ContactNumber) AS ContactNumber,
-                    r.SpecialRequests
+                    r.SpecialRequests,
+                    r.ReservationStatus
                  FROM reservations r
                  LEFT JOIN customers c ON r.CustomerID = c.CustomerID
-                 WHERE r.ReservationStatus = 'Confirmed'
+                 WHERE r.ReservationStatus IN ('Confirmed', 'Completed')
                  AND r.EventDate >= @startDate
                  AND r.EventDate <= @endDate
                  ORDER BY r.EventDate, r.EventTime"
@@ -66,7 +68,8 @@ Public Class ReservationCalendar
                             .EventTime = reader("EventTime").ToString(),
                             .NumberOfGuests = Convert.ToInt32(reader("NumberOfGuests")),
                             .ContactNumber = If(IsDBNull(reader("ContactNumber")), "N/A", reader("ContactNumber").ToString()),
-                            .SpecialRequests = If(IsDBNull(reader("SpecialRequests")), "None", reader("SpecialRequests").ToString())
+                            .SpecialRequests = If(IsDBNull(reader("SpecialRequests")), "None", reader("SpecialRequests").ToString()),
+                            .ReservationStatus = reader("ReservationStatus").ToString()
                         }
                         reservationData.Add(resInfo)
                     End While
@@ -151,22 +154,64 @@ Public Class ReservationCalendar
                 Dim dayReservations = reservationData.Where(Function(r) r.EventDate.Date = currentDate.Date).ToList()
 
                 If dayReservations.Count > 0 Then
+                    ' Check if there are any confirmed reservations (clickable)
+                    Dim confirmedCount = dayReservations.Where(Function(r) r.ReservationStatus = "Confirmed").Count()
+                    Dim completedCount = dayReservations.Where(Function(r) r.ReservationStatus = "Completed").Count()
+
+                    ' Set background color based on reservation status
+                    If confirmedCount > 0 Then
+                        ' Light green background for dates with confirmed reservations
+                        If isPastDate Then
+                            dayPanel.BackColor = Color.FromArgb(220, 237, 220) ' Muted green for past confirmed
+                        Else
+                            dayPanel.BackColor = Color.FromArgb(232, 245, 233) ' Light green for future confirmed
+                        End If
+                    ElseIf completedCount > 0 Then
+                        ' Light gray for completed only
+                        dayPanel.BackColor = Color.FromArgb(245, 245, 245)
+                    End If
+
                     ' Reservation count indicator (center of cell)
                     Dim lblIndicator As New Label()
-                    lblIndicator.Text = $"📅 {dayReservations.Count}" & vbCrLf & "Reservation" & If(dayReservations.Count > 1, "s", "")
+                    Dim statusText As String = ""
+                    
+                    If confirmedCount > 0 And completedCount > 0 Then
+                        statusText = $"📅 {confirmedCount} Confirmed" & vbCrLf & $"✓ {completedCount} Completed"
+                    ElseIf confirmedCount > 0 Then
+                        statusText = $"📅 {confirmedCount}" & vbCrLf & "Reservation" & If(confirmedCount > 1, "s", "")
+                    Else
+                        statusText = $"✓ {completedCount}" & vbCrLf & "Completed"
+                    End If
+                    
+                    lblIndicator.Text = statusText
                     lblIndicator.Location = New Point(10, 35)
                     lblIndicator.Size = New Size(cellWidth - 20, 50)
                     lblIndicator.TextAlign = ContentAlignment.MiddleCenter
                     lblIndicator.Font = New Font("Segoe UI", 9, FontStyle.Bold)
-                    lblIndicator.ForeColor = If(isPastDate, Color.Gray, Color.FromArgb(40, 167, 69))
+                    
+                    ' Color based on status: Green for confirmed, Gray for completed only
+                    If isPastDate Then
+                        lblIndicator.ForeColor = Color.Gray
+                    ElseIf confirmedCount > 0 Then
+                        lblIndicator.ForeColor = Color.FromArgb(40, 167, 69) ' Green for confirmed
+                    Else
+                        lblIndicator.ForeColor = Color.FromArgb(108, 117, 125) ' Gray for completed only
+                    End If
+                    
                     lblIndicator.BackColor = Color.Transparent
                     dayPanel.Controls.Add(lblIndicator)
 
-                    ' Only make clickable if not past date
-                    If Not isPastDate Then
+                    ' Make clickable if has confirmed reservations (regardless of date)
+                    ' Only completed reservations are view-only (non-clickable)
+                    If confirmedCount > 0 Then
+                        ' Has confirmed reservations - always clickable even if past date
                         AddHandler dayPanel.Click, Sub() ShowDayReservations(currentDate)
                         AddHandler lblDay.Click, Sub() ShowDayReservations(currentDate)
                         AddHandler lblIndicator.Click, Sub() ShowDayReservations(currentDate)
+                        dayPanel.Cursor = Cursors.Hand
+                    ElseIf completedCount > 0 Then
+                        ' Has only completed reservations - view-only (non-clickable)
+                        dayPanel.Cursor = Cursors.No
                     End If
                 Else
                     ' No reservations message
@@ -209,11 +254,23 @@ Public Class ReservationCalendar
             ' Create popup form
             Dim popupForm As New Form()
             popupForm.Text = $"Reservations for {selectedDate:MMMM dd, yyyy}"
-            popupForm.Size = New Size(700, 500)
+            popupForm.Size = New Size(800, 550)
             popupForm.StartPosition = FormStartPosition.CenterParent
-            popupForm.FormBorderStyle = FormBorderStyle.FixedDialog
+            popupForm.FormBorderStyle = FormBorderStyle.None ' Remove title bar
             popupForm.MaximizeBox = False
             popupForm.MinimizeBox = False
+
+            ' Add paint handler for border
+            AddHandler popupForm.Paint, Sub(sender As Object, e As PaintEventArgs)
+                                            Dim borderColor As Color = Color.LightGray
+                                            Dim borderThickness As Integer = 1
+                                            Dim rect As Rectangle = popupForm.ClientRectangle
+                                            rect.Width -= borderThickness
+                                            rect.Height -= borderThickness
+                                            Using pen As New Pen(borderColor, borderThickness)
+                                                e.Graphics.DrawRectangle(pen, rect)
+                                            End Using
+                                        End Sub
 
             ' Header panel
             Dim headerPanel As New Panel()
@@ -221,47 +278,87 @@ Public Class ReservationCalendar
             headerPanel.Height = 60
             headerPanel.BackColor = Color.FromArgb(52, 73, 94)
 
+            ' Count confirmed and completed
+            Dim confirmedCount = dayReservations.Where(Function(r) r.ReservationStatus = "Confirmed").Count()
+            Dim completedCount = dayReservations.Where(Function(r) r.ReservationStatus = "Completed").Count()
+            
             Dim lblHeader As New Label()
-            lblHeader.Text = $"📅 {selectedDate:dddd, MMMM dd, yyyy}" & vbCrLf & $"{dayReservations.Count} Confirmed Reservation" & If(dayReservations.Count > 1, "s", "")
+            Dim headerText As String = $"📅 {selectedDate:dddd, MMMM dd, yyyy}" & vbCrLf
+            If confirmedCount > 0 And completedCount > 0 Then
+                headerText &= $"{confirmedCount} Confirmed, {completedCount} Completed"
+            ElseIf confirmedCount > 0 Then
+                headerText &= $"{confirmedCount} Confirmed Reservation" & If(confirmedCount > 1, "s", "")
+            Else
+                headerText &= $"{completedCount} Completed Reservation" & If(completedCount > 1, "s", "")
+            End If
+            lblHeader.Text = headerText
             lblHeader.Dock = DockStyle.Fill
             lblHeader.Font = New Font("Segoe UI", 12, FontStyle.Bold)
             lblHeader.ForeColor = Color.White
             lblHeader.TextAlign = ContentAlignment.MiddleCenter
             headerPanel.Controls.Add(lblHeader)
 
-            ' Scrollable panel for reservations list
-            Dim scrollPanel As New Panel()
-            scrollPanel.Dock = DockStyle.Fill
-            scrollPanel.AutoScroll = True
-            scrollPanel.Padding = New Padding(10)
-            scrollPanel.BackColor = Color.White
-
-            Dim yPos As Integer = 10
+            ' Scrollable panel replaced with FlowLayoutPanel for auto-fit grid
+            Dim flowPanel As New FlowLayoutPanel()
+            flowPanel.Dock = DockStyle.Fill
+            flowPanel.AutoScroll = True
+            ' Add enough top padding to clear the Header (60px) + Extra spacing
+            ' Add bottom padding to clear the Footer (60px)
+            flowPanel.Padding = New Padding(20, 80, 20, 80)
+            flowPanel.BackColor = Color.White
+            flowPanel.WrapContents = True
+            flowPanel.FlowDirection = FlowDirection.LeftToRight
 
             For Each res In dayReservations
-                ' Reservation card panel
+                ' Determine if this reservation is completed
+                Dim isCompleted As Boolean = (res.ReservationStatus = "Completed")
+                
+                ' Reservation card panel - SQUARE STYLE
                 Dim cardPanel As New Panel()
-                cardPanel.Location = New Point(10, yPos)
-                cardPanel.Size = New Size(640, 110)
+                cardPanel.Size = New Size(250, 250) ' Square size
+                cardPanel.Margin = New Padding(10)
                 cardPanel.BorderStyle = BorderStyle.FixedSingle
-                cardPanel.BackColor = Color.FromArgb(240, 248, 255)
+                cardPanel.BackColor = If(isCompleted, Color.FromArgb(245, 245, 245), Color.FromArgb(240, 248, 255))
                 cardPanel.Padding = New Padding(10)
 
-                ' Time label (large and prominent)
+                ' Time label (large and prominent) - Convert to 12-hour format
                 Dim lblTime As New Label()
-                lblTime.Text = res.EventTime.ToString()
+                Dim timeDisplay As String = res.EventTime.ToString()
+                Try
+                    ' Try to parse and format to 12-hour
+                    Dim timeParsed As DateTime
+                    If DateTime.TryParse(res.EventTime, timeParsed) Then
+                        timeDisplay = timeParsed.ToString("h:mm tt")
+                    End If
+                Catch
+                    ' If parsing fails, use original
+                End Try
+                lblTime.Text = timeDisplay
                 lblTime.Location = New Point(10, 10)
-                lblTime.Size = New Size(80, 30)
+                lblTime.Size = New Size(100, 30)
                 lblTime.Font = New Font("Segoe UI", 14, FontStyle.Bold)
-                lblTime.ForeColor = Color.FromArgb(52, 152, 219)
+                lblTime.ForeColor = If(isCompleted, Color.FromArgb(108, 117, 125), Color.FromArgb(52, 152, 219))
                 cardPanel.Controls.Add(lblTime)
+                
+                ' Status badge
+                If isCompleted Then
+                    Dim lblStatus As New Label()
+                    lblStatus.Text = "✓ COMPLETED"
+                    lblStatus.Location = New Point(120, 10)
+                    lblStatus.Size = New Size(100, 20)
+                    lblStatus.Font = New Font("Segoe UI", 8, FontStyle.Bold)
+                    lblStatus.ForeColor = Color.White
+                    lblStatus.BackColor = Color.FromArgb(108, 117, 125)
+                    lblStatus.TextAlign = ContentAlignment.MiddleCenter
+                    cardPanel.Controls.Add(lblStatus)
+                End If
 
                 ' Reservation details
                 Dim lblDetails As New Label()
                 lblDetails.Text = $"Customer: {res.CustomerName}" & vbCrLf &
                             $"Event: {res.EventType}" & vbCrLf &
                             $"Guests: {res.NumberOfGuests}   |   Contact: {res.ContactNumber}"
-                lblDetails.Location = New Point(100, 10)
+                lblDetails.Location = New Point(If(isCompleted, 100, 120), If(isCompleted, 10, 35))
                 lblDetails.Size = New Size(520, 60)
                 lblDetails.Font = New Font("Segoe UI", 9)
                 lblDetails.ForeColor = Color.FromArgb(52, 73, 94)
@@ -278,33 +375,39 @@ Public Class ReservationCalendar
                     cardPanel.Controls.Add(lblSpecial)
                 End If
 
-                ' View details button
-                Dim btnViewDetails As New Button()
-                btnViewDetails.Text = "View Details"
-                btnViewDetails.Location = New Point(10, 75)
-                btnViewDetails.Size = New Size(80, 25)
-                btnViewDetails.BackColor = Color.FromArgb(52, 152, 219)
-                btnViewDetails.ForeColor = Color.White
-                btnViewDetails.FlatStyle = FlatStyle.Flat
-                btnViewDetails.FlatAppearance.BorderSize = 0
-                btnViewDetails.Font = New Font("Segoe UI", 8)
-                btnViewDetails.Cursor = Cursors.Hand
+                ' View details button (only for confirmed reservations)
+                If Not isCompleted Then
+                    Dim btnViewDetails As New Button()
+                    btnViewDetails.Text = "View Details"
+                    btnViewDetails.Location = New Point(10, 75)
+                    btnViewDetails.Size = New Size(80, 25)
+                    btnViewDetails.BackColor = Color.FromArgb(52, 152, 219)
+                    btnViewDetails.ForeColor = Color.White
+                    btnViewDetails.FlatStyle = FlatStyle.Flat
+                    btnViewDetails.FlatAppearance.BorderSize = 0
+                    btnViewDetails.Font = New Font("Segoe UI", 8)
+                    btnViewDetails.Cursor = Cursors.Hand
 
-                Dim resId As Integer = res.ReservationID
-                AddHandler btnViewDetails.Click, Sub()
-                                                     ShowReservationDetails(resId)
-                                                 End Sub
-                cardPanel.Controls.Add(btnViewDetails)
+                    Dim resId As Integer = res.ReservationID
+                    AddHandler btnViewDetails.Click, Sub()
+                                                         ShowReservationDetails(resId)
+                                                     End Sub
+                    cardPanel.Controls.Add(btnViewDetails)
+                End If
 
-                scrollPanel.Controls.Add(cardPanel)
-                yPos += 120
+                flowPanel.Controls.Add(cardPanel)
             Next
 
-            ' Close button at bottom
+            ' Close button panel (Footer) for margin/spacing
+            Dim footerPanel As New Panel()
+            footerPanel.Dock = DockStyle.Bottom
+            footerPanel.Height = 60
+            footerPanel.BackColor = Color.Transparent ' Or match form background
+            footerPanel.Padding = New Padding(10)
+
             Dim btnClose As New Button()
             btnClose.Text = "Close"
-            btnClose.Dock = DockStyle.Bottom
-            btnClose.Height = 40
+            btnClose.Dock = DockStyle.Fill
             btnClose.BackColor = Color.FromArgb(108, 117, 125)
             btnClose.ForeColor = Color.White
             btnClose.FlatStyle = FlatStyle.Flat
@@ -313,10 +416,18 @@ Public Class ReservationCalendar
             btnClose.Cursor = Cursors.Hand
             AddHandler btnClose.Click, Sub() popupForm.Close()
 
-            ' Add controls to form
-            popupForm.Controls.Add(scrollPanel)
-            popupForm.Controls.Add(headerPanel)
-            popupForm.Controls.Add(btnClose)
+            footerPanel.Controls.Add(btnClose)
+
+            ' Add controls to form (explicit Z-order: Edge first, Fill last)
+            popupForm.Controls.Add(footerPanel) ' Dock Bottom
+            popupForm.Controls.Add(headerPanel) ' Dock Top
+            popupForm.Controls.Add(flowPanel)   ' Dock Fill
+            
+            ' Explicitly set Z-Order
+            footerPanel.BringToFront()
+            headerPanel.BringToFront()
+            flowPanel.SendToBack()
+
 
             ' Show popup
             popupForm.ShowDialog()
@@ -336,19 +447,32 @@ Public Class ReservationCalendar
             Dim res = reservationData.FirstOrDefault(Function(r) r.ReservationID = reservationID)
 
             If res IsNot Nothing Then
+                ' Format time to 12-hour
+                Dim timeDisplay As String = res.EventTime.ToString()
+                Try
+                    Dim timeParsed As DateTime
+                    If DateTime.TryParse(res.EventTime, timeParsed) Then
+                        timeDisplay = timeParsed.ToString("h:mm tt")
+                    End If
+                Catch
+                    ' If parsing fails, use original
+                End Try
+                
+                ' Dynamic status display
+                Dim statusText As String = If(res.ReservationStatus = "Completed", "COMPLETED ✓", "CONFIRMED ✓")
+                
                 Dim details As String =
                 $"═══════════════════════════════════════" & vbCrLf &
                 $"         RESERVATION DETAILS" & vbCrLf &
                 $"═══════════════════════════════════════" & vbCrLf & vbCrLf &
-                $"Reservation ID: #{res.ReservationID}" & vbCrLf &
-                $"Status: CONFIRMED ✓" & vbCrLf & vbCrLf &
+                $"Status: {statusText}" & vbCrLf & vbCrLf &
                 $"Customer Information:" & vbCrLf &
                 $"  • Name: {res.CustomerName}" & vbCrLf &
                 $"  • Contact: {res.ContactNumber}" & vbCrLf & vbCrLf &
                 $"Event Details:" & vbCrLf &
                 $"  • Type: {res.EventType}" & vbCrLf &
                 $"  • Date: {res.EventDate:MMMM dd, yyyy (dddd)}" & vbCrLf &
-                $"  • Time: {res.EventTime}" & vbCrLf &
+                $"  • Time: {timeDisplay}" & vbCrLf &
                 $"  • Number of Guests: {res.NumberOfGuests}" & vbCrLf & vbCrLf &
                 $"Special Requests:" & vbCrLf &
                 $"  {If(res.SpecialRequests = "None", "No special requests", res.SpecialRequests)}" & vbCrLf & vbCrLf &
@@ -365,11 +489,31 @@ Public Class ReservationCalendar
     ' ADD RESIZE EVENT HANDLER
     ' ============================================================
 
-    Private Sub ReservationCalendar_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
+    Private Sub OrderCalendar_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
         ' Redraw calendar when form is resized
         If reservationData IsNot Nothing Then
             DisplayCalendar()
         End If
+    End Sub
+
+    ' Close button
+    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
+        Me.Close()
+    End Sub
+
+    ' Paint light gray border
+    Private Sub ReservationCalendar_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+        Dim borderColor As Color = Color.LightGray
+        Dim borderThickness As Integer = 1
+        Dim rect As Rectangle = Me.ClientRectangle
+
+        ' Adjust rectangle for border thickness
+        rect.Width -= borderThickness
+        rect.Height -= borderThickness
+
+        Using pen As New Pen(borderColor, borderThickness)
+            e.Graphics.DrawRectangle(pen, rect)
+        End Using
     End Sub
 
     ' ==========================================

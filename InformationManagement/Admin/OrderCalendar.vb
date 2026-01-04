@@ -19,6 +19,7 @@ Public Class OrderCalendar
         Public Property SpecialRequests As String
         Public Property DeliveryAddress As String
         Public Property DeliveryOption As String
+        Public Property OrderStatus As String
     End Class
 
     Private Sub OrderCalendar_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -28,7 +29,7 @@ Public Class OrderCalendar
     End Sub
 
     ' ==========================================
-    ' LOAD CONFIRMED ORDERS
+    ' LOAD CONFIRMED AND COMPLETED ORDERS
     ' ==========================================
     Private Sub LoadOrders()
         Try
@@ -51,6 +52,7 @@ Public Class OrderCalendar
                     COALESCE(o.SpecialRequests, '') AS SpecialRequests,
                     COALESCE(o.DeliveryAddress, '') AS DeliveryAddress,
                     COALESCE(o.DeliveryOption, '') AS DeliveryOption,
+                    o.OrderStatus,
                     COALESCE(
                         (SELECT GROUP_CONCAT(
                             CONCAT(ProductName, ' (', Quantity, ')') 
@@ -64,7 +66,7 @@ Public Class OrderCalendar
                     ) AS OrderedProducts
                  FROM orders o
                  LEFT JOIN customers c ON o.CustomerID = c.CustomerID
-                 WHERE o.OrderStatus = 'Confirmed'
+                 WHERE o.OrderStatus IN ('Confirmed', 'Completed')
                  AND o.OrderDate >= @startDate
                  AND o.OrderDate <= @endDate
                  ORDER BY o.OrderDate, o.OrderTime"
@@ -88,7 +90,8 @@ Public Class OrderCalendar
                             .ContactNumber = If(IsDBNull(reader("ContactNumber")), "N/A", reader("ContactNumber").ToString()),
                             .SpecialRequests = If(IsDBNull(reader("SpecialRequests")) OrElse String.IsNullOrWhiteSpace(reader("SpecialRequests").ToString()), "None", reader("SpecialRequests").ToString()),
                             .DeliveryAddress = If(IsDBNull(reader("DeliveryAddress")), "N/A", reader("DeliveryAddress").ToString()),
-                            .DeliveryOption = If(IsDBNull(reader("DeliveryOption")), "N/A", reader("DeliveryOption").ToString())
+                            .DeliveryOption = If(IsDBNull(reader("DeliveryOption")), "N/A", reader("DeliveryOption").ToString()),
+                            .OrderStatus = reader("OrderStatus").ToString()
                         }
                         orderData.Add(orderInfo)
                     End While
@@ -173,22 +176,64 @@ Public Class OrderCalendar
                 Dim dayOrders = orderData.Where(Function(o) o.OrderDate.Date = currentDate.Date).ToList()
 
                 If dayOrders.Count > 0 Then
+                    ' Check if there are any confirmed orders (clickable)
+                    Dim confirmedCount = dayOrders.Where(Function(o) o.OrderStatus = "Confirmed").Count()
+                    Dim completedCount = dayOrders.Where(Function(o) o.OrderStatus = "Completed").Count()
+
+                    ' Set background color based on order status
+                    If confirmedCount > 0 Then
+                        ' Light green background for dates with confirmed orders
+                        If isPastDate Then
+                            dayPanel.BackColor = Color.FromArgb(220, 237, 220) ' Muted green for past confirmed
+                        Else
+                            dayPanel.BackColor = Color.FromArgb(232, 245, 233) ' Light green for future confirmed
+                        End If
+                    ElseIf completedCount > 0 Then
+                        ' Light gray for completed only
+                        dayPanel.BackColor = Color.FromArgb(245, 245, 245)
+                    End If
+
                     ' Order count indicator (center of cell)
                     Dim lblIndicator As New Label()
-                    lblIndicator.Text = $"🛒 {dayOrders.Count}" & vbCrLf & "Order" & If(dayOrders.Count > 1, "s", "")
+                    Dim statusText As String = ""
+                    
+                    If confirmedCount > 0 And completedCount > 0 Then
+                        statusText = $"🛒 {confirmedCount} Confirmed" & vbCrLf & $"✓ {completedCount} Completed"
+                    ElseIf confirmedCount > 0 Then
+                        statusText = $"🛒 {confirmedCount}" & vbCrLf & "Order" & If(confirmedCount > 1, "s", "")
+                    Else
+                        statusText = $"✓ {completedCount}" & vbCrLf & "Completed"
+                    End If
+                    
+                    lblIndicator.Text = statusText
                     lblIndicator.Location = New Point(10, 35)
                     lblIndicator.Size = New Size(cellWidth - 20, 50)
                     lblIndicator.TextAlign = ContentAlignment.MiddleCenter
                     lblIndicator.Font = New Font("Segoe UI", 9, FontStyle.Bold)
-                    lblIndicator.ForeColor = If(isPastDate, Color.Gray, Color.FromArgb(0, 123, 255))
+                    
+                    ' Color based on status: Blue for confirmed, Gray for completed only
+                    If isPastDate AndAlso confirmedCount = 0 Then
+                        lblIndicator.ForeColor = Color.Gray
+                    ElseIf confirmedCount > 0 Then
+                        lblIndicator.ForeColor = Color.FromArgb(0, 123, 255) ' Blue for confirmed
+                    Else
+                        lblIndicator.ForeColor = Color.FromArgb(108, 117, 125) ' Gray for completed only
+                    End If
+                    
                     lblIndicator.BackColor = Color.Transparent
                     dayPanel.Controls.Add(lblIndicator)
 
-                    ' Only make clickable if not past date
-                    If Not isPastDate Then
+                    ' Make clickable if has confirmed orders (regardless of date)
+                    ' Only completed orders are view-only (non-clickable)
+                    If confirmedCount > 0 Then
+                        ' Has confirmed orders - always clickable even if past date
                         AddHandler dayPanel.Click, Sub() ShowDayOrders(currentDate)
                         AddHandler lblDay.Click, Sub() ShowDayOrders(currentDate)
                         AddHandler lblIndicator.Click, Sub() ShowDayOrders(currentDate)
+                        dayPanel.Cursor = Cursors.Hand
+                    ElseIf completedCount > 0 Then
+                        ' Has only completed orders - view-only (non-clickable)
+                        dayPanel.Cursor = Cursors.No
                     End If
                 Else
                     ' No orders message
@@ -237,9 +282,21 @@ Public Class OrderCalendar
             popupForm.Text = $"Orders for {selectedDate:MMMM dd, yyyy}"
             popupForm.Size = New Size(800, 550)
             popupForm.StartPosition = FormStartPosition.CenterParent
-            popupForm.FormBorderStyle = FormBorderStyle.FixedDialog
+            popupForm.FormBorderStyle = FormBorderStyle.None ' Remove title bar
             popupForm.MaximizeBox = False
             popupForm.MinimizeBox = False
+
+            ' Add paint handler for border
+            AddHandler popupForm.Paint, Sub(sender As Object, e As PaintEventArgs)
+                                            Dim borderColor As Color = Color.LightGray
+                                            Dim borderThickness As Integer = 1
+                                            Dim rect As Rectangle = popupForm.ClientRectangle
+                                            rect.Width -= borderThickness
+                                            rect.Height -= borderThickness
+                                            Using pen As New Pen(borderColor, borderThickness)
+                                                e.Graphics.DrawRectangle(pen, rect)
+                                            End Using
+                                        End Sub
 
             ' Header panel
             Dim headerPanel As New Panel()
@@ -247,90 +304,141 @@ Public Class OrderCalendar
             headerPanel.Height = 60
             headerPanel.BackColor = Color.FromArgb(52, 73, 94)
 
+            ' Count confirmed and completed
+            Dim confirmedCount = dayOrders.Where(Function(o) o.OrderStatus = "Confirmed").Count()
+            Dim completedCount = dayOrders.Where(Function(o) o.OrderStatus = "Completed").Count()
+            
             Dim lblHeader As New Label()
-            lblHeader.Text = $"🛒 {selectedDate:dddd, MMMM dd, yyyy}" & vbCrLf & $"{dayOrders.Count} Confirmed Order" & If(dayOrders.Count > 1, "s", "")
+            Dim headerText As String = $"🛒 {selectedDate:dddd, MMMM dd, yyyy}" & vbCrLf
+            If confirmedCount > 0 And completedCount > 0 Then
+                headerText &= $"{confirmedCount} Confirmed, {completedCount} Completed"
+            ElseIf confirmedCount > 0 Then
+                headerText &= $"{confirmedCount} Confirmed Order" & If(confirmedCount > 1, "s", "")
+            Else
+                headerText &= $"{completedCount} Completed Order" & If(completedCount > 1, "s", "")
+            End If
+            lblHeader.Text = headerText
             lblHeader.Dock = DockStyle.Fill
             lblHeader.Font = New Font("Segoe UI", 12, FontStyle.Bold)
             lblHeader.ForeColor = Color.White
             lblHeader.TextAlign = ContentAlignment.MiddleCenter
             headerPanel.Controls.Add(lblHeader)
 
-            ' Scrollable panel for orders list
-            Dim scrollPanel As New Panel()
-            scrollPanel.Dock = DockStyle.Fill
-            scrollPanel.AutoScroll = True
-            scrollPanel.Padding = New Padding(10)
-            scrollPanel.BackColor = Color.White
-
+            ' Scrollable panel replaced with FlowLayoutPanel for auto-fit grid
+            Dim flowPanel As New FlowLayoutPanel()
+            flowPanel.Dock = DockStyle.Fill
+            flowPanel.AutoScroll = True
+            ' Add enough top padding to clear the Header (60px) + Extra spacing
+            ' Add bottom padding to clear the Footer (60px)
+            flowPanel.Padding = New Padding(20, 80, 20, 80) 
+            flowPanel.BackColor = Color.White
+            flowPanel.WrapContents = True
+            flowPanel.FlowDirection = FlowDirection.LeftToRight
+            
             Dim yPos As Integer = 10
 
             For Each ord In dayOrders
-                ' Order card panel
+                ' Determine if this order is completed
+                Dim isCompleted As Boolean = (ord.OrderStatus = "Completed")
+                
+                ' Order card panel - SQUARE STYLE
                 Dim cardPanel As New Panel()
-                cardPanel.Location = New Point(10, yPos)
-                cardPanel.Size = New Size(740, 120)
+                cardPanel.Size = New Size(250, 250) ' Square size
+                cardPanel.Margin = New Padding(10)
                 cardPanel.BorderStyle = BorderStyle.FixedSingle
-                cardPanel.BackColor = Color.FromArgb(240, 248, 255)
+                cardPanel.BackColor = If(isCompleted, Color.FromArgb(245, 245, 245), Color.FromArgb(240, 248, 255))
                 cardPanel.Padding = New Padding(10)
 
-                ' Order time (large and prominent)
+                ' Order time (large and prominent) - Convert to 12-hour format
                 Dim lblTime As New Label()
-                lblTime.Text = ord.OrderTime.ToString()
+                Dim timeDisplay As String = ord.OrderTime.ToString()
+                Try
+                    ' Try to parse and format to 12-hour
+                    Dim timeParsed As DateTime
+                    If DateTime.TryParse(ord.OrderTime, timeParsed) Then
+                        timeDisplay = timeParsed.ToString("h:mm tt")
+                    End If
+                Catch
+                    ' If parsing fails, use original
+                End Try
+                lblTime.Text = timeDisplay
                 lblTime.Location = New Point(10, 10)
-                lblTime.Size = New Size(80, 30)
-                lblTime.Font = New Font("Segoe UI", 14, FontStyle.Bold)
-                lblTime.ForeColor = Color.FromArgb(0, 123, 255)
+                lblTime.Size = New Size(100, 30)
+                lblTime.Font = New Font("Segoe UI", 12, FontStyle.Bold)
+                lblTime.ForeColor = If(isCompleted, Color.FromArgb(108, 117, 125), Color.FromArgb(0, 123, 255))
                 cardPanel.Controls.Add(lblTime)
+                
+                ' Status badge
+                If isCompleted Then
+                    Dim lblStatus As New Label()
+                    lblStatus.Text = "✓ COMPLETED"
+                    lblStatus.Location = New Point(130, 10) ' Top right
+                    lblStatus.Size = New Size(110, 20)
+                    lblStatus.Font = New Font("Segoe UI", 8, FontStyle.Bold)
+                    lblStatus.ForeColor = Color.White
+                    lblStatus.BackColor = Color.FromArgb(108, 117, 125)
+                    lblStatus.TextAlign = ContentAlignment.MiddleCenter
+                    cardPanel.Controls.Add(lblStatus)
+                End If
 
                 ' Order details
                 Dim lblDetails As New Label()
-                lblDetails.Text = $"Order #{ord.OrderID}   |   Customer: {ord.CustomerName}" & vbCrLf &
-                                $"Type: {ord.OrderType}   |   Items: {ord.ItemsOrderedCount}   |   Total: ₱{ord.TotalAmount:N2}" & vbCrLf &
-                                $"Delivery: {ord.DeliveryOption}   |   Contact: {ord.ContactNumber}"
-                lblDetails.Location = New Point(100, 10)
-                lblDetails.Size = New Size(620, 70)
-                lblDetails.Font = New Font("Segoe UI", 9)
+                lblDetails.Text = $"{ord.CustomerName}" & vbCrLf &
+                                $"{ord.OrderType}" & vbCrLf &
+                                $"{ord.ItemsOrderedCount} Item(s)" & vbCrLf &
+                                $"Total: ₱{ord.TotalAmount:N2}"
+                lblDetails.Location = New Point(10, 45)
+                lblDetails.Size = New Size(230, 80)
+                lblDetails.Font = New Font("Segoe UI", 10)
                 lblDetails.ForeColor = Color.FromArgb(52, 73, 94)
+                lblDetails.TextAlign = ContentAlignment.TopLeft
                 cardPanel.Controls.Add(lblDetails)
 
-                ' Special requests (if any)
+                ' Special Request (if any)
                 If ord.SpecialRequests <> "None" AndAlso Not String.IsNullOrWhiteSpace(ord.SpecialRequests) Then
-                    Dim lblSpecial As New Label()
-                    lblSpecial.Text = "📝 " & ord.SpecialRequests
-                    lblSpecial.Location = New Point(100, 85)
-                    lblSpecial.Size = New Size(620, 25)
-                    lblSpecial.Font = New Font("Segoe UI", 8, FontStyle.Italic)
-                    lblSpecial.ForeColor = Color.FromArgb(149, 165, 166)
-                    cardPanel.Controls.Add(lblSpecial)
+                   Dim lblSpecial As New Label()
+                   lblSpecial.Text = "📝 " & ord.SpecialRequests
+                   lblSpecial.Location = New Point(10, 130)
+                   lblSpecial.Size = New Size(230, 60)
+                   lblSpecial.Font = New Font("Segoe UI", 9, FontStyle.Italic)
+                   lblSpecial.ForeColor = Color.FromArgb(149, 165, 166)
+                   lblSpecial.AutoEllipsis = True
+                   cardPanel.Controls.Add(lblSpecial)
                 End If
 
-                ' View details button
-                Dim btnViewDetails As New Button()
-                btnViewDetails.Text = "View Details"
-                btnViewDetails.Location = New Point(10, 85)
-                btnViewDetails.Size = New Size(80, 25)
-                btnViewDetails.BackColor = Color.FromArgb(0, 123, 255)
-                btnViewDetails.ForeColor = Color.White
-                btnViewDetails.FlatStyle = FlatStyle.Flat
-                btnViewDetails.FlatAppearance.BorderSize = 0
-                btnViewDetails.Font = New Font("Segoe UI", 8)
-                btnViewDetails.Cursor = Cursors.Hand
+                ' View details button (only for confirmed orders)
+                If Not isCompleted Then
+                    Dim btnViewDetails As New Button()
+                    btnViewDetails.Text = "View Details"
+                    btnViewDetails.Location = New Point(10, 205) ' Bottom
+                    btnViewDetails.Size = New Size(230, 35)
+                    btnViewDetails.BackColor = Color.FromArgb(0, 123, 255)
+                    btnViewDetails.ForeColor = Color.White
+                    btnViewDetails.FlatStyle = FlatStyle.Flat
+                    btnViewDetails.FlatAppearance.BorderSize = 0
+                    btnViewDetails.Font = New Font("Segoe UI", 9)
+                    btnViewDetails.Cursor = Cursors.Hand
 
-                Dim ordId As Integer = ord.OrderID
-                AddHandler btnViewDetails.Click, Sub()
-                                                     ShowOrderDetails(ordId)
-                                                 End Sub
-                cardPanel.Controls.Add(btnViewDetails)
+                    Dim ordId As Integer = ord.OrderID
+                    AddHandler btnViewDetails.Click, Sub()
+                                                         ShowOrderDetails(ordId)
+                                                     End Sub
+                    cardPanel.Controls.Add(btnViewDetails)
+                End If
 
-                scrollPanel.Controls.Add(cardPanel)
-                yPos += 130
+                flowPanel.Controls.Add(cardPanel)
             Next
 
-            ' Close button at bottom
+            ' Close button panel (Footer) for margin/spacing
+            Dim footerPanel As New Panel()
+            footerPanel.Dock = DockStyle.Bottom
+            footerPanel.Height = 60
+            footerPanel.BackColor = Color.Transparent ' Or match form background
+            footerPanel.Padding = New Padding(10)
+
             Dim btnClose As New Button()
             btnClose.Text = "Close"
-            btnClose.Dock = DockStyle.Bottom
-            btnClose.Height = 40
+            btnClose.Dock = DockStyle.Fill
             btnClose.BackColor = Color.FromArgb(108, 117, 125)
             btnClose.ForeColor = Color.White
             btnClose.FlatStyle = FlatStyle.Flat
@@ -339,10 +447,18 @@ Public Class OrderCalendar
             btnClose.Cursor = Cursors.Hand
             AddHandler btnClose.Click, Sub() popupForm.Close()
 
-            ' Add controls to form
-            popupForm.Controls.Add(scrollPanel)
-            popupForm.Controls.Add(headerPanel)
-            popupForm.Controls.Add(btnClose)
+            footerPanel.Controls.Add(btnClose)
+
+            ' Add controls to form (explicit Z-order: Edge first, Fill last)
+            popupForm.Controls.Add(footerPanel) ' Dock Bottom
+            popupForm.Controls.Add(headerPanel) ' Dock Top
+            popupForm.Controls.Add(flowPanel)   ' Dock Fill
+            
+            ' Explicitly set Z-Order
+            footerPanel.BringToFront()
+            headerPanel.BringToFront()
+            flowPanel.SendToBack()
+
 
             ' Show popup
             popupForm.ShowDialog()
@@ -360,19 +476,32 @@ Public Class OrderCalendar
             Dim ord = orderData.FirstOrDefault(Function(o) o.OrderID = orderID)
 
             If ord IsNot Nothing Then
+                ' Format time to 12-hour
+                Dim timeDisplay As String = ord.OrderTime.ToString()
+                Try
+                    Dim timeParsed As DateTime
+                    If DateTime.TryParse(ord.OrderTime, timeParsed) Then
+                        timeDisplay = timeParsed.ToString("h:mm tt")
+                    End If
+                Catch
+                    ' If parsing fails, use original
+                End Try
+                
+                ' Dynamic status display
+                Dim statusText As String = If(ord.OrderStatus = "Completed", "COMPLETED ✓", "CONFIRMED ✓")
+                
                 Dim details As String =
                     $"═══════════════════════════════════════" & vbCrLf &
                     $"            ORDER DETAILS" & vbCrLf &
                     $"═══════════════════════════════════════" & vbCrLf & vbCrLf &
-                    $"Order ID: #{ord.OrderID}" & vbCrLf &
-                    $"Status: CONFIRMED ✓" & vbCrLf & vbCrLf &
+                    $"Status: {statusText}" & vbCrLf & vbCrLf &
                     $"Customer Information:" & vbCrLf &
                     $"  • Name: {ord.CustomerName}" & vbCrLf &
                     $"  • Contact: {ord.ContactNumber}" & vbCrLf & vbCrLf &
                     $"Order Details:" & vbCrLf &
                     $"  • Type: {ord.OrderType}" & vbCrLf &
                     $"  • Date: {ord.OrderDate:MMMM dd, yyyy (dddd)}" & vbCrLf &
-                    $"  • Time: {ord.OrderTime}" & vbCrLf &
+                    $"  • Time: {timeDisplay}" & vbCrLf &
                     $"  • Items Ordered: {ord.ItemsOrderedCount}" & vbCrLf &
                     $"  • Total Amount: ₱{ord.TotalAmount:N2}" & vbCrLf & vbCrLf &
                     $"Products:" & vbCrLf &
@@ -422,5 +551,25 @@ Public Class OrderCalendar
         If orderData IsNot Nothing Then
             DisplayCalendar()
         End If
+    End Sub
+
+    ' Close button
+    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
+        Me.Close()
+    End Sub
+
+    ' Paint light gray border
+    Private Sub OrderCalendar_Paint(sender As Object, e As PaintEventArgs) Handles MyBase.Paint
+        Dim borderColor As Color = Color.LightGray
+        Dim borderThickness As Integer = 1
+        Dim rect As Rectangle = Me.ClientRectangle
+
+        ' Adjust rectangle for border thickness
+        rect.Width -= borderThickness
+        rect.Height -= borderThickness
+
+        Using pen As New Pen(borderColor, borderThickness)
+            e.Graphics.DrawRectangle(pen, rect)
+        End Using
     End Sub
 End Class
