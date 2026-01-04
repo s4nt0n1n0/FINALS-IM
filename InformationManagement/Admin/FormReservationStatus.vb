@@ -9,6 +9,10 @@ Public Class FormReservationStatus
     Private reservationData As New Dictionary(Of String, Integer)
     Private isInitializing As Boolean = True
 
+    ' UI Controls created programmatically
+    Private WithEvents cmbSource As ComboBox
+
+
 
     ' =======================================================================
     ' FORM LOAD
@@ -33,16 +37,36 @@ Public Class FormReservationStatus
         Try
             filterPeriod = Reports.SelectedPeriod
 
+            ' === CREATE SOURCE FILTER (Programmatically) ===
+            If cmbSource Is Nothing Then
+                cmbSource = New ComboBox()
+                cmbSource.Name = "cmbSource"
+                cmbSource.DropDownStyle = ComboBoxStyle.DropDownList
+                cmbSource.Font = New Font("Segoe UI", 10)
+                cmbSource.Size = New Size(150, 30)
+                ' Positioning: Top Right, aligned with existing layout
+                cmbSource.Location = New Point(Me.Width - 180, 40)
+                cmbSource.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+
+                cmbSource.Items.Add("All Sources")
+                cmbSource.Items.Add("Website (Online)")
+                cmbSource.Items.Add("POS (Walk-in)")
+                cmbSource.SelectedIndex = 0
+
+                Me.Controls.Add(cmbSource)
+                cmbSource.BringToFront()
+            End If
+
             ' Configure chart colors
             Chart1.BackColor = Color.White
             If Chart1.ChartAreas.Count > 0 Then
                 Chart1.ChartAreas(0).BackColor = Color.White
             End If
 
-            ' Set label colors
-            lblPending.ForeColor = Color.FromArgb(255, 165, 0) ' Orange
-            lblConfirmed.ForeColor = Color.FromArgb(34, 197, 94) ' Green
-            lblCancelled.ForeColor = Color.FromArgb(239, 68, 68) ' Red
+            ' Set label colors to White for better contrast on colored cards
+            lblPending.ForeColor = Color.White
+            lblConfirmed.ForeColor = Color.White
+            lblCancelled.ForeColor = Color.White
 
             ' Set initial values to prevent blank display
             lblTotalReservations.Text = "0"
@@ -53,6 +77,13 @@ Public Class FormReservationStatus
         Catch ex As Exception
             MessageBox.Show($"Initialize Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    ' Handle Source Change
+    Private Sub cmbSource_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbSource.SelectedIndexChanged
+        If Not isInitializing Then
+            LoadReservationData()
+        End If
     End Sub
 
     ' =======================================================================
@@ -103,12 +134,25 @@ Public Class FormReservationStatus
             Dim dateFilter As String = GetDateFilter()
 
             ' Get reservation counts by status
+            ' Apply Source Filter
+            Dim sourceFilter As String = ""
+            If cmbSource IsNot Nothing AndAlso cmbSource.SelectedIndex > 0 Then
+                If cmbSource.SelectedIndex = 1 Then
+                    ' Website (Online)
+                    sourceFilter = " AND ReservationType = 'Online'"
+                ElseIf cmbSource.SelectedIndex = 2 Then
+                    ' POS (Walk-in)
+                    sourceFilter = " AND ReservationType = 'Walk-in'"
+                End If
+            End If
+
+            ' Get reservation counts by status
             Dim sql As String = $"
                 SELECT 
                     ReservationStatus,
                     COUNT(*) AS StatusCount
                 FROM reservations
-                WHERE {dateFilter}
+                WHERE {dateFilter} {sourceFilter}
                 GROUP BY ReservationStatus
             "
 
@@ -121,6 +165,7 @@ Public Class FormReservationStatus
                     reservationData("Pending") = 0
                     reservationData("Confirmed") = 0
                     reservationData("Cancelled") = 0
+                    reservationData("Completed") = 0 ' New Status
 
                     ' Load actual data
                     While reader.Read()
@@ -129,6 +174,9 @@ Public Class FormReservationStatus
 
                         If reservationData.ContainsKey(status) Then
                             reservationData(status) = count
+                            ' If unexpected status, ignore or log?
+                        ElseIf status = "Completed" Then
+                            reservationData("Completed") = count
                         End If
                     End While
                 End Using
@@ -137,6 +185,22 @@ Public Class FormReservationStatus
             ' Update UI with data
             UpdateStatisticsCards()
             UpdateChart()
+
+            ' Update Title with context
+            Dim periodText As String = $"{filterPeriod} Report"
+            If filterPeriod = "Daily" Then
+                periodText = $"Report for {Reports.GlobalFilterDate:MMM dd, yyyy}"
+            ElseIf filterPeriod = "Monthly" Then
+                If Reports.SelectedMonth > 0 Then
+                    periodText = $"Report for {System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Reports.SelectedMonth)} {currentYear}"
+                Else
+                    periodText = $"Report for Year {currentYear}"
+                End If
+            ElseIf filterPeriod = "Yearly" Then
+                periodText = $"Report for Year {currentYear}"
+            End If
+
+            Label4.Text = $"Reservation Status Breakdown - {periodText}"
 
         Catch ex As MySqlException
             MessageBox.Show($"Database Error: {ex.Message}{vbCrLf}Make sure the 'reservations' table exists with 'ReservationStatus' and 'ReservationDate' columns.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -155,6 +219,7 @@ Public Class FormReservationStatus
         reservationData("Pending") = 0
         reservationData("Confirmed") = 0
         reservationData("Cancelled") = 0
+        reservationData("Completed") = 0
 
         UpdateStatisticsCards()
         UpdateChart()
@@ -202,26 +267,44 @@ Public Class FormReservationStatus
     ' =======================================================================
     Private Sub UpdateStatisticsCards()
         Try
-            Dim total As Integer = reservationData.Values.Sum()
             Dim pending As Integer = reservationData("Pending")
             Dim confirmed As Integer = reservationData("Confirmed")
+            Dim completed As Integer = If(reservationData.ContainsKey("Completed"), reservationData("Completed"), 0)
             Dim cancelled As Integer = reservationData("Cancelled")
+
+            ' Total includes completed
+            Dim total As Integer = pending + confirmed + completed + cancelled
 
             ' Update labels
             lblTotalReservations.Text = total.ToString()
             lblPending.Text = pending.ToString()
-            lblConfirmed.Text = confirmed.ToString()
+
+            ' Confirmed Card now shows Active Confirmed (Ready to serve)
+            ' But maybe user wants "Successful" = Confirmed + Completed?
+            ' Let's show Confirmed + Completed in the Green Card to show total success
+            ' Or keep it strictly Confirmed. 
+            ' Given the label "Ready to serve", it usually implies future/active.
+            ' But "Completed" implies served.
+            ' Let's update the Green card to show BOTH if space allows, or SUM.
+            ' Decision: Display SUM of Confirmed + Completed, as both are "Good" stats.
+            lblConfirmed.Text = (confirmed + completed).ToString()
+
             lblCancelled.Text = cancelled.ToString()
 
             ' Calculate and show percentages
             If total > 0 Then
                 Dim pendingPercent As Decimal = (pending / total) * 100
-                Dim confirmedPercent As Decimal = (confirmed / total) * 100
+                Dim successPercent As Decimal = ((confirmed + completed) / total) * 100
                 Dim cancelledPercent As Decimal = (cancelled / total) * 100
 
                 Label3.Text = $"Awaiting Confirmation ({pendingPercent:N1}%)"
-                Label5.Text = $"Ready to serve ({confirmedPercent:N1}%)"
+                ' Update label text to reflect inclusion of completed
+                Label5.Text = $"Confirmed & Completed ({successPercent:N1}%)"
                 Label7.Text = $"Cancellations ({cancelledPercent:N1}%)"
+            Else
+                Label3.Text = "Awaiting Confirmation (0%)"
+                Label5.Text = "Confirmed & Completed (0%)"
+                Label7.Text = "Cancellations (0%)"
             End If
 
         Catch ex As Exception
@@ -238,6 +321,7 @@ Public Class FormReservationStatus
 
             Dim pending As Integer = reservationData("Pending")
             Dim confirmed As Integer = reservationData("Confirmed")
+            Dim completed As Integer = If(reservationData.ContainsKey("Completed"), reservationData("Completed"), 0)
             Dim cancelled As Integer = reservationData("Cancelled")
 
             ' Only add points if there's data
@@ -247,7 +331,7 @@ Public Class FormReservationStatus
                 point1.Label = $"Pending ({pending})"
                 point1.LegendText = $"Pending ({pending})"
                 point1.Color = Color.FromArgb(245, 158, 11) ' Orange
-                point1.LabelForeColor = Color.White
+                point1.LabelForeColor = Color.Black
                 Chart1.Series("ReservationStatus").Points.Add(point1)
             End If
 
@@ -257,8 +341,18 @@ Public Class FormReservationStatus
                 point2.Label = $"Confirmed ({confirmed})"
                 point2.LegendText = $"Confirmed ({confirmed})"
                 point2.Color = Color.FromArgb(34, 197, 94) ' Green
-                point2.LabelForeColor = Color.White
+                point2.LabelForeColor = Color.Black
                 Chart1.Series("ReservationStatus").Points.Add(point2)
+            End If
+
+            If completed > 0 Then
+                Dim point4 As New DataPoint(0, completed)
+                point4.AxisLabel = "Completed"
+                point4.Label = $"Completed ({completed})"
+                point4.LegendText = $"Completed ({completed})"
+                point4.Color = Color.FromArgb(59, 130, 246) ' Blue
+                point4.LabelForeColor = Color.Black
+                Chart1.Series("ReservationStatus").Points.Add(point4)
             End If
 
             If cancelled > 0 Then
@@ -267,12 +361,12 @@ Public Class FormReservationStatus
                 point3.Label = $"Cancelled ({cancelled})"
                 point3.LegendText = $"Cancelled ({cancelled})"
                 point3.Color = Color.FromArgb(239, 68, 68) ' Red
-                point3.LabelForeColor = Color.White
+                point3.LabelForeColor = Color.Black
                 Chart1.Series("ReservationStatus").Points.Add(point3)
             End If
 
             ' Show message if no data
-            If pending = 0 AndAlso confirmed = 0 AndAlso cancelled = 0 Then
+            If pending = 0 AndAlso confirmed = 0 AndAlso cancelled = 0 AndAlso completed = 0 Then
                 Dim emptyPoint As New DataPoint(0, 1)
                 emptyPoint.AxisLabel = "No Data"
                 emptyPoint.Label = "No Reservations"

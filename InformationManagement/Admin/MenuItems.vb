@@ -803,44 +803,7 @@ Public Class MenuItems
         End Try
     End Sub
 
-    Private Sub btnExport_Click(sender As Object, e As EventArgs) Handles btnExport.Click
-        Try
-            Dim saveDialog As New SaveFileDialog()
-            saveDialog.Filter = "CSV files (*.csv)|*.csv"
-            saveDialog.FileName = $"MenuItems_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
 
-            If saveDialog.ShowDialog() = DialogResult.OK Then
-                Dim csv As New System.Text.StringBuilder()
-
-                ' Add headers
-                Dim headers As New List(Of String)
-                For Each col As DataGridViewColumn In DataGridMenu.Columns
-                    If col.Name <> "ViewImageButton" And col.Name <> "EditButton" And col.Name <> "DeleteButton" And col.Name <> "ImageDisplay" And col.Name <> "ImagePath" Then
-                        headers.Add(col.HeaderText)
-                    End If
-                Next
-                csv.AppendLine(String.Join(",", headers))
-
-                ' Add rows
-                For Each row As DataGridViewRow In DataGridMenu.Rows
-                    Dim values As New List(Of String)
-                    For Each col As DataGridViewColumn In DataGridMenu.Columns
-                        If col.Name <> "ViewImageButton" And col.Name <> "EditButton" And col.Name <> "DeleteButton" And col.Name <> "ImageDisplay" And col.Name <> "ImagePath" Then
-                            Dim value As String = If(row.Cells(col.Name).Value?.ToString(), "")
-                            values.Add($"""{value}""")
-                        End If
-                    Next
-                    csv.AppendLine(String.Join(",", values))
-                Next
-
-                System.IO.File.WriteAllText(saveDialog.FileName, csv.ToString())
-                MessageBox.Show("✓ Data exported successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show("Error exporting data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-    End Sub
 
     ' =======================================================
     ' 🥘 CHECK INGREDIENTS BUTTON - NEW FEATURE
@@ -848,6 +811,7 @@ Public Class MenuItems
     Private Sub btnCheckIngredients_Click(sender As Object, e As EventArgs) Handles btnCheckIngredients.Click
         Try
             Dim ingredientsForm As New FormCheckIngredients()
+            ingredientsForm.StartPosition = FormStartPosition.CenterScreen
             ingredientsForm.ShowDialog()
         Catch ex As Exception
             MessageBox.Show("Error opening ingredients viewer: " & ex.Message & vbCrLf & vbCrLf &

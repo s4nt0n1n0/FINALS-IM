@@ -70,21 +70,6 @@ Partial Class FormOrders
         Me.RoundedPane21.SuspendLayout()
         CType(Me.OrderCategoriesGraph, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-
-
-        '
-        'DataGridView1
-        '
-        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
-        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView1.Location = New System.Drawing.Point(43, 578)
-        Me.DataGridView1.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
-        Me.DataGridView1.Name = "DataGridView1"
-        Me.DataGridView1.RowHeadersWidth = 51
-        Me.DataGridView1.RowTemplate.Height = 24
-        Me.DataGridView1.Size = New System.Drawing.Size(1421, 330)
-        Me.DataGridView1.TabIndex = 11
         '
         'RoundedPane25
         '
@@ -98,6 +83,16 @@ Partial Class FormOrders
         Me.RoundedPane25.Location = New System.Drawing.Point(971, 62)
         Me.RoundedPane25.Margin = New System.Windows.Forms.Padding(4)
         Me.RoundedPane25.Name = "RoundedPane25"
+        '
+        'DataGridView1
+        '
+        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
+        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridView1.Location = New System.Drawing.Point(41, 580)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.RowHeadersWidth = 51
+        Me.DataGridView1.Size = New System.Drawing.Size(1300, 200)
+        Me.DataGridView1.TabIndex = 20
         Me.RoundedPane25.Size = New System.Drawing.Size(449, 154)
         Me.RoundedPane25.TabIndex = 16
         '
@@ -348,17 +343,16 @@ Partial Class FormOrders
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.GhostWhite
         Me.ClientSize = New System.Drawing.Size(1388, 802)
+        Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.RoundedPane25)
         Me.Controls.Add(Me.RoundedPane24)
         Me.Controls.Add(Me.RoundedPane23)
         Me.Controls.Add(Me.RoundedPane22)
         Me.Controls.Add(Me.RoundedPane21)
-        Me.Controls.Add(Me.DataGridView1)
         Me.DoubleBuffered = True
         Me.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Name = "FormOrders"
         Me.Text = "FormOrders"
-        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.RoundedPane25.ResumeLayout(False)
         Me.RoundedPane25.PerformLayout()
         CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -372,6 +366,7 @@ Partial Class FormOrders
         CType(Me.MonthlyChartOrder, System.ComponentModel.ISupportInitialize).EndInit()
         Me.RoundedPane21.ResumeLayout(False)
         CType(Me.OrderCategoriesGraph, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -385,7 +380,6 @@ Partial Class FormOrders
     Friend WithEvents Label7 As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents Label6 As Label
-    Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents RoundedPane23 As RoundedPane2
     Friend WithEvents Label10 As Label
     Friend WithEvents PictureBox1 As PictureBox
@@ -395,4 +389,5 @@ Partial Class FormOrders
     Friend WithEvents RoundedPane25 As RoundedPane2
     Friend WithEvents Label13 As Label
     Friend WithEvents PictureBox3 As PictureBox
+    Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
 End Class

@@ -22,7 +22,7 @@ Partial Class MenuItems
         Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnExport = New System.Windows.Forms.Button()
+
         Me.AddMenuItemsbtn = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.txtSearch = New InformationManagement.RoundedPane2()
@@ -49,7 +49,7 @@ Partial Class MenuItems
         '
         Me.Panel1.BackColor = System.Drawing.Color.GhostWhite
         Me.Panel1.Controls.Add(Me.Label1)
-        Me.Panel1.Controls.Add(Me.btnExport)
+
         Me.Panel1.Controls.Add(Me.AddMenuItemsbtn)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
@@ -67,21 +67,7 @@ Partial Class MenuItems
         Me.Label1.Size = New System.Drawing.Size(373, 40)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Menu Items Management"
-        '
-        'btnExport
-        '
-        Me.btnExport.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(123, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.btnExport.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnExport.FlatAppearance.BorderSize = 0
-        Me.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExport.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me.btnExport.ForeColor = System.Drawing.Color.White
-        Me.btnExport.Location = New System.Drawing.Point(1207, 32)
-        Me.btnExport.Name = "btnExport"
-        Me.btnExport.Size = New System.Drawing.Size(130, 35)
-        Me.btnExport.TabIndex = 6
-        Me.btnExport.Text = "📊 Export CSV"
-        Me.btnExport.UseVisualStyleBackColor = False
+
         '
         'AddMenuItemsbtn
         '
@@ -336,7 +322,7 @@ Partial Class MenuItems
     Friend WithEvents AddMenuItemsbtn As Button
     Friend WithEvents btnRefresh As Button
     Friend WithEvents btnToggleAvailability As Button
-    Friend WithEvents btnExport As Button
+
     Friend WithEvents btnCheckIngredients As Button
     Friend WithEvents Edit As Button
     Friend WithEvents Delete As Button
