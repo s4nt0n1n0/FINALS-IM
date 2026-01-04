@@ -142,6 +142,28 @@ Public Class Employee
                                   If dgv.Columns.Contains("EmployeeID") Then
                                       dgv.Columns("EmployeeID").Visible = False
                                   End If
+
+                                  ' Column Header Styling
+                                  dgv.EnableHeadersVisualStyles = False
+                                  dgv.RowHeadersVisible = False
+                                  dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+                                  dgv.ColumnHeadersHeight = 45
+                                  dgv.BorderStyle = BorderStyle.None
+
+                                  dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+                                  dgv.ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+                                  dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                                  dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White
+                                  dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(26, 38, 50)
+                                  dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                                  
+                                  ' Default Cell Style
+                                  dgv.DefaultCellStyle.BackColor = SystemColors.Window
+                                  dgv.DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+                                  dgv.DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+                                  dgv.DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                                  dgv.DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+                                  dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                               End Sub)
                 End Using
             End Using

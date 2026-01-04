@@ -161,6 +161,36 @@ Public Class UsersAccounts
         UsersAccountData.SuspendLayout()
         UsersAccountData.Rows.Clear()
 
+        ' Column Header Styling
+        With UsersAccountData
+            .EnableHeadersVisualStyles = False
+            .RowHeadersVisible = False ' Hide the row selector column
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            
+            ' Default Cell Style
+            .DefaultCellStyle.BackColor = SystemColors.Window
+            .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+            .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+            .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+            .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+            .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End With
+
+        ' Force styles on existing columns (Fix for mismatched header styles)
+        For Each col As DataGridViewColumn In UsersAccountData.Columns
+            col.HeaderCell.Style = Nothing ' Clear individual styles so they inherit default
+        Next
+
+        ' Ensure Name column has proper header
+        If UsersAccountData.Columns.Contains("txtName") Then
+            UsersAccountData.Columns("txtName").HeaderText = "Name"
+        End If
+
         ' Add Create Account Action Column
         If Not UsersAccountData.Columns.Contains("colCreateAccount") Then
             Dim btnCol As New DataGridViewButtonColumn()
@@ -191,11 +221,6 @@ Public Class UsersAccounts
             UsersAccountData.Columns.Add("colEmployeeID", "EmployeeID")
             UsersAccountData.Columns("colEmployeeID").Visible = False
         End If
-
-        ' Hide the Edit column
-        'If UsersAccountData.Columns.Contains("colEdit") Then
-        '    UsersAccountData.Columns("colEdit").Visible = False
-        'End If
     End Sub
 
     Private Sub LoadDataBasedOnMode()

@@ -43,6 +43,28 @@ Public Class Feedback
             .AllowUserToAddRows = False
             .RowHeadersVisible = False
 
+            ' Column Header Styling
+            .EnableHeadersVisualStyles = False
+            .RowHeadersVisible = False
+            .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+            .ColumnHeadersHeight = 45
+            .BorderStyle = BorderStyle.None
+
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
+            ' Default Cell Style
+            .DefaultCellStyle.BackColor = SystemColors.Window
+            .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+            .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+            .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+            .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+            .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
             ' Add Action Buttons if not exists
             If Not .Columns.Contains("Approve") Then
                 Dim btnApprove As New DataGridViewButtonColumn()

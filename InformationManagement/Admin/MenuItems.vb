@@ -167,13 +167,36 @@ Public Class MenuItems
                 imgCol.DisplayIndex = 0
             End If
 
-            ' Hide ImagePath column (used internally for fullscreen view)
             If DataGridMenu.Columns.Contains("ImagePath") Then
                 DataGridMenu.Columns("ImagePath").Visible = False
             End If
 
             ' Format other columns
             FormatColumns()
+
+            ' Column Header Styling
+            With DataGridMenu
+                .EnableHeadersVisualStyles = False
+                .RowHeadersVisible = False ' Hide the row selector column
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing ' Prevent auto-sizing overriding height
+                .ColumnHeadersHeight = 45
+                .BorderStyle = BorderStyle.None
+                
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                
+                ' Default Cell Style
+                .DefaultCellStyle.BackColor = SystemColors.Window
+                .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+                .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+                .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            End With
 
 
 
@@ -919,5 +942,6 @@ Public Class MenuItems
         End If
 
     End Sub
+
 
 End Class

@@ -495,6 +495,28 @@ Public Class Reservations
             With Reservation
                 .SuspendLayout()
 
+                ' Column Header Styling
+                .EnableHeadersVisualStyles = False
+                .RowHeadersVisible = False
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+                .ColumnHeadersHeight = 45
+                .BorderStyle = BorderStyle.None
+                
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+                .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
+                ' Default Cell Style
+                .DefaultCellStyle.BackColor = SystemColors.Window
+                .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+                .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+                .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
                 ' Hide ID columns
                 If .Columns.Contains("ReservationID") Then .Columns("ReservationID").Visible = False
                 If .Columns.Contains("CustomerID") Then .Columns("CustomerID").Visible = False
