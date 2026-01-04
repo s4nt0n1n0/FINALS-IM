@@ -138,11 +138,11 @@ Public Class FormEmployeeAttendance
             ' Add columns to match the design EXACTLY
             DataGridView1.Columns.Add(CreateColumn("AttendanceDate", "Date", 120, False, "MMM dd, yyyy"))
             DataGridView1.Columns.Add(CreateColumn("EmployeeName", "Employee", 200))
-            DataGridView1.Columns.Add(CreateColumn("Shift", "Shift", 100))
-            DataGridView1.Columns.Add(CreateColumn("TimeIn", "Time In", 100, False, "hh:mm tt"))
-            DataGridView1.Columns.Add(CreateColumn("TimeOut", "Time Out", 100, False, "hh:mm tt"))
-            DataGridView1.Columns.Add(CreateColumn("WorkHours", "Total Hours", 100))
-            DataGridView1.Columns.Add(CreateColumn("Overtime", "Overtime", 100))
+            DataGridView1.Columns.Add(CreateColumn("Shift", "Shift", 120))
+            DataGridView1.Columns.Add(CreateColumn("TimeIn", "Time In", 120, False, "hh:mm tt"))
+            DataGridView1.Columns.Add(CreateColumn("TimeOut", "Time Out", 120, False, "hh:mm tt"))
+            DataGridView1.Columns.Add(CreateColumn("WorkHours", "Total Hours", 120))
+            DataGridView1.Columns.Add(CreateColumn("Overtime", "Overtime", 120))
             DataGridView1.Columns.Add(CreateColumn("Status", "Status", 120))
 
             ' Hidden ID column for reference

@@ -3,6 +3,8 @@ Imports System.Data
 
 Public Class Employee
     Private _isLoading As Boolean = False
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
     
     ' Pagination state
     Private currentPage As Integer = 1
@@ -17,7 +19,16 @@ Public Class Employee
         RoundPaginationButtons()
         
         LoadEmployees()
+        InitializeSearchBox()
+        isInitializing = False
+    End Sub
 
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search employees..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
     End Sub
 
     '====================================
@@ -30,17 +41,18 @@ Public Class Employee
 
         If resetPage Then currentPage = 1
         If condition <> "" OrElse (condition = "" AndAlso Not resetPage AndAlso _currentCondition <> "") Then
-             If condition <> "" Then _currentCondition = condition
+            If condition <> "" Then _currentCondition = condition
         Else
-             _currentCondition = ""
+            _currentCondition = ""
         End If
 
         Try
             ' Get search text from UI if not provided
-            If String.IsNullOrEmpty(searchText) AndAlso txtSearch IsNot Nothing Then
-                searchText = txtSearch.Text.Trim()
+            If String.IsNullOrEmpty(searchText) AndAlso TextBoxSearch IsNot Nothing Then
+                searchText = TextBoxSearch.Text.Trim()
             End If
 
+            If searchText = "Search employees..." Then searchText = ""
             ' Get total count
             totalRecords = Await Task.Run(Function() FetchTotalEmployeeCount(searchText, _currentCondition))
             totalPages = Math.Ceiling(totalRecords / recordsPerPage)
@@ -48,7 +60,7 @@ Public Class Employee
             If currentPage > totalPages Then currentPage = totalPages
 
             Dim offset As Integer = (currentPage - 1) * recordsPerPage
-            
+
             Dim query As String =
                 "SELECT EmployeeID, FirstName, LastName, Gender, DateOfBirth, ContactNumber, Email, Address, HireDate, Position, MaritalStatus, EmploymentStatus, EmploymentType, EmergencyContact, WorkShift, Salary FROM employee"
 
@@ -91,7 +103,7 @@ Public Class Employee
     Private Function FetchTotalEmployeeCount(searchText As String, condition As String) As Integer
         Dim query As String = "SELECT COUNT(*) FROM employee"
         Dim finalCondition As String = condition
-        
+
         If searchText <> "" Then
             Dim searchPart As String = "(FirstName LIKE @search OR LastName LIKE @search OR Position LIKE @search)"
             If finalCondition <> "" Then
@@ -131,17 +143,39 @@ Public Class Employee
                 End If
                 cmd.Parameters.AddWithValue("@limit", limit)
                 cmd.Parameters.AddWithValue("@offset", offset)
-                
+
                 Using adapter As New MySqlDataAdapter(cmd)
                     Dim table As New DataTable()
                     adapter.Fill(table)
-                    
+
                     Me.Invoke(Sub()
                                   dgv.DataSource = table
                                   ' ✅ HIDE EMPLOYEE ID COLUMN
                                   If dgv.Columns.Contains("EmployeeID") Then
                                       dgv.Columns("EmployeeID").Visible = False
                                   End If
+
+                                  ' Column Header Styling
+                                  dgv.EnableHeadersVisualStyles = False
+                                  dgv.RowHeadersVisible = False
+                                  dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+                                  dgv.ColumnHeadersHeight = 45
+                                  dgv.BorderStyle = BorderStyle.None
+
+                                  dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+                                  dgv.ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+                                  dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                                  dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                                  dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+                                  dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
+                                  ' Default Cell Style
+                                  dgv.DefaultCellStyle.BackColor = SystemColors.Window
+                                  dgv.DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+                                  dgv.DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+                                  dgv.DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                                  dgv.DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+                                  dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                               End Sub)
                 End Using
             End Using
@@ -163,7 +197,7 @@ Public Class Employee
             AddEmployee.Enabled = Not isLoading
             EditEmployee.Enabled = Not isLoading
             btnDelete.Enabled = Not isLoading
-            
+
             ' Pagination buttons are handled in UpdatePaginationControls
         Catch
         End Try
@@ -233,11 +267,11 @@ Public Class Employee
             ' 2. Position Center Group
             btnFirstPage.Location = New Point(startX, 10)
             btnPrevPage.Location = New Point(btnFirstPage.Right + spacing, 10)
-            
+
             lblPageInfo.AutoSize = True
             lblPageInfo.Location = New Point(btnPrevPage.Right + spacing, 16)
             lblPageInfo.Top = (Panel4.Height - lblPageInfo.Height) \ 2
-            
+
             btnNextPage.Location = New Point(lblPageInfo.Right + spacing, 10)
             btnLastPage.Location = New Point(btnNextPage.Right + spacing, 10)
 
@@ -274,10 +308,9 @@ Public Class Employee
         LoadEmployees()
     End Sub
 
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        LoadEmployees(resetPage:=True)
-    End Sub
-
+    ' =======================================================
+    ' SEARCH FUNCTIONALITY
+    ' =======================================================
     '====================================
     ' ADD EMPLOYEE
     '====================================
@@ -309,6 +342,38 @@ Public Class Employee
 
     End Sub
 
+    ' =======================================================
+    ' SEARCH FUNCTIONALITY
+    ' =======================================================
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search employees..." Then currentSearch = ""
+
+        ' Only reload if search term actually changed
+        If currentSearch = _lastSearchText Then Return
+        _lastSearchText = currentSearch
+
+        LoadEmployees(searchText:=currentSearch, resetPage:=True)
+    End Sub
+
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search employees..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42) ' Dark slate color
+        End If
+        txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search employees..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184) ' Slate-400
+        End If
+        txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
+    End Sub
+
     '====================================
     ' FILTER BUTTONS
     '====================================
@@ -336,11 +401,12 @@ Public Class Employee
     ' REFRESH LIST
     '====================================
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        InitializeSearchBox()
+        _lastSearchText = ""
         LoadEmployees(resetPage:=True)
         lblFilter.Text = "Showing: All Employees"
     End Sub
-
-    '====================================
+      '====================================
     ' DELETE EMPLOYEE
     '====================================
     Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click

@@ -81,7 +81,7 @@ Partial Class FormDineInOrders
         Me.Label5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.Label5.Location = New System.Drawing.Point(75, 50)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(112, 20)
+        Me.Label5.Size = New System.Drawing.Size(90, 15)
         Me.Label5.TabIndex = 2
         Me.Label5.Text = "Total for Month"
         '
@@ -93,7 +93,7 @@ Partial Class FormDineInOrders
         Me.Label4.ForeColor = System.Drawing.Color.White
         Me.Label4.Location = New System.Drawing.Point(75, 75)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(69, 41)
+        Me.Label4.Size = New System.Drawing.Size(56, 32)
         Me.Label4.TabIndex = 1
         Me.Label4.Text = "240"
         '
@@ -105,7 +105,7 @@ Partial Class FormDineInOrders
         Me.Label1.ForeColor = System.Drawing.Color.White
         Me.Label1.Location = New System.Drawing.Point(75, 25)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(115, 25)
+        Me.Label1.Size = New System.Drawing.Size(92, 20)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Total Orders"
         '
@@ -143,7 +143,7 @@ Partial Class FormDineInOrders
         Me.Label8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.Label8.Location = New System.Drawing.Point(75, 50)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(112, 20)
+        Me.Label8.Size = New System.Drawing.Size(90, 15)
         Me.Label8.TabIndex = 3
         Me.Label8.Text = "Total for Month"
         '
@@ -155,7 +155,7 @@ Partial Class FormDineInOrders
         Me.Label6.ForeColor = System.Drawing.Color.White
         Me.Label6.Location = New System.Drawing.Point(75, 75)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(189, 41)
+        Me.Label6.Size = New System.Drawing.Size(155, 32)
         Me.Label6.TabIndex = 2
         Me.Label6.Text = "₱125,420.00"
         '
@@ -167,7 +167,7 @@ Partial Class FormDineInOrders
         Me.Label2.ForeColor = System.Drawing.Color.White
         Me.Label2.Location = New System.Drawing.Point(75, 25)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(131, 25)
+        Me.Label2.Size = New System.Drawing.Size(105, 20)
         Me.Label2.TabIndex = 0
         Me.Label2.Text = "Total Revenue"
         '
@@ -205,7 +205,7 @@ Partial Class FormDineInOrders
         Me.Label9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.Label9.Location = New System.Drawing.Point(75, 50)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(108, 20)
+        Me.Label9.Size = New System.Drawing.Size(85, 15)
         Me.Label9.TabIndex = 2
         Me.Label9.Text = "Average/Order"
         '
@@ -217,7 +217,7 @@ Partial Class FormDineInOrders
         Me.Label7.ForeColor = System.Drawing.Color.White
         Me.Label7.Location = New System.Drawing.Point(75, 75)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(130, 41)
+        Me.Label7.Size = New System.Drawing.Size(106, 32)
         Me.Label7.TabIndex = 1
         Me.Label7.Text = "₱520.00"
         '
@@ -229,7 +229,7 @@ Partial Class FormDineInOrders
         Me.Label3.ForeColor = System.Drawing.Color.White
         Me.Label3.Location = New System.Drawing.Point(75, 25)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(152, 25)
+        Me.Label3.Size = New System.Drawing.Size(122, 20)
         Me.Label3.TabIndex = 0
         Me.Label3.Text = "Avg Order Value"
         '
@@ -306,7 +306,7 @@ Partial Class FormDineInOrders
         Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
         Me.lblPageStatus.Location = New System.Drawing.Point(0, 10)
         Me.lblPageStatus.Name = "lblPageStatus"
-        Me.lblPageStatus.Size = New System.Drawing.Size(158, 20)
+        Me.lblPageStatus.Size = New System.Drawing.Size(124, 15)
         Me.lblPageStatus.TabIndex = 0
         Me.lblPageStatus.Text = "Page 1 of 1 (0 records)"
         '
@@ -318,20 +318,20 @@ Partial Class FormDineInOrders
         Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
         Me.SearchContainer.CornerRadius = 10
         Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.SearchContainer.Location = New System.Drawing.Point(508, 20)
+        Me.SearchContainer.Location = New System.Drawing.Point(557, 23)
         Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(391, 45)
+        Me.SearchContainer.Size = New System.Drawing.Size(391, 38)
         Me.SearchContainer.TabIndex = 11
         '
         'TextBoxSearch
         '
         Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
         Me.TextBoxSearch.Location = New System.Drawing.Point(15, 12)
         Me.TextBoxSearch.Name = "TextBoxSearch"
-        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 25)
+        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 18)
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search orders..."
         '
@@ -340,9 +340,9 @@ Partial Class FormDineInOrders
         Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(328, 28)
+        Me.dtpFilter.Location = New System.Drawing.Point(384, 36)
         Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(150, 30)
+        Me.dtpFilter.Size = New System.Drawing.Size(150, 25)
         Me.dtpFilter.TabIndex = 11
         Me.dtpFilter.Visible = False
         '
@@ -357,7 +357,7 @@ Partial Class FormDineInOrders
         Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
         Me.btnExportPdf.Location = New System.Drawing.Point(964, 23)
         Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(135, 45)
+        Me.btnExportPdf.Size = New System.Drawing.Size(135, 38)
         Me.btnExportPdf.TabIndex = 10
         Me.btnExportPdf.Text = "   Export PDF"
         Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -372,7 +372,7 @@ Partial Class FormDineInOrders
         Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
         Me.Label10.Location = New System.Drawing.Point(32, 28)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(212, 30)
+        Me.Label10.Size = New System.Drawing.Size(179, 25)
         Me.Label10.TabIndex = 7
         Me.Label10.Text = "Recent Table Orders"
         '
@@ -383,7 +383,8 @@ Partial Class FormDineInOrders
         Me.DataGridView1.AllowUserToResizeRows = False
         Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
         Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
+        Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
+        Me.DataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DataGridView1.ColumnHeadersHeight = 50
         Me.DataGridView1.Location = New System.Drawing.Point(24, 85)
         Me.DataGridView1.Name = "DataGridView1"
@@ -402,7 +403,7 @@ Partial Class FormDineInOrders
         Me.LabelHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
         Me.LabelHeader.Location = New System.Drawing.Point(30, 25)
         Me.LabelHeader.Name = "LabelHeader"
-        Me.LabelHeader.Size = New System.Drawing.Size(491, 50)
+        Me.LabelHeader.Size = New System.Drawing.Size(400, 41)
         Me.LabelHeader.TabIndex = 8
         Me.LabelHeader.Text = "Dine-In Order Management"
         '
@@ -413,7 +414,7 @@ Partial Class FormDineInOrders
         Me.LabelSubHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
         Me.LabelSubHeader.Location = New System.Drawing.Point(32, 68)
         Me.LabelSubHeader.Name = "LabelSubHeader"
-        Me.LabelSubHeader.Size = New System.Drawing.Size(444, 25)
+        Me.LabelSubHeader.Size = New System.Drawing.Size(343, 19)
         Me.LabelSubHeader.TabIndex = 9
         Me.LabelSubHeader.Text = "Track and manage table orders and customer presence"
         '

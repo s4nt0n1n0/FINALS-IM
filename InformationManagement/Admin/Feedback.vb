@@ -15,6 +15,8 @@ Public Class Feedback
     Private totalPages As Integer = 0
     Private currentFilter As String = ""
     Private currentSearchTerm As String = ""
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
 
     ' Form Load Event
     Private Sub Feedback_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -23,9 +25,49 @@ Public Class Feedback
         SetupDataGridView()
         UpdatePaginationControls()
         RoundPaginationButtons()
+        InitializeSearchBox()
+        isInitializing = False
     End Sub
 
-    ' Initialize Database Connection
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search feedback..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+    End Sub
+
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch As String = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search feedback..." Then currentSearch = ""
+
+        ' Only reload if search term actually changed
+        If currentSearch = _lastSearchText Then Return
+        _lastSearchText = currentSearch
+
+        currentSearchTerm = currentSearch
+        currentPage = 1 ' Reset to first page on search
+        LoadFeedback(currentFilter)
+    End Sub
+
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search feedback..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42) ' Dark slate color
+        End If
+        txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search feedback..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184) ' Slate-400
+        End If
+        txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
+    End Sub
+      ' Initialize Database Connection
     Private Sub InitializeConnection()
         Try
             conn = New MySqlConnection(connectionString)
@@ -42,6 +84,28 @@ Public Class Feedback
             .ReadOnly = True
             .AllowUserToAddRows = False
             .RowHeadersVisible = False
+
+            ' Column Header Styling
+            .EnableHeadersVisualStyles = False
+            .RowHeadersVisible = False
+            .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+            .ColumnHeadersHeight = 45
+            .BorderStyle = BorderStyle.None
+
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+            .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
+            ' Default Cell Style
+            .DefaultCellStyle.BackColor = SystemColors.Window
+            .DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
+            .DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64)
+            .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+            .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
+            .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
 
             ' Add Action Buttons if not exists
             If Not .Columns.Contains("Approve") Then
@@ -600,6 +664,8 @@ Public Class Feedback
 
     ' Button Event Handlers
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        InitializeSearchBox()
+        _lastSearchText = ""
         currentPage = 1
         LoadFeedback(currentFilter)
     End Sub
@@ -623,16 +689,6 @@ Public Class Feedback
         currentPage = 1
         currentFilter = ""
         LoadFeedback()
-    End Sub
-
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        If txtSearch.Text.Trim() <> "" Then
-            SearchFeedback(txtSearch.Text.Trim())
-        Else
-            currentSearchTerm = ""
-            currentPage = 1
-            LoadFeedback(currentFilter)
-        End If
     End Sub
 
     Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click

@@ -11,7 +11,11 @@ Public Class Setting
         
         ' Load DB Data
         LoadDBConfigData()
+
+        ' Show password by default
+        chkShowPassword.Checked = True
     End Sub
+    
 
     Private Sub LoadCurrentUserData()
         Try

@@ -62,10 +62,18 @@ Public Class ActivityLogsForm
             .DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215)
             .DefaultCellStyle.SelectionForeColor = Color.White
             .EnableHeadersVisualStyles = False
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
-            .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 10, FontStyle.Bold)
-            .ColumnHeadersHeight = 40
+             .EnableHeadersVisualStyles = False
+                .RowHeadersVisible = False
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+                .ColumnHeadersHeight = 45
+                .BorderStyle = BorderStyle.None
+
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
+                .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
             .RowTemplate.Height = 35
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
 

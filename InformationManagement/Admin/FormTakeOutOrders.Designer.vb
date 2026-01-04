@@ -48,7 +48,6 @@ Partial Class FormTakeOutOrders
         Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
         Me.btnExportPdf = New System.Windows.Forms.Button()
-
         Me.Label10 = New System.Windows.Forms.Label()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.LabelHeader = New System.Windows.Forms.Label()
@@ -259,7 +258,6 @@ Partial Class FormTakeOutOrders
         Me.RoundedPane24.Controls.Add(Me.SearchContainer)
         Me.RoundedPane24.Controls.Add(Me.dtpFilter)
         Me.RoundedPane24.Controls.Add(Me.btnExportPdf)
-
         Me.RoundedPane24.Controls.Add(Me.Label10)
         Me.RoundedPane24.Controls.Add(Me.DataGridView1)
         Me.RoundedPane24.CornerRadius = 15
@@ -326,20 +324,20 @@ Partial Class FormTakeOutOrders
         Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
         Me.SearchContainer.CornerRadius = 10
         Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.SearchContainer.Location = New System.Drawing.Point(498, 13)
+        Me.SearchContainer.Location = New System.Drawing.Point(498, 14)
         Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(482, 45)
+        Me.SearchContainer.Size = New System.Drawing.Size(482, 38)
         Me.SearchContainer.TabIndex = 11
         '
         'TextBoxSearch
         '
         Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
-        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 12)
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
         Me.TextBoxSearch.Name = "TextBoxSearch"
-        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 20)
+        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 18)
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search orders..."
         '
@@ -347,8 +345,8 @@ Partial Class FormTakeOutOrders
         '
         Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.Short
-        Me.dtpFilter.Location = New System.Drawing.Point(320, 28) ' Positioned before search
+        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtpFilter.Location = New System.Drawing.Point(320, 26)
         Me.dtpFilter.Name = "dtpFilter"
         Me.dtpFilter.Size = New System.Drawing.Size(150, 25)
         Me.dtpFilter.TabIndex = 11
@@ -362,10 +360,10 @@ Partial Class FormTakeOutOrders
         Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
         Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("Button1.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(986, 13)
+        Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
+        Me.btnExportPdf.Location = New System.Drawing.Point(986, 14)
         Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(135, 45)
+        Me.btnExportPdf.Size = New System.Drawing.Size(135, 38)
         Me.btnExportPdf.TabIndex = 10
         Me.btnExportPdf.Text = "   Export PDF"
         Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight

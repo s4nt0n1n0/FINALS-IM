@@ -22,48 +22,49 @@ Partial Class FormPayroll
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormPayroll))
-
         Me.RoundedPane24 = New InformationManagement.RoundedPane2()
-        Me.btnExportPdf = New System.Windows.Forms.Button()
-        Me.Label10 = New System.Windows.Forms.Label()
+        Me.PaginationContainer = New System.Windows.Forms.Panel()
+        Me.btnNext = New System.Windows.Forms.Button()
+        Me.btnPrev = New System.Windows.Forms.Button()
+        Me.lblPageStatus = New System.Windows.Forms.Label()
+        Me.btnProcessPayout = New System.Windows.Forms.Button()
         Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
-        Me.btnProcessPayout = New System.Windows.Forms.Button()
         Me.labelHeader = New System.Windows.Forms.Label()
-        Me.btnPrev = New System.Windows.Forms.Button()
-        Me.btnNext = New System.Windows.Forms.Button()
-        Me.lblPageStatus = New System.Windows.Forms.Label()
-        Me.PaginationContainer = New System.Windows.Forms.Panel()
+        Me.btnExportPdf = New System.Windows.Forms.Button()
+        Me.Label10 = New System.Windows.Forms.Label()
         Me.RoundedPane23 = New InformationManagement.RoundedPane2()
+        Me.RoundedPane26 = New InformationManagement.RoundedPane2()
+        Me.PictureBox2 = New System.Windows.Forms.PictureBox()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.RoundedPane22 = New InformationManagement.RoundedPane2()
+        Me.RoundedPane25 = New InformationManagement.RoundedPane2()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.RoundedPane21 = New InformationManagement.RoundedPane2()
+        Me.RoundedPane221 = New InformationManagement.RoundedPane2()
+        Me.PictureBox11 = New System.Windows.Forms.PictureBox()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.RoundedPane221 = New InformationManagement.RoundedPane2()
-        Me.PictureBox11 = New System.Windows.Forms.PictureBox()
-        Me.RoundedPane25 = New InformationManagement.RoundedPane2()
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
-        Me.RoundedPane26 = New InformationManagement.RoundedPane2()
-        Me.PictureBox2 = New System.Windows.Forms.PictureBox()
         Me.RoundedPane24.SuspendLayout()
-
+        Me.PaginationContainer.SuspendLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane23.SuspendLayout()
+        Me.RoundedPane26.SuspendLayout()
+        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane22.SuspendLayout()
+        Me.RoundedPane25.SuspendLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane21.SuspendLayout()
         Me.RoundedPane221.SuspendLayout()
         CType(Me.PictureBox11, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.RoundedPane25.SuspendLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.RoundedPane26.SuspendLayout()
-        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'RoundedPane24
@@ -84,6 +85,115 @@ Partial Class FormPayroll
         Me.RoundedPane24.Size = New System.Drawing.Size(1045, 393)
         Me.RoundedPane24.TabIndex = 7
         '
+        'PaginationContainer
+        '
+        Me.PaginationContainer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.PaginationContainer.Controls.Add(Me.btnNext)
+        Me.PaginationContainer.Controls.Add(Me.btnPrev)
+        Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
+        Me.PaginationContainer.Location = New System.Drawing.Point(24, 345)
+        Me.PaginationContainer.Name = "PaginationContainer"
+        Me.PaginationContainer.Size = New System.Drawing.Size(955, 40)
+        Me.PaginationContainer.TabIndex = 12
+        '
+        'btnNext
+        '
+        Me.btnNext.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.btnNext.Location = New System.Drawing.Point(1610, 5)
+        Me.btnNext.Name = "btnNext"
+        Me.btnNext.Size = New System.Drawing.Size(80, 30)
+        Me.btnNext.TabIndex = 2
+        Me.btnNext.Text = "Next →"
+        Me.btnNext.UseVisualStyleBackColor = True
+        '
+        'btnPrev
+        '
+        Me.btnPrev.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.btnPrev.Location = New System.Drawing.Point(1520, 5)
+        Me.btnPrev.Name = "btnPrev"
+        Me.btnPrev.Size = New System.Drawing.Size(80, 30)
+        Me.btnPrev.TabIndex = 1
+        Me.btnPrev.Text = "← Prev"
+        Me.btnPrev.UseVisualStyleBackColor = True
+        '
+        'lblPageStatus
+        '
+        Me.lblPageStatus.AutoSize = True
+        Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.lblPageStatus.Location = New System.Drawing.Point(0, 10)
+        Me.lblPageStatus.Name = "lblPageStatus"
+        Me.lblPageStatus.Size = New System.Drawing.Size(65, 15)
+        Me.lblPageStatus.TabIndex = 0
+        Me.lblPageStatus.Text = "Page 1 of 1"
+        '
+        'btnProcessPayout
+        '
+        Me.btnProcessPayout.BackColor = System.Drawing.Color.FromArgb(CType(CType(55, Byte), Integer), CType(CType(65, Byte), Integer), CType(CType(81, Byte), Integer))
+        Me.btnProcessPayout.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnProcessPayout.FlatAppearance.BorderSize = 0
+        Me.btnProcessPayout.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnProcessPayout.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnProcessPayout.ForeColor = System.Drawing.Color.White
+        Me.btnProcessPayout.Location = New System.Drawing.Point(776, 20)
+        Me.btnProcessPayout.Name = "btnProcessPayout"
+        Me.btnProcessPayout.Size = New System.Drawing.Size(125, 38)
+        Me.btnProcessPayout.TabIndex = 8
+        Me.btnProcessPayout.Text = "Process Payout"
+        Me.btnProcessPayout.UseVisualStyleBackColor = False
+        '
+        'dtpFilter
+        '
+        Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtpFilter.Location = New System.Drawing.Point(558, 22)
+        Me.dtpFilter.Name = "dtpFilter"
+        Me.dtpFilter.Size = New System.Drawing.Size(180, 25)
+        Me.dtpFilter.TabIndex = 15
+        '
+        'DataGridView1
+        '
+        Me.DataGridView1.AllowUserToAddRows = False
+        Me.DataGridView1.AllowUserToDeleteRows = False
+        Me.DataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
+        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
+        Me.DataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(254, Byte))
+        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridView1.Location = New System.Drawing.Point(35, 63)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.ReadOnly = True
+        Me.DataGridView1.Size = New System.Drawing.Size(972, 300)
+        Me.DataGridView1.TabIndex = 6
+        '
+        'labelHeader
+        '
+        Me.labelHeader.AutoSize = True
+        Me.labelHeader.BackColor = System.Drawing.Color.Transparent
+        Me.labelHeader.Font = New System.Drawing.Font("Segoe UI", 12.0!)
+        Me.labelHeader.ForeColor = System.Drawing.Color.DimGray
+        Me.labelHeader.Location = New System.Drawing.Point(31, 25)
+        Me.labelHeader.Name = "labelHeader"
+        Me.labelHeader.Size = New System.Drawing.Size(152, 21)
+        Me.labelHeader.TabIndex = 9
+        Me.labelHeader.Text = "Payroll Computation"
         '
         'btnExportPdf
         '
@@ -93,10 +203,10 @@ Partial Class FormPayroll
         Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
         Me.btnExportPdf.ForeColor = System.Drawing.Color.White
-        Me.btnExportPdf.Image = CType(resources.GetObject("Button1.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(920, 20)
+        Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
+        Me.btnExportPdf.Location = New System.Drawing.Point(906, 20)
         Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(104, 30)
+        Me.btnExportPdf.Size = New System.Drawing.Size(135, 38)
         Me.btnExportPdf.TabIndex = 10
         Me.btnExportPdf.Text = "   Export PDF"
         Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -115,105 +225,6 @@ Partial Class FormPayroll
         Me.Label10.TabIndex = 7
         Me.Label10.Text = "Payroll Summary"
         '
-        'btnProcessPayout
-        '
-        Me.btnProcessPayout.BackColor = System.Drawing.Color.FromArgb(CType(CType(55, Byte), Integer), CType(CType(65, Byte), Integer), CType(CType(81, Byte), Integer))
-        Me.btnProcessPayout.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnProcessPayout.FlatAppearance.BorderSize = 0
-        Me.btnProcessPayout.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnProcessPayout.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnProcessPayout.ForeColor = System.Drawing.Color.White
-        Me.btnProcessPayout.Location = New System.Drawing.Point(785, 20)
-        Me.btnProcessPayout.Name = "btnProcessPayout"
-        Me.btnProcessPayout.Size = New System.Drawing.Size(125, 32)
-        Me.btnProcessPayout.TabIndex = 8
-        Me.btnProcessPayout.Text = "Process Payout"
-        Me.btnProcessPayout.UseVisualStyleBackColor = False
-        '
-        'dtpFilter
-        '
-        Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(595, 20)
-        Me.dtpFilter.Name = "dtpFilter"
-        Me.dtpFilter.Size = New System.Drawing.Size(180, 30)
-        Me.dtpFilter.TabIndex = 15
-        '
-        'DataGridView1
-        '
-        Me.DataGridView1.AllowUserToAddRows = False
-        Me.DataGridView1.AllowUserToDeleteRows = False
-        Me.DataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
-        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
-        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView1.Location = New System.Drawing.Point(35, 63)
-        Me.DataGridView1.Name = "DataGridView1"
-        Me.DataGridView1.ReadOnly = True
-        Me.DataGridView1.Size = New System.Drawing.Size(972, 300)
-        Me.DataGridView1.TabIndex = 6
-        '
-        'PaginationContainer
-        '
-        Me.PaginationContainer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.PaginationContainer.Controls.Add(Me.btnNext)
-        Me.PaginationContainer.Controls.Add(Me.btnPrev)
-        Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
-        Me.PaginationContainer.Location = New System.Drawing.Point(24, 345)
-        Me.PaginationContainer.Name = "PaginationContainer"
-        Me.PaginationContainer.Size = New System.Drawing.Size(945, 40)
-        Me.PaginationContainer.TabIndex = 12
-        '
-        'btnNext
-        '
-        Me.btnNext.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnNext.Location = New System.Drawing.Point(855, 5)
-        Me.btnNext.Name = "btnNext"
-        Me.btnNext.Size = New System.Drawing.Size(80, 30)
-        Me.btnNext.TabIndex = 2
-        Me.btnNext.Text = "Next →"
-        Me.btnNext.UseVisualStyleBackColor = True
-        '
-        'btnPrev
-        '
-        Me.btnPrev.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnPrev.Location = New System.Drawing.Point(765, 5)
-        Me.btnPrev.Name = "btnPrev"
-        Me.btnPrev.Size = New System.Drawing.Size(80, 30)
-        Me.btnPrev.TabIndex = 1
-        Me.btnPrev.Text = "← Prev"
-        Me.btnPrev.UseVisualStyleBackColor = True
-        '
-        'lblPageStatus
-        '
-        Me.lblPageStatus.AutoSize = True
-        Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        Me.lblPageStatus.Location = New System.Drawing.Point(0, 10)
-        Me.lblPageStatus.Name = "lblPageStatus"
-        Me.lblPageStatus.Size = New System.Drawing.Size(158, 20)
-        Me.lblPageStatus.TabIndex = 0
-        Me.lblPageStatus.Text = "Page 1 of 1"
-        '
-        'labelHeader
-        '
-        Me.labelHeader.AutoSize = True
-        Me.labelHeader.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular)
-        Me.labelHeader.ForeColor = System.Drawing.Color.DimGray
-        Me.labelHeader.Location = New System.Drawing.Point(31, 25)
-        Me.labelHeader.Name = "labelHeader"
-        Me.labelHeader.Size = New System.Drawing.Size(155, 21)
-        Me.labelHeader.TabIndex = 9
-        Me.labelHeader.Text = "Payroll Computation"
-        '
         'RoundedPane23
         '
         Me.RoundedPane23.BorderColor = System.Drawing.Color.LightGray
@@ -228,6 +239,29 @@ Partial Class FormPayroll
         Me.RoundedPane23.Name = "RoundedPane23"
         Me.RoundedPane23.Size = New System.Drawing.Size(337, 149)
         Me.RoundedPane23.TabIndex = 5
+        '
+        'RoundedPane26
+        '
+        Me.RoundedPane26.BackColor = System.Drawing.Color.Transparent
+        Me.RoundedPane26.BorderColor = System.Drawing.Color.Transparent
+        Me.RoundedPane26.BorderThickness = 1
+        Me.RoundedPane26.Controls.Add(Me.PictureBox2)
+        Me.RoundedPane26.CornerRadius = 8
+        Me.RoundedPane26.FillColor = System.Drawing.Color.FromArgb(CType(CType(167, Byte), Integer), CType(CType(139, Byte), Integer), CType(CType(250, Byte), Integer))
+        Me.RoundedPane26.Location = New System.Drawing.Point(24, 21)
+        Me.RoundedPane26.Name = "RoundedPane26"
+        Me.RoundedPane26.Size = New System.Drawing.Size(43, 38)
+        Me.RoundedPane26.TabIndex = 9
+        '
+        'PictureBox2
+        '
+        Me.PictureBox2.BackColor = System.Drawing.Color.Transparent
+        Me.PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), System.Drawing.Image)
+        Me.PictureBox2.Location = New System.Drawing.Point(9, 6)
+        Me.PictureBox2.Name = "PictureBox2"
+        Me.PictureBox2.Size = New System.Drawing.Size(28, 28)
+        Me.PictureBox2.TabIndex = 4
+        Me.PictureBox2.TabStop = False
         '
         'Label9
         '
@@ -280,6 +314,29 @@ Partial Class FormPayroll
         Me.RoundedPane22.Size = New System.Drawing.Size(337, 149)
         Me.RoundedPane22.TabIndex = 4
         '
+        'RoundedPane25
+        '
+        Me.RoundedPane25.BackColor = System.Drawing.Color.Transparent
+        Me.RoundedPane25.BorderColor = System.Drawing.Color.Transparent
+        Me.RoundedPane25.BorderThickness = 1
+        Me.RoundedPane25.Controls.Add(Me.PictureBox1)
+        Me.RoundedPane25.CornerRadius = 8
+        Me.RoundedPane25.FillColor = System.Drawing.Color.FromArgb(CType(CType(34, Byte), Integer), CType(CType(211, Byte), Integer), CType(CType(238, Byte), Integer))
+        Me.RoundedPane25.Location = New System.Drawing.Point(24, 21)
+        Me.RoundedPane25.Name = "RoundedPane25"
+        Me.RoundedPane25.Size = New System.Drawing.Size(43, 38)
+        Me.RoundedPane25.TabIndex = 9
+        '
+        'PictureBox1
+        '
+        Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
+        Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
+        Me.PictureBox1.Location = New System.Drawing.Point(9, 6)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(28, 28)
+        Me.PictureBox1.TabIndex = 4
+        Me.PictureBox1.TabStop = False
+        '
         'Label8
         '
         Me.Label8.AutoSize = True
@@ -331,6 +388,29 @@ Partial Class FormPayroll
         Me.RoundedPane21.Size = New System.Drawing.Size(337, 149)
         Me.RoundedPane21.TabIndex = 3
         '
+        'RoundedPane221
+        '
+        Me.RoundedPane221.BackColor = System.Drawing.Color.Transparent
+        Me.RoundedPane221.BorderColor = System.Drawing.Color.Transparent
+        Me.RoundedPane221.BorderThickness = 1
+        Me.RoundedPane221.Controls.Add(Me.PictureBox11)
+        Me.RoundedPane221.CornerRadius = 8
+        Me.RoundedPane221.FillColor = System.Drawing.Color.FromArgb(CType(CType(129, Byte), Integer), CType(CType(140, Byte), Integer), CType(CType(248, Byte), Integer))
+        Me.RoundedPane221.Location = New System.Drawing.Point(24, 21)
+        Me.RoundedPane221.Name = "RoundedPane221"
+        Me.RoundedPane221.Size = New System.Drawing.Size(43, 38)
+        Me.RoundedPane221.TabIndex = 8
+        '
+        'PictureBox11
+        '
+        Me.PictureBox11.BackColor = System.Drawing.Color.Transparent
+        Me.PictureBox11.Image = CType(resources.GetObject("PictureBox11.Image"), System.Drawing.Image)
+        Me.PictureBox11.Location = New System.Drawing.Point(9, 6)
+        Me.PictureBox11.Name = "PictureBox11"
+        Me.PictureBox11.Size = New System.Drawing.Size(28, 28)
+        Me.PictureBox11.TabIndex = 4
+        Me.PictureBox11.TabStop = False
+        '
         'Label5
         '
         Me.Label5.AutoSize = True
@@ -367,75 +447,6 @@ Partial Class FormPayroll
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Total Payroll"
         '
-        'RoundedPane221
-        '
-        Me.RoundedPane221.BackColor = System.Drawing.Color.Transparent
-        Me.RoundedPane221.BorderColor = System.Drawing.Color.Transparent
-        Me.RoundedPane221.BorderThickness = 1
-        Me.RoundedPane221.Controls.Add(Me.PictureBox11)
-        Me.RoundedPane221.CornerRadius = 8
-        Me.RoundedPane221.FillColor = System.Drawing.Color.FromArgb(CType(CType(129, Byte), Integer), CType(CType(140, Byte), Integer), CType(CType(248, Byte), Integer))
-        Me.RoundedPane221.Location = New System.Drawing.Point(24, 21)
-        Me.RoundedPane221.Name = "RoundedPane221"
-        Me.RoundedPane221.Size = New System.Drawing.Size(43, 38)
-        Me.RoundedPane221.TabIndex = 8
-        '
-        'PictureBox11
-        '
-        Me.PictureBox11.BackColor = System.Drawing.Color.Transparent
-        Me.PictureBox11.Image = CType(resources.GetObject("PictureBox11.Image"), System.Drawing.Image)
-        Me.PictureBox11.Location = New System.Drawing.Point(9, 6)
-        Me.PictureBox11.Name = "PictureBox11"
-        Me.PictureBox11.Size = New System.Drawing.Size(28, 28)
-        Me.PictureBox11.TabIndex = 4
-        Me.PictureBox11.TabStop = False
-        '
-        'RoundedPane25
-        '
-        Me.RoundedPane25.BackColor = System.Drawing.Color.Transparent
-        Me.RoundedPane25.BorderColor = System.Drawing.Color.Transparent
-        Me.RoundedPane25.BorderThickness = 1
-        Me.RoundedPane25.Controls.Add(Me.PictureBox1)
-        Me.RoundedPane25.CornerRadius = 8
-        Me.RoundedPane25.FillColor = System.Drawing.Color.FromArgb(CType(CType(34, Byte), Integer), CType(CType(211, Byte), Integer), CType(CType(238, Byte), Integer))
-        Me.RoundedPane25.Location = New System.Drawing.Point(24, 21)
-        Me.RoundedPane25.Name = "RoundedPane25"
-        Me.RoundedPane25.Size = New System.Drawing.Size(43, 38)
-        Me.RoundedPane25.TabIndex = 9
-        '
-        'PictureBox1
-        '
-        Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
-        Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
-        Me.PictureBox1.Location = New System.Drawing.Point(9, 6)
-        Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(28, 28)
-        Me.PictureBox1.TabIndex = 4
-        Me.PictureBox1.TabStop = False
-        '
-        'RoundedPane26
-        '
-        Me.RoundedPane26.BackColor = System.Drawing.Color.Transparent
-        Me.RoundedPane26.BorderColor = System.Drawing.Color.Transparent
-        Me.RoundedPane26.BorderThickness = 1
-        Me.RoundedPane26.Controls.Add(Me.PictureBox2)
-        Me.RoundedPane26.CornerRadius = 8
-        Me.RoundedPane26.FillColor = System.Drawing.Color.FromArgb(CType(CType(167, Byte), Integer), CType(CType(139, Byte), Integer), CType(CType(250, Byte), Integer))
-        Me.RoundedPane26.Location = New System.Drawing.Point(24, 21)
-        Me.RoundedPane26.Name = "RoundedPane26"
-        Me.RoundedPane26.Size = New System.Drawing.Size(43, 38)
-        Me.RoundedPane26.TabIndex = 9
-        '
-        'PictureBox2
-        '
-        Me.PictureBox2.BackColor = System.Drawing.Color.Transparent
-        Me.PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), System.Drawing.Image)
-        Me.PictureBox2.Location = New System.Drawing.Point(9, 6)
-        Me.PictureBox2.Name = "PictureBox2"
-        Me.PictureBox2.Size = New System.Drawing.Size(28, 28)
-        Me.PictureBox2.TabIndex = 4
-        Me.PictureBox2.TabStop = False
-        '
         'FormPayroll
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -451,19 +462,21 @@ Partial Class FormPayroll
         Me.Text = "FormPayroll"
         Me.RoundedPane24.ResumeLayout(False)
         Me.RoundedPane24.PerformLayout()
-
+        Me.PaginationContainer.ResumeLayout(False)
+        Me.PaginationContainer.PerformLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.RoundedPane23.ResumeLayout(False)
         Me.RoundedPane23.PerformLayout()
+        Me.RoundedPane26.ResumeLayout(False)
+        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.RoundedPane22.ResumeLayout(False)
         Me.RoundedPane22.PerformLayout()
+        Me.RoundedPane25.ResumeLayout(False)
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.RoundedPane21.ResumeLayout(False)
         Me.RoundedPane21.PerformLayout()
         Me.RoundedPane221.ResumeLayout(False)
         CType(Me.PictureBox11, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.RoundedPane25.ResumeLayout(False)
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.RoundedPane26.ResumeLayout(False)
-        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
