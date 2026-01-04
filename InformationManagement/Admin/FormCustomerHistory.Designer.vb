@@ -22,10 +22,11 @@ Partial Class FormCustomerHistory
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormCustomerHistory))
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Me.Panel1 = New System.Windows.Forms.Panel()
         Me.LabelHeader = New System.Windows.Forms.Label()
         Me.LabelSubHeader = New System.Windows.Forms.Label()
+        Me.btnExportPdf = New System.Windows.Forms.Button()
         Me.RoundedPane21 = New InformationManagement.RoundedPane2()
         Me.PaginationContainer = New System.Windows.Forms.Panel()
         Me.btnNext = New System.Windows.Forms.Button()
@@ -34,28 +35,43 @@ Partial Class FormCustomerHistory
         Me.SearchContainer = New InformationManagement.RoundedPane2()
         Me.txtSearch = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
-
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
-        Me.dateid = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Orderid = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Type = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Items = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Amount = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Status = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colCustomerName = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colContact = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colType = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colLastVisit = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colTotalVisits = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colTotalSpent = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.colAction = New System.Windows.Forms.DataGridViewButtonColumn()
+        Me.Panel1.SuspendLayout()
         Me.RoundedPane21.SuspendLayout()
         Me.PaginationContainer.SuspendLayout()
         Me.SearchContainer.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
+        'Panel1
+        '
+        Me.Panel1.AutoScroll = True
+        Me.Panel1.Controls.Add(Me.LabelHeader)
+        Me.Panel1.Controls.Add(Me.LabelSubHeader)
+        Me.Panel1.Controls.Add(Me.btnExportPdf)
+        Me.Panel1.Controls.Add(Me.RoundedPane21)
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel1.Location = New System.Drawing.Point(0, 0)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(1111, 609)
+        Me.Panel1.TabIndex = 4
+        '
         'LabelHeader
         '
         Me.LabelHeader.AutoSize = True
         Me.LabelHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 22.0!, System.Drawing.FontStyle.Bold)
-        Me.LabelHeader.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42)
-        Me.LabelHeader.Location = New System.Drawing.Point(30, 25)
+        Me.LabelHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
+        Me.LabelHeader.Location = New System.Drawing.Point(22, 20)
+        Me.LabelHeader.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.LabelHeader.Name = "LabelHeader"
-        Me.LabelHeader.Size = New System.Drawing.Size(256, 41)
+        Me.LabelHeader.Size = New System.Drawing.Size(258, 41)
         Me.LabelHeader.TabIndex = 0
         Me.LabelHeader.Text = "Customer History"
         '
@@ -63,30 +79,50 @@ Partial Class FormCustomerHistory
         '
         Me.LabelSubHeader.AutoSize = True
         Me.LabelSubHeader.Font = New System.Drawing.Font("Segoe UI", 10.5!)
-        Me.LabelSubHeader.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.LabelSubHeader.Location = New System.Drawing.Point(32, 68)
+        Me.LabelSubHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.LabelSubHeader.Location = New System.Drawing.Point(24, 55)
+        Me.LabelSubHeader.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.LabelSubHeader.Name = "LabelSubHeader"
-        Me.LabelSubHeader.Size = New System.Drawing.Size(460, 19)
+        Me.LabelSubHeader.Size = New System.Drawing.Size(469, 19)
         Me.LabelSubHeader.TabIndex = 1
         Me.LabelSubHeader.Text = "Comprehensive record of customer transactions, order details, and statuses"
         '
-        'RoundedPane21 (Main Container)
+        'btnExportPdf
+        '
+        Me.btnExportPdf.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(55, Byte), Integer), CType(CType(65, Byte), Integer), CType(CType(81, Byte), Integer))
+        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnExportPdf.FlatAppearance.BorderSize = 0
+        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold)
+        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
+        Me.btnExportPdf.Location = New System.Drawing.Point(1117, 28)
+        Me.btnExportPdf.Margin = New System.Windows.Forms.Padding(2)
+        Me.btnExportPdf.Name = "btnExportPdf"
+        Me.btnExportPdf.Size = New System.Drawing.Size(125, 35)
+        Me.btnExportPdf.TabIndex = 3
+        Me.btnExportPdf.Text = "Export PDF"
+        Me.btnExportPdf.UseVisualStyleBackColor = False
+        '
+        'RoundedPane21
         '
         Me.RoundedPane21.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.RoundedPane21.BorderColor = System.Drawing.Color.FromArgb(241, 245, 249)
+        Me.RoundedPane21.AutoScroll = True
+        Me.RoundedPane21.AutoSize = True
+        Me.RoundedPane21.BorderColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
         Me.RoundedPane21.BorderThickness = 1
         Me.RoundedPane21.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane21.Controls.Add(Me.SearchContainer)
-
         Me.RoundedPane21.Controls.Add(Me.Label1)
         Me.RoundedPane21.Controls.Add(Me.DataGridView1)
         Me.RoundedPane21.CornerRadius = 15
         Me.RoundedPane21.FillColor = System.Drawing.Color.White
-        Me.RoundedPane21.Location = New System.Drawing.Point(30, 110)
+        Me.RoundedPane21.Location = New System.Drawing.Point(22, 89)
+        Me.RoundedPane21.Margin = New System.Windows.Forms.Padding(2)
         Me.RoundedPane21.Name = "RoundedPane21"
-        Me.RoundedPane21.Size = New System.Drawing.Size(1516, 610)
+        Me.RoundedPane21.Size = New System.Drawing.Size(1220, 496)
         Me.RoundedPane21.TabIndex = 2
         '
         'PaginationContainer
@@ -96,9 +132,10 @@ Partial Class FormCustomerHistory
         Me.PaginationContainer.Controls.Add(Me.btnNext)
         Me.PaginationContainer.Controls.Add(Me.btnPrev)
         Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
-        Me.PaginationContainer.Location = New System.Drawing.Point(20, 545)
+        Me.PaginationContainer.Location = New System.Drawing.Point(15, 443)
+        Me.PaginationContainer.Margin = New System.Windows.Forms.Padding(2)
         Me.PaginationContainer.Name = "PaginationContainer"
-        Me.PaginationContainer.Size = New System.Drawing.Size(1475, 45)
+        Me.PaginationContainer.Size = New System.Drawing.Size(1189, 37)
         Me.PaginationContainer.TabIndex = 10
         '
         'btnNext
@@ -107,7 +144,8 @@ Partial Class FormCustomerHistory
         Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnNext.Location = New System.Drawing.Point(1375, 7)
+        Me.btnNext.Location = New System.Drawing.Point(1114, 4)
+        Me.btnNext.Margin = New System.Windows.Forms.Padding(2)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(80, 30)
         Me.btnNext.TabIndex = 2
@@ -120,7 +158,8 @@ Partial Class FormCustomerHistory
         Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnPrev.Location = New System.Drawing.Point(1285, 7)
+        Me.btnPrev.Location = New System.Drawing.Point(1024, 4)
+        Me.btnPrev.Margin = New System.Windows.Forms.Padding(2)
         Me.btnPrev.Name = "btnPrev"
         Me.btnPrev.Size = New System.Drawing.Size(80, 30)
         Me.btnPrev.TabIndex = 1
@@ -131,10 +170,11 @@ Partial Class FormCustomerHistory
         '
         Me.lblPageStatus.AutoSize = True
         Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblPageStatus.Location = New System.Drawing.Point(0, 15)
+        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.lblPageStatus.Location = New System.Drawing.Point(7, 12)
+        Me.lblPageStatus.Margin = New System.Windows.Forms.Padding(2, 0, 2, 0)
         Me.lblPageStatus.Name = "lblPageStatus"
-        Me.lblPageStatus.Size = New System.Drawing.Size(125, 15)
+        Me.lblPageStatus.Size = New System.Drawing.Size(124, 15)
         Me.lblPageStatus.TabIndex = 0
         Me.lblPageStatus.Text = "Page 1 of 1 (0 records)"
         '
@@ -142,39 +182,37 @@ Partial Class FormCustomerHistory
         '
         Me.SearchContainer.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.SearchContainer.BackColor = System.Drawing.Color.Transparent
-        Me.SearchContainer.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240)
+        Me.SearchContainer.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
         Me.SearchContainer.BorderThickness = 1
         Me.SearchContainer.Controls.Add(Me.txtSearch)
         Me.SearchContainer.CornerRadius = 10
-        Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(248, 250, 252)
-        Me.SearchContainer.Location = New System.Drawing.Point(1050, 22)
+        Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.SearchContainer.Location = New System.Drawing.Point(1000, 18)
+        Me.SearchContainer.Margin = New System.Windows.Forms.Padding(2)
         Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(280, 40)
+        Me.SearchContainer.Size = New System.Drawing.Size(210, 38)
         Me.SearchContainer.TabIndex = 1
         '
         'txtSearch
         '
-        Me.txtSearch.BackColor = System.Drawing.Color.FromArgb(248, 250, 252)
+        Me.txtSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.txtSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42)
-        Me.txtSearch.Location = New System.Drawing.Point(12, 11)
+        Me.txtSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
+        Me.txtSearch.Location = New System.Drawing.Point(9, 9)
+        Me.txtSearch.Margin = New System.Windows.Forms.Padding(2)
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(255, 18)
+        Me.txtSearch.Size = New System.Drawing.Size(191, 18)
         Me.txtSearch.TabIndex = 0
-        Me.txtSearch.Text = ""
         '
-
-
         'Label1
         '
         Me.Label1.AutoSize = True
         Me.Label1.BackColor = System.Drawing.Color.Transparent
         Me.Label1.Font = New System.Drawing.Font("Segoe UI", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(40, 38)
-        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label1.Location = New System.Drawing.Point(30, 31)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(271, 25)
+        Me.Label1.Size = New System.Drawing.Size(214, 20)
         Me.Label1.TabIndex = 1
         Me.Label1.Text = "Customer Order History Report"
         '
@@ -191,82 +229,90 @@ Partial Class FormCustomerHistory
         Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
+        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
         DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
         DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         Me.DataGridView1.ColumnHeadersHeight = 45
-        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.dateid, Me.Orderid, Me.Type, Me.Items, Me.Amount, Me.Status})
+        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.colCustomerName, Me.colContact, Me.colType, Me.colLastVisit, Me.colTotalVisits, Me.colTotalSpent, Me.colAction})
         Me.DataGridView1.EnableHeadersVisualStyles = False
-        Me.DataGridView1.GridColor = System.Drawing.Color.FromArgb(241, 245, 249)
-        Me.DataGridView1.Location = New System.Drawing.Point(20, 85)
+        Me.DataGridView1.GridColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
+        Me.DataGridView1.Location = New System.Drawing.Point(15, 69)
+        Me.DataGridView1.Margin = New System.Windows.Forms.Padding(2)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.RowHeadersVisible = False
         Me.DataGridView1.RowTemplate.Height = 50
         Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.DataGridView1.Size = New System.Drawing.Size(1475, 450)
+        Me.DataGridView1.Size = New System.Drawing.Size(1189, 366)
         Me.DataGridView1.TabIndex = 0
         '
-        'dateid
+        'colCustomerName
         '
-        Me.dateid.HeaderText = "Date"
-        Me.dateid.MinimumWidth = 6
-        Me.dateid.Name = "dateid"
-        Me.dateid.Width = 150
+        Me.colCustomerName.HeaderText = "Customer Name"
+        Me.colCustomerName.MinimumWidth = 6
+        Me.colCustomerName.Name = "colCustomerName"
+        Me.colCustomerName.Width = 200
         '
-        'Orderid
+        'colContact
         '
-        Me.Orderid.HeaderText = "Order ID"
-        Me.Orderid.MinimumWidth = 6
-        Me.Orderid.Name = "Orderid"
-        Me.Orderid.Width = 150
+        Me.colContact.HeaderText = "Contact / Email"
+        Me.colContact.MinimumWidth = 6
+        Me.colContact.Name = "colContact"
+        Me.colContact.Width = 200
         '
-        'Type
+        'colType
         '
-        Me.Type.HeaderText = "Type"
-        Me.Type.MinimumWidth = 6
-        Me.Type.Name = "Type"
-        Me.Type.Width = 220
+        Me.colType.HeaderText = "Type"
+        Me.colType.MinimumWidth = 6
+        Me.colType.Name = "colType"
         '
-        'Items
+        'colLastVisit
         '
-        Me.Items.HeaderText = "Items"
-        Me.Items.MinimumWidth = 6
-        Me.Items.Name = "Items"
-        Me.Items.Width = 230
+        Me.colLastVisit.HeaderText = "Last Visit"
+        Me.colLastVisit.MinimumWidth = 6
+        Me.colLastVisit.Name = "colLastVisit"
+        Me.colLastVisit.Width = 120
         '
-        'Amount
+        'colTotalVisits
         '
-        Me.Amount.HeaderText = "Amount"
-        Me.Amount.MinimumWidth = 6
-        Me.Amount.Name = "Amount"
-        Me.Amount.Width = 220
+        Me.colTotalVisits.HeaderText = "Visits"
+        Me.colTotalVisits.MinimumWidth = 6
+        Me.colTotalVisits.Name = "colTotalVisits"
+        Me.colTotalVisits.Width = 80
         '
-        'Status
+        'colTotalSpent
         '
-        Me.Status.HeaderText = "Status"
-        Me.Status.MinimumWidth = 6
-        Me.Status.Name = "Status"
-        Me.Status.Width = 150
+        Me.colTotalSpent.HeaderText = "Total Spent"
+        Me.colTotalSpent.MinimumWidth = 6
+        Me.colTotalSpent.Name = "colTotalSpent"
+        Me.colTotalSpent.Width = 120
+        '
+        'colAction
+        '
+        Me.colAction.HeaderText = "Action"
+        Me.colAction.MinimumWidth = 6
+        Me.colAction.Name = "colAction"
+        Me.colAction.Text = "View History"
+        Me.colAction.UseColumnTextForButtonValue = True
+        Me.colAction.Width = 120
         '
         'FormCustomerHistory
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.AutoScroll = True
         Me.BackColor = System.Drawing.Color.GhostWhite
-        Me.ClientSize = New System.Drawing.Size(1580, 750)
-        Me.Controls.Add(Me.LabelSubHeader)
-        Me.Controls.Add(Me.LabelHeader)
-        Me.Controls.Add(Me.RoundedPane21)
+        Me.ClientSize = New System.Drawing.Size(1111, 609)
+        Me.Controls.Add(Me.Panel1)
+        Me.DoubleBuffered = True
         Me.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Name = "FormCustomerHistory"
         Me.Text = "FormCustomerHistory"
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.RoundedPane21.ResumeLayout(False)
         Me.RoundedPane21.PerformLayout()
         Me.PaginationContainer.ResumeLayout(False)
@@ -275,15 +321,16 @@ Partial Class FormCustomerHistory
         Me.SearchContainer.PerformLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
 
+
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents btnExportPdf As Button
     Friend WithEvents LabelHeader As Label
     Friend WithEvents LabelSubHeader As Label
     Friend WithEvents RoundedPane21 As RoundedPane2
     Friend WithEvents DataGridView1 As DataGridView
-    Friend WithEvents Label1 As Label
 
     Friend WithEvents PaginationContainer As Panel
     Friend WithEvents btnNext As Button
@@ -291,12 +338,13 @@ Partial Class FormCustomerHistory
     Friend WithEvents lblPageStatus As Label
     Friend WithEvents SearchContainer As RoundedPane2
     Friend WithEvents txtSearch As TextBox
-    Friend WithEvents dateid As DataGridViewTextBoxColumn
-    Friend WithEvents Orderid As DataGridViewTextBoxColumn
-    Friend WithEvents Type As DataGridViewTextBoxColumn
-    Friend WithEvents Items As DataGridViewTextBoxColumn
-    Friend WithEvents Amount As DataGridViewTextBoxColumn
-    Friend WithEvents Status As DataGridViewTextBoxColumn
-
+    Friend WithEvents colCustomerName As DataGridViewTextBoxColumn
+    Friend WithEvents colContact As DataGridViewTextBoxColumn
+    Friend WithEvents colType As DataGridViewTextBoxColumn
+    Friend WithEvents colLastVisit As DataGridViewTextBoxColumn
+    Friend WithEvents colTotalVisits As DataGridViewTextBoxColumn
+    Friend WithEvents colTotalSpent As DataGridViewTextBoxColumn
+    Friend WithEvents colAction As DataGridViewButtonColumn
+    Friend WithEvents Label1 As Label
 End Class
 

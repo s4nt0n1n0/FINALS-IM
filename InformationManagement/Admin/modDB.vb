@@ -59,14 +59,22 @@ Module modDB
             If File.Exists(iniFilePath) Then
                 Dim lines = File.ReadAllLines(iniFilePath)
                 For Each line In lines
-                    If line.StartsWith("Server=") Then
-                        db_server = line.Substring(7).Trim()
-                    ElseIf line.StartsWith("Database=") Then
-                        db_name = line.Substring(9).Trim()
-                    ElseIf line.StartsWith("Uid=") Then
-                        db_uid = line.Substring(4).Trim()
-                    ElseIf line.StartsWith("Pwd=") Then
-                        db_pwd = line.Substring(4).Trim()
+                    Dim trimmedLine = line.Trim()
+                    If trimmedLine.Contains("=") Then
+                        Dim parts = trimmedLine.Split(New Char() {"="c}, 2)
+                        Dim key = parts(0).Trim().ToLower()
+                        Dim value = parts(1).Trim()
+
+                        Select Case key
+                            Case "server"
+                                db_server = value
+                            Case "database"
+                                db_name = value
+                            Case "uid", "username"
+                                db_uid = value
+                            Case "pwd", "password"
+                                db_pwd = value
+                        End Select
                     End If
                 Next
                 UpdateConnectionString()
@@ -85,6 +93,10 @@ Module modDB
             sb.AppendLine($"Database={db}")
             sb.AppendLine($"Uid={uid}")
             sb.AppendLine($"Pwd={pwd}")
+
+            ' Ensure directory exists
+            Dim dir = Path.GetDirectoryName(iniFilePath)
+            If Not Directory.Exists(dir) Then Directory.CreateDirectory(dir)
 
             File.WriteAllText(iniFilePath, sb.ToString())
             

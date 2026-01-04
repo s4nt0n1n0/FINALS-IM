@@ -7,16 +7,14 @@ Public Class ConfigurationPage
     Private mainServerConfigPath As String = ""
 
     Private Sub ConfigurationPage_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Initialize configuration path
-        InitializeConfigPath()
+        ' Load existing configuration from central module
+        modDB.LoadDatabaseConfig()
 
-        ' Load existing configuration if available
-        LoadConfiguration()
-
-        ' Set default values if fields are empty
-        If String.IsNullOrWhiteSpace(txtServer.Text) Then
-            SetDefaultValues()
-        End If
+        ' Map to UI
+        txtServer.Text = modDB.db_server
+        txtDatabasename.Text = modDB.db_name
+        txtUsername.Text = modDB.db_uid
+        txtPassword.Text = modDB.db_pwd
     End Sub
 
     Private Sub InitializeConfigPath()
@@ -99,20 +97,13 @@ Public Class ConfigurationPage
         End If
 
         Try
-            ' Build configuration content
-            Dim sb As New StringBuilder()
-            sb.AppendLine($"CONNECTION_TYPE=DATABASE")
-            sb.AppendLine($"SERVER={txtServer.Text.Trim()}")
-            sb.AppendLine($"DATABASE={txtDatabasename.Text.Trim()}")
-            sb.AppendLine($"USERNAME={txtUsername.Text.Trim()}")
-            sb.AppendLine($"PASSWORD={EncryptPassword(txtPassword.Text)}")
-            sb.AppendLine($"SAVED_DATE={DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}")
-
-            ' Save to file
-            File.WriteAllText(mainServerConfigPath, sb.ToString())
-
-            ' Update modDB connection string
-            UpdateModDBConnectionString()
+            ' Use central modDB to save configuration (writes to db_config.ini)
+            modDB.SaveDatabaseConfig(
+                txtServer.Text.Trim(),
+                txtDatabasename.Text.Trim(),
+                txtUsername.Text.Trim(),
+                txtPassword.Text
+            )
 
             lblServerStatus.Text = "Configuration saved successfully ✓"
             lblServerStatus.ForeColor = Color.Green
@@ -403,35 +394,24 @@ Public Class ConfigurationPage
         ' Connection successful, save configuration
         SaveConfiguration()
 
-        ' Verify config file was created
-        If File.Exists(mainServerConfigPath) Then
-            ' Initialize database tables
-            Try
-                UpdateModDBConnectionString()
-                modDB.CheckAndCreateTables()
-            Catch ex As Exception
-                MessageBox.Show(
-                    "Database connected but failed to initialize tables:" & vbCrLf & vbCrLf &
-                    ex.Message & vbCrLf & vbCrLf &
-                    "Please check database permissions.",
-                    "Initialization Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning)
-                Return
-            End Try
-
-            ' Proceed to login
-            Dim loginForm As New Adminlogin()
-            loginForm.Show()
-            Me.Hide()
-        Else
+        ' Initialize database tables
+        Try
+            modDB.CheckAndCreateTables()
+        Catch ex As Exception
             MessageBox.Show(
-                "Configuration file was not saved properly." & vbCrLf &
-                "Please try again.",
-                "Save Error",
+                "Database connected but failed to initialize tables:" & vbCrLf & vbCrLf &
+                ex.Message & vbCrLf & vbCrLf &
+                "Please check database permissions.",
+                "Initialization Error",
                 MessageBoxButtons.OK,
-                MessageBoxIcon.Error)
-        End If
+                MessageBoxIcon.Warning)
+            Return
+        End Try
+
+        ' Proceed to login
+        Dim loginForm As New Adminlogin()
+        loginForm.Show()
+        Me.Hide()
     End Sub
 
     ' Optional: Add keyboard shortcuts

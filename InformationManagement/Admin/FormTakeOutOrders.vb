@@ -195,14 +195,19 @@ Public Class FormTakeOutOrders
                 conn.Open()
                 Dim query As String =
                     "SELECT " &
-                    "OrderID, " &
-                    "CONCAT('#', OrderID) AS OrderNumber, " &
-                    "ItemsOrderedCount AS Items, " &
-                    "TotalAmount AS Amount, " &
-                    "OrderStatus AS Status, " &
-                    "DATE_FORMAT(CONCAT(OrderDate, ' ', OrderTime), '%Y-%m-%d %H:%i') AS Time " &
+                    "o.OrderID, " &
+                    "CONCAT('#', o.OrderID) AS OrderNumber, " &
+                    "(SELECT GROUP_CONCAT(CONCAT(oi.Quantity, 'x ', oi.ProductName) SEPARATOR ', ') " &
+                    "   FROM order_items oi " &
+                    "   WHERE oi.OrderID = o.OrderID " &
+                    "   LIMIT 10) AS ItemsOrdered, " &
+                    "o.TotalAmount AS Amount, " &
+                    "o.OrderStatus AS Status, " &
+                    "COALESCE(p.PaymentMethod, 'Cash') AS PaymentMethod, " &
+                    "DATE_FORMAT(CONCAT(o.OrderDate, ' ', o.OrderTime), '%Y-%m-%d %H:%i') AS Time " &
                     "FROM orders o " &
-                    "WHERE o.OrderType = 'Takeout' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search) " &
+                    "LEFT JOIN payments p ON o.OrderID = p.OrderID " &
+                    "WHERE o.OrderType = 'Takeout' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search OR p.PaymentMethod LIKE @search) " &
                     "ORDER BY o.OrderDate DESC, o.OrderTime DESC, o.OrderID DESC " &
                     "LIMIT @limit OFFSET @offset"
 
@@ -410,7 +415,7 @@ Public Class FormTakeOutOrders
     ' =============================
     Private Sub FormatGrid()
         With DataGridView1
-            .AutoGenerateColumns = False
+           .AutoGenerateColumns = False
                 .AllowUserToAddRows = False
                 .AllowUserToDeleteRows = False
                 .ReadOnly = True
@@ -418,17 +423,15 @@ Public Class FormTakeOutOrders
                 .RowHeadersVisible = False
                 .BackgroundColor = Color.White
                 .BorderStyle = BorderStyle.None
-                .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-                .GridColor = Color.FromArgb(241, 245, 249)
-                .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-                .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+                .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
                 .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
-                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
+                .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                 .ColumnHeadersHeight = 50
                 .RowTemplate.Height = 50
-                .EnableHeadersVisualStyles = False
+                .EnableHeadersVisualStyles = True
 
             If .Columns.Contains("OrderID") Then .Columns("OrderID").Visible = False
 
@@ -439,11 +442,13 @@ Public Class FormTakeOutOrders
                 End With
             End If
 
-            If .Columns.Contains("Items") Then
-                With .Columns("Items")
-                    .HeaderText = "Items"
-                    .FillWeight = 60
-                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            If .Columns.Contains("ItemsOrdered") Then
+                With .Columns("ItemsOrdered")
+                    .HeaderText = "Ordered Products"
+                    .FillWeight = 100
+                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                    .DefaultCellStyle.WrapMode = DataGridViewTriState.False
+                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
                 End With
             End If
 
@@ -451,10 +456,19 @@ Public Class FormTakeOutOrders
                 With .Columns("Amount")
                     .HeaderText = "Total Amount"
                     .DefaultCellStyle.Format = "₱#,##0.00"
-                    .DefaultCellStyle.ForeColor = Color.FromArgb(15, 23, 42)
-                    .DefaultCellStyle.Font = New Font("Segoe UI Semibold", 10)
+                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                    .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F, FontStyle.Bold)
                 End With
             End If
+
+            If .Columns.Contains("PaymentMethod") Then
+                With .Columns("PaymentMethod")
+                    .HeaderText = "Payment"
+                    .FillWeight = 100
+                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                End With
+            End If
+
 
             If .Columns.Contains("Time") Then
                 With .Columns("Time")

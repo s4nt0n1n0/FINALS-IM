@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,38 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="PictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEbSURBVDhPldOx
-        K0VhGMfx26WkpIwWxWCQFGVgEYsyGgxyWQxisfgDJINRkYEyGRWDslykMCijstjY2CyWj97bc3Xc0j3n
-        t5z3/J7zfJ/3Oc/7lkoZ4RadOEMPjjEcsV6c4xOD2bxfRbAFdxjAIeYC+oIFXGK8MTcld+At1nXAJtax
-        iIOIXfwH6MdjA2AFO9jCWjPACKqxnkRbVN7HNlabAWotpMrx3h79LuUCJGE6IBN4xh7KuQFJOMJsTKQc
-        XiHACWbwntoIrxDgFFN4RVd4hQC1D+IfdIe3ga9o67sZoBojfUJfxk/jnM+zg/s4RLVnxs8NSJXTxblK
-        O8n4hQBDeGgA7GIZNxj9m5URKviIq9ua8cditNfpmNf9H/Ru8ZLy9fQaAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="PictureBox2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAD6SURBVDhPzdOx
-        K4VRGMfx6/4Dl00xKavFrKTLYJKdTHaD+B+k2O9sMFjNMqAUk0FJEgZGLNJHR8+r8x5XKINvPcNzfs/v
-        V+c579toZGAVL+rc4xTr6M/nP4H9MN3iApd4ysLuMFz6PsBBDE5lZz2YwFVou6WpD0c4xmMMnUef13Vo
-        r9EnT28VMoghnMTQfPR5jYSWGEueytzEONo4i4GV6POaywJmw9NMAS1sYRsPMbAXfVU7eA7tJs6Sp1Xu
-        o1riBhaxjM14kUS6/3TNlJMFdCM96UzpqZEFdGIPS1jA6Pt9v6Pbd/Ar/kXA4V8FTJbaj8Ba/IkDpfYV
-        bx5Q5nMht7RxAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="PictureBox3.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAD6SURBVDhPzdOx
-        K4VRGMfx6/4Dl00xKavFrKTLYJKdTHaD+B+k2O9sMFjNMqAUk0FJEgZGLNJHR8+r8x5XKINvPcNzfs/v
-        V+c579toZGAVL+rc4xTr6M/nP4H9MN3iApd4ysLuMFz6PsBBDE5lZz2YwFVou6WpD0c4xmMMnUef13Vo
-        r9EnT28VMoghnMTQfPR5jYSWGEueytzEONo4i4GV6POaywJmw9NMAS1sYRsPMbAXfVU7eA7tJs6Sp1Xu
-        o1riBhaxjM14kUS6/3TNlJMFdCM96UzpqZEFdGIPS1jA6Pt9v6Pbd/Ar/kXA4V8FTJbaj8Ba/IkDpfYV
-        bx5Q5nMht7RxAAAAAElFTkSuQmCC
-</value>
-  </data>
 </root>
