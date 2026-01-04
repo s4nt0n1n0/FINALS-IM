@@ -22,7 +22,14 @@ Public Class Setting
             ' Load the current logged-in admin's data
             txtName.Text = CurrentLoggedUser.name
             txtUsername.Text = CurrentLoggedUser.username
-            txtCurrentPassword.Text = ""
+            
+            ' Populate current password (decrypted)
+            If Not String.IsNullOrEmpty(CurrentLoggedUser.password) Then
+                txtCurrentPassword.Text = Decrypt(CurrentLoggedUser.password)
+            Else
+                txtCurrentPassword.Text = ""
+            End If
+            
             txtNewPassword.Text = ""
         Catch ex As Exception
             MessageBox.Show("Error loading user data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)

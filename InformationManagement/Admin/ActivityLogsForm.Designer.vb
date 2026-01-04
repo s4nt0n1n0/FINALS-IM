@@ -134,6 +134,7 @@ Partial Class ActivityLogsForm
         'btnApplyFilters
         '
         Me.btnApplyFilters.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(120, Byte), Integer), CType(CType(215, Byte), Integer))
+        Me.btnApplyFilters.FlatAppearance.BorderSize = 0
         Me.btnApplyFilters.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnApplyFilters.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.btnApplyFilters.ForeColor = System.Drawing.Color.White
@@ -147,6 +148,7 @@ Partial Class ActivityLogsForm
         'btnResetFilters
         '
         Me.btnResetFilters.BackColor = System.Drawing.Color.FromArgb(CType(CType(108, Byte), Integer), CType(CType(117, Byte), Integer), CType(CType(125, Byte), Integer))
+        Me.btnResetFilters.FlatAppearance.BorderSize = 0
         Me.btnResetFilters.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnResetFilters.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.btnResetFilters.ForeColor = System.Drawing.Color.White
@@ -160,6 +162,7 @@ Partial Class ActivityLogsForm
         'btnSearch
         '
         Me.btnSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(120, Byte), Integer), CType(CType(215, Byte), Integer))
+        Me.btnSearch.FlatAppearance.BorderSize = 0
         Me.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnSearch.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.btnSearch.ForeColor = System.Drawing.Color.White
@@ -173,6 +176,7 @@ Partial Class ActivityLogsForm
         'btnExportCSV
         '
         Me.btnExportCSV.BackColor = System.Drawing.Color.FromArgb(CType(CType(40, Byte), Integer), CType(CType(167, Byte), Integer), CType(CType(69, Byte), Integer))
+        Me.btnExportCSV.FlatAppearance.BorderSize = 0
         Me.btnExportCSV.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnExportCSV.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.btnExportCSV.ForeColor = System.Drawing.Color.White
@@ -186,6 +190,7 @@ Partial Class ActivityLogsForm
         'btnRefresh
         '
         Me.btnRefresh.BackColor = System.Drawing.Color.FromArgb(CType(CType(23, Byte), Integer), CType(CType(162, Byte), Integer), CType(CType(184, Byte), Integer))
+        Me.btnRefresh.FlatAppearance.BorderSize = 0
         Me.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnRefresh.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.btnRefresh.ForeColor = System.Drawing.Color.White
@@ -199,6 +204,7 @@ Partial Class ActivityLogsForm
         'btnClearLogs
         '
         Me.btnClearLogs.BackColor = System.Drawing.Color.FromArgb(CType(CType(220, Byte), Integer), CType(CType(53, Byte), Integer), CType(CType(69, Byte), Integer))
+        Me.btnClearLogs.FlatAppearance.BorderSize = 0
         Me.btnClearLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnClearLogs.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.btnClearLogs.ForeColor = System.Drawing.Color.White

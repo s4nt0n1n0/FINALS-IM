@@ -32,7 +32,6 @@ Public Class ConfigurationPage
     Private Sub SetDefaultValues()
         ' Set default XAMPP values
         txtServer.Text = "localhost"
-        txtPort.Text = "3306"
         txtUsername.Text = "root"
         txtPassword.Text = ""
         txtDatabasename.Text = ""
@@ -53,8 +52,6 @@ Public Class ConfigurationPage
                             Select Case key.ToUpper()
                                 Case "SERVER", "IP"
                                     txtServer.Text = value
-                                Case "PORT"
-                                    txtPort.Text = value
                                 Case "DATABASE"
                                     txtDatabasename.Text = value
                                 Case "USERNAME"
@@ -106,7 +103,6 @@ Public Class ConfigurationPage
             Dim sb As New StringBuilder()
             sb.AppendLine($"CONNECTION_TYPE=DATABASE")
             sb.AppendLine($"SERVER={txtServer.Text.Trim()}")
-            sb.AppendLine($"PORT={txtPort.Text.Trim()}")
             sb.AppendLine($"DATABASE={txtDatabasename.Text.Trim()}")
             sb.AppendLine($"USERNAME={txtUsername.Text.Trim()}")
             sb.AppendLine($"PASSWORD={EncryptPassword(txtPassword.Text)}")
@@ -139,27 +135,9 @@ Public Class ConfigurationPage
             Return False
         End If
 
-        ' Validate Port
-        If String.IsNullOrWhiteSpace(txtPort.Text) Then
-            MessageBox.Show("Please enter Port number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txtPort.Focus()
-            Return False
-        End If
 
-        ' Validate Port is numeric
-        Dim portNumber As Integer
-        If Not Integer.TryParse(txtPort.Text, portNumber) Then
-            MessageBox.Show("Port must be a valid number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txtPort.Focus()
-            Return False
-        End If
 
-        ' Validate Port range
-        If portNumber < 1 OrElse portNumber > 65535 Then
-            MessageBox.Show("Port must be between 1 and 65535.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txtPort.Focus()
-            Return False
-        End If
+
 
         ' Validate Database Name
         If String.IsNullOrWhiteSpace(txtDatabasename.Text) Then
@@ -187,7 +165,6 @@ Public Class ConfigurationPage
 
     Private Sub ClearFields()
         txtServer.Text = ""
-        txtPort.Text = "3306"
         txtDatabasename.Text = ""
         txtUsername.Text = "root"
         txtPassword.Text = ""
@@ -367,7 +344,7 @@ Public Class ConfigurationPage
     End Function
 
     Private Function BuildConnectionString() As String
-        Return $"Server={txtServer.Text.Trim()};Port={txtPort.Text.Trim()};Database={txtDatabasename.Text.Trim()};Uid={txtUsername.Text.Trim()};Pwd={txtPassword.Text};ConnectionTimeout=5;"
+        Return $"Server={txtServer.Text.Trim()};Database={txtDatabasename.Text.Trim()};Uid={txtUsername.Text.Trim()};Pwd={txtPassword.Text};ConnectionTimeout=5;"
     End Function
 
     ' Update modDB connection string after saving config
@@ -378,7 +355,7 @@ Public Class ConfigurationPage
             modDB.db_pwd = txtPassword.Text
             modDB.db_name = txtDatabasename.Text.Trim()
 
-            modDB.strConnection = $"Server={modDB.db_server};Port={txtPort.Text.Trim()};Database={modDB.db_name};Uid={modDB.db_uid};Pwd={modDB.db_pwd};AllowUserVariables=True;"
+            modDB.strConnection = $"Server={modDB.db_server};Database={modDB.db_name};Uid={modDB.db_uid};Pwd={modDB.db_pwd};AllowUserVariables=True;"
         Catch ex As Exception
             ' Silent fail - not critical
         End Try
@@ -475,7 +452,7 @@ Public Class ConfigurationPage
         lblServerStatus.ForeColor = Color.Gray
     End Sub
 
-    Private Sub txtPort_Enter(sender As Object, e As EventArgs) Handles txtPort.Enter
+    Private Sub txtPort_Enter(sender As Object, e As EventArgs)
         lblServerStatus.Text = "Default MySQL port is 3306"
         lblServerStatus.ForeColor = Color.Gray
     End Sub
