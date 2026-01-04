@@ -25,6 +25,12 @@ Partial Class FormReservationStatus
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormReservationStatus))
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.RoundedPane25 = New InformationManagement.RoundedPane2()
+        Me.PaginationContainer = New System.Windows.Forms.Panel()
+        Me.btnNext = New System.Windows.Forms.Button()
+        Me.btnPrev = New System.Windows.Forms.Button()
+        Me.lblPageStatus = New System.Windows.Forms.Label()
+        Me.searchTextBox1 = New InformationManagement.RoundedPane2()
+        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.dgvDetails = New System.Windows.Forms.DataGridView()
         Me.btnExportPdf = New System.Windows.Forms.Button()
         Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
@@ -53,9 +59,9 @@ Partial Class FormReservationStatus
         Me.lblTotalReservations = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.searchTextBox1 = New InformationManagement.RoundedPane2()
-        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.RoundedPane25.SuspendLayout()
+        Me.PaginationContainer.SuspendLayout()
+        Me.searchTextBox1.SuspendLayout()
         CType(Me.dgvDetails, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane24.SuspendLayout()
         Me.RoundedPane29.SuspendLayout()
@@ -69,7 +75,6 @@ Partial Class FormReservationStatus
         Me.RoundedPane21.SuspendLayout()
         Me.RoundedPane27.SuspendLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.searchTextBox1.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
@@ -78,7 +83,7 @@ Partial Class FormReservationStatus
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1077, 592)
+        Me.Panel1.Size = New System.Drawing.Size(1248, 749)
         Me.Panel1.TabIndex = 11
         '
         'RoundedPane25
@@ -87,6 +92,7 @@ Partial Class FormReservationStatus
         Me.RoundedPane25.BackColor = System.Drawing.Color.White
         Me.RoundedPane25.BorderColor = System.Drawing.Color.LightGray
         Me.RoundedPane25.BorderThickness = 1
+        Me.RoundedPane25.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane25.Controls.Add(Me.searchTextBox1)
         Me.RoundedPane25.Controls.Add(Me.dgvDetails)
         Me.RoundedPane25.Controls.Add(Me.btnExportPdf)
@@ -97,8 +103,82 @@ Partial Class FormReservationStatus
         Me.RoundedPane25.ForeColor = System.Drawing.Color.LightGray
         Me.RoundedPane25.Location = New System.Drawing.Point(32, 228)
         Me.RoundedPane25.Name = "RoundedPane25"
-        Me.RoundedPane25.Size = New System.Drawing.Size(1045, 337)
+        Me.RoundedPane25.Size = New System.Drawing.Size(1140, 463)
         Me.RoundedPane25.TabIndex = 10
+        '
+        'PaginationContainer
+        '
+        Me.PaginationContainer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.PaginationContainer.Controls.Add(Me.btnNext)
+        Me.PaginationContainer.Controls.Add(Me.btnPrev)
+        Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
+        Me.PaginationContainer.Location = New System.Drawing.Point(28, 411)
+        Me.PaginationContainer.Name = "PaginationContainer"
+        Me.PaginationContainer.Size = New System.Drawing.Size(945, 40)
+        Me.PaginationContainer.TabIndex = 23
+        '
+        'btnNext
+        '
+        Me.btnNext.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.btnNext.Location = New System.Drawing.Point(1600, 5)
+        Me.btnNext.Name = "btnNext"
+        Me.btnNext.Size = New System.Drawing.Size(80, 30)
+        Me.btnNext.TabIndex = 2
+        Me.btnNext.Text = "Next →"
+        Me.btnNext.UseVisualStyleBackColor = True
+        '
+        'btnPrev
+        '
+        Me.btnPrev.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.btnPrev.Location = New System.Drawing.Point(1510, 5)
+        Me.btnPrev.Name = "btnPrev"
+        Me.btnPrev.Size = New System.Drawing.Size(80, 30)
+        Me.btnPrev.TabIndex = 1
+        Me.btnPrev.Text = "← Prev"
+        Me.btnPrev.UseVisualStyleBackColor = True
+        '
+        'lblPageStatus
+        '
+        Me.lblPageStatus.AutoSize = True
+        Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.lblPageStatus.Location = New System.Drawing.Point(14, 15)
+        Me.lblPageStatus.Name = "lblPageStatus"
+        Me.lblPageStatus.Size = New System.Drawing.Size(65, 15)
+        Me.lblPageStatus.TabIndex = 0
+        Me.lblPageStatus.Text = "Page 1 of 1"
+        '
+        'searchTextBox1
+        '
+        Me.searchTextBox1.BackColor = System.Drawing.Color.Transparent
+        Me.searchTextBox1.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.searchTextBox1.BorderThickness = 1
+        Me.searchTextBox1.Controls.Add(Me.TextBoxSearch)
+        Me.searchTextBox1.CornerRadius = 10
+        Me.searchTextBox1.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.searchTextBox1.Location = New System.Drawing.Point(503, 18)
+        Me.searchTextBox1.Name = "searchTextBox1"
+        Me.searchTextBox1.Size = New System.Drawing.Size(482, 38)
+        Me.searchTextBox1.TabIndex = 22
+        '
+        'TextBoxSearch
+        '
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
+        Me.TextBoxSearch.Name = "TextBoxSearch"
+        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 18)
+        Me.TextBoxSearch.TabIndex = 0
+        Me.TextBoxSearch.Text = "Search orders..."
         '
         'dgvDetails
         '
@@ -111,13 +191,13 @@ Partial Class FormReservationStatus
         Me.dgvDetails.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.dgvDetails.ColumnHeadersHeight = 40
         Me.dgvDetails.GridColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
-        Me.dgvDetails.Location = New System.Drawing.Point(53, 50)
+        Me.dgvDetails.Location = New System.Drawing.Point(30, 83)
         Me.dgvDetails.Name = "dgvDetails"
         Me.dgvDetails.ReadOnly = True
         Me.dgvDetails.RowHeadersVisible = False
         Me.dgvDetails.RowTemplate.Height = 50
         Me.dgvDetails.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvDetails.Size = New System.Drawing.Size(922, 268)
+        Me.dgvDetails.Size = New System.Drawing.Size(1037, 313)
         Me.dgvDetails.TabIndex = 21
         '
         'btnExportPdf
@@ -129,9 +209,9 @@ Partial Class FormReservationStatus
         Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
         Me.btnExportPdf.ForeColor = System.Drawing.Color.White
         Me.btnExportPdf.Image = CType(resources.GetObject("btnExportPdf.Image"), System.Drawing.Image)
-        Me.btnExportPdf.Location = New System.Drawing.Point(915, 23)
+        Me.btnExportPdf.Location = New System.Drawing.Point(991, 17)
         Me.btnExportPdf.Name = "btnExportPdf"
-        Me.btnExportPdf.Size = New System.Drawing.Size(118, 30)
+        Me.btnExportPdf.Size = New System.Drawing.Size(135, 38)
         Me.btnExportPdf.TabIndex = 9
         Me.btnExportPdf.Text = "   Export PDF"
         Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -142,7 +222,7 @@ Partial Class FormReservationStatus
         '
         Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(265, 24)
+        Me.dtpFilter.Location = New System.Drawing.Point(331, 28)
         Me.dtpFilter.Name = "dtpFilter"
         Me.dtpFilter.Size = New System.Drawing.Size(151, 25)
         Me.dtpFilter.TabIndex = 20
@@ -152,11 +232,11 @@ Partial Class FormReservationStatus
         '
         Me.Label4.AutoSize = True
         Me.Label4.BackColor = System.Drawing.Color.Transparent
-        Me.Label4.Font = New System.Drawing.Font("Segoe UI", 11.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label4.Font = New System.Drawing.Font("Segoe UI Semibold", 13.0!, System.Drawing.FontStyle.Bold)
         Me.Label4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.Label4.Location = New System.Drawing.Point(25, 24)
+        Me.Label4.Location = New System.Drawing.Point(24, 21)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(136, 20)
+        Me.Label4.Size = New System.Drawing.Size(173, 25)
         Me.Label4.TabIndex = 0
         Me.Label4.Text = "Reservation Details"
         '
@@ -457,38 +537,13 @@ Partial Class FormReservationStatus
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Total Reservations"
         '
-        'searchTextBox1
-        '
-        Me.searchTextBox1.BackColor = System.Drawing.Color.Transparent
-        Me.searchTextBox1.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
-        Me.searchTextBox1.BorderThickness = 1
-        Me.searchTextBox1.Controls.Add(Me.TextBoxSearch)
-        Me.searchTextBox1.CornerRadius = 10
-        Me.searchTextBox1.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.searchTextBox1.Location = New System.Drawing.Point(427, 8)
-        Me.searchTextBox1.Name = "searchTextBox1"
-        Me.searchTextBox1.Size = New System.Drawing.Size(482, 45)
-        Me.searchTextBox1.TabIndex = 22
-        '
-        'TextBoxSearch
-        '
-        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
-        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 12)
-        Me.TextBoxSearch.Name = "TextBoxSearch"
-        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 20)
-        Me.TextBoxSearch.TabIndex = 0
-        Me.TextBoxSearch.Text = "Search orders..."
-        '
         'FormReservationStatus
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoScroll = True
         Me.BackColor = System.Drawing.Color.GhostWhite
-        Me.ClientSize = New System.Drawing.Size(1028, 609)
+        Me.ClientSize = New System.Drawing.Size(1248, 749)
         Me.Controls.Add(Me.RoundedPane25)
         Me.Controls.Add(Me.RoundedPane24)
         Me.Controls.Add(Me.RoundedPane23)
@@ -500,6 +555,10 @@ Partial Class FormReservationStatus
         Me.Text = "FormReservationStatus"
         Me.RoundedPane25.ResumeLayout(False)
         Me.RoundedPane25.PerformLayout()
+        Me.PaginationContainer.ResumeLayout(False)
+        Me.PaginationContainer.PerformLayout()
+        Me.searchTextBox1.ResumeLayout(False)
+        Me.searchTextBox1.PerformLayout()
         CType(Me.dgvDetails, System.ComponentModel.ISupportInitialize).EndInit()
         Me.RoundedPane24.ResumeLayout(False)
         Me.RoundedPane24.PerformLayout()
@@ -517,8 +576,6 @@ Partial Class FormReservationStatus
         Me.RoundedPane21.PerformLayout()
         Me.RoundedPane27.ResumeLayout(False)
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.searchTextBox1.ResumeLayout(False)
-        Me.searchTextBox1.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -555,4 +612,8 @@ Partial Class FormReservationStatus
     Friend WithEvents dgvDetails As DataGridView
     Friend WithEvents searchTextBox1 As RoundedPane2
     Friend WithEvents TextBoxSearch As TextBox
+    Friend WithEvents PaginationContainer As Panel
+    Friend WithEvents btnNext As Button
+    Friend WithEvents btnPrev As Button
+    Friend WithEvents lblPageStatus As Label
 End Class

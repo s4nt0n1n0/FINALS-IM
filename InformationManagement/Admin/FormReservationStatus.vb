@@ -409,20 +409,25 @@ Public Class FormReservationStatus
     ' =======================================================================
     Private Sub InitializeDetailsGrid()
         With dgvDetails
-            .EnableHeadersVisualStyles = False
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-            .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
-            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 9.5!)
-            .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White
-            .ColumnHeadersHeight = 45
-
+            .AutoGenerateColumns = False
+            .AllowUserToAddRows = False
+            .AllowUserToDeleteRows = False
+            .ReadOnly = True
+            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+            .RowHeadersVisible = False
+            .BackgroundColor = Color.White
+            .BorderStyle = BorderStyle.None
+            .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
+            .GridColor = Color.FromArgb(241, 245, 249)
             .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-            .DefaultCellStyle.SelectionForeColor = Color.FromArgb(99, 102, 241)
-            .DefaultCellStyle.Font = New Font("Segoe UI", 9.0!)
-
-            ' Row settings
-            .RowTemplate.Height = 60
-            .AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(252, 253, 255)
+            .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+            .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.White
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
+            .ColumnHeadersHeight = 50
+            .RowTemplate.Height = 50
+            .EnableHeadersVisualStyles = False
         End With
     End Sub
 
@@ -579,5 +584,9 @@ Public Class FormReservationStatus
             End Select
             e.CellStyle.Font = New Font("Segoe UI Semibold", 9.0!)
         End If
+    End Sub
+
+    Private Sub RoundedPane25_Paint(sender As Object, e As PaintEventArgs)
+
     End Sub
 End Class

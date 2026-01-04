@@ -57,22 +57,10 @@ Partial Class Setting
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.lblTitle = New System.Windows.Forms.Label()
         Me.btnViewDB = New System.Windows.Forms.Button()
         Me.btnViewAdmin = New System.Windows.Forms.Button()
+        Me.lblTitle = New System.Windows.Forms.Label()
         Me.Panel2 = New System.Windows.Forms.Panel()
-        Me.btnCancel = New System.Windows.Forms.Button()
-        Me.btnSave = New System.Windows.Forms.Button()
-        Me.pnlAdminInfo = New System.Windows.Forms.Panel()
-        Me.chkShowPassword = New System.Windows.Forms.CheckBox()
-        Me.txtNewPassword = New System.Windows.Forms.TextBox()
-        Me.lblNewPassword = New System.Windows.Forms.Label()
-        Me.txtCurrentPassword = New System.Windows.Forms.TextBox()
-        Me.lblCurrentPassword = New System.Windows.Forms.Label()
-        Me.txtUsername = New System.Windows.Forms.TextBox()
-        Me.lblUsername = New System.Windows.Forms.Label()
-        Me.lblName = New System.Windows.Forms.Label()
-        Me.txtName = New System.Windows.Forms.TextBox()
         Me.pnlDBConfig = New System.Windows.Forms.Panel()
         Me.txtDBPass = New System.Windows.Forms.TextBox()
         Me.lblDBPass = New System.Windows.Forms.Label()
@@ -82,15 +70,27 @@ Partial Class Setting
         Me.lblDBName = New System.Windows.Forms.Label()
         Me.txtServerIP = New System.Windows.Forms.TextBox()
         Me.lblServerIP = New System.Windows.Forms.Label()
+        Me.pnlAdminInfo = New System.Windows.Forms.Panel()
+        Me.chkShowPassword = New System.Windows.Forms.CheckBox()
+        Me.txtNewPassword = New System.Windows.Forms.TextBox()
+        Me.lblNewPassword = New System.Windows.Forms.Label()
+        Me.txtCurrentPassword = New System.Windows.Forms.TextBox()
+        Me.lblCurrentPassword = New System.Windows.Forms.Label()
+        Me.txtUsername = New System.Windows.Forms.TextBox()
+        Me.lblUsername = New System.Windows.Forms.Label()
+        Me.txtName = New System.Windows.Forms.TextBox()
+        Me.lblName = New System.Windows.Forms.Label()
+        Me.btnCancel = New System.Windows.Forms.Button()
+        Me.btnSave = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         Me.Panel2.SuspendLayout()
-        Me.pnlAdminInfo.SuspendLayout()
         Me.pnlDBConfig.SuspendLayout()
+        Me.pnlAdminInfo.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
         '
-        Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(41, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(185, Byte), Integer))
+        Me.Panel1.BackColor = System.Drawing.Color.White
         Me.Panel1.Controls.Add(Me.btnViewDB)
         Me.Panel1.Controls.Add(Me.btnViewAdmin)
         Me.Panel1.Controls.Add(Me.lblTitle)
@@ -100,28 +100,17 @@ Partial Class Setting
         Me.Panel1.Size = New System.Drawing.Size(600, 60)
         Me.Panel1.TabIndex = 0
         '
-        'lblTitle
-        '
-        Me.lblTitle.AutoSize = True
-        Me.lblTitle.Font = New System.Drawing.Font("Segoe UI", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTitle.ForeColor = System.Drawing.Color.White
-        Me.lblTitle.Location = New System.Drawing.Point(12, 12)
-        Me.lblTitle.Name = "lblTitle"
-        Me.lblTitle.Size = New System.Drawing.Size(199, 32)
-        Me.lblTitle.TabIndex = 0
-        Me.lblTitle.Text = "Settings"
-        '
         'btnViewDB
         '
         Me.btnViewDB.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnViewDB.BackColor = System.Drawing.Color.Transparent
         Me.btnViewDB.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnViewDB.FlatAppearance.BorderColor = System.Drawing.Color.White
-        Me.btnViewDB.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(51, 255, 255, 255)
+        Me.btnViewDB.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(CType(CType(51, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.btnViewDB.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(152, Byte), Integer), CType(CType(219, Byte), Integer))
         Me.btnViewDB.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnViewDB.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
-        Me.btnViewDB.ForeColor = System.Drawing.Color.White
+        Me.btnViewDB.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.btnViewDB.Location = New System.Drawing.Point(440, 15)
         Me.btnViewDB.Name = "btnViewDB"
         Me.btnViewDB.Size = New System.Drawing.Size(140, 30)
@@ -145,6 +134,17 @@ Partial Class Setting
         Me.btnViewAdmin.Text = "Admin Info"
         Me.btnViewAdmin.UseVisualStyleBackColor = False
         '
+        'lblTitle
+        '
+        Me.lblTitle.AutoSize = True
+        Me.lblTitle.Font = New System.Drawing.Font("Segoe UI", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTitle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.lblTitle.Location = New System.Drawing.Point(12, 12)
+        Me.lblTitle.Name = "lblTitle"
+        Me.lblTitle.Size = New System.Drawing.Size(106, 32)
+        Me.lblTitle.TabIndex = 0
+        Me.lblTitle.Text = "Settings"
+        '
         'Panel2
         '
         Me.Panel2.BackColor = System.Drawing.Color.White
@@ -158,6 +158,202 @@ Partial Class Setting
         Me.Panel2.Padding = New System.Windows.Forms.Padding(30)
         Me.Panel2.Size = New System.Drawing.Size(600, 440)
         Me.Panel2.TabIndex = 1
+        '
+        'pnlDBConfig
+        '
+        Me.pnlDBConfig.Controls.Add(Me.txtDBPass)
+        Me.pnlDBConfig.Controls.Add(Me.lblDBPass)
+        Me.pnlDBConfig.Controls.Add(Me.txtDBUser)
+        Me.pnlDBConfig.Controls.Add(Me.lblDBUser)
+        Me.pnlDBConfig.Controls.Add(Me.txtDBName)
+        Me.pnlDBConfig.Controls.Add(Me.lblDBName)
+        Me.pnlDBConfig.Controls.Add(Me.txtServerIP)
+        Me.pnlDBConfig.Controls.Add(Me.lblServerIP)
+        Me.pnlDBConfig.Location = New System.Drawing.Point(30, 30)
+        Me.pnlDBConfig.Name = "pnlDBConfig"
+        Me.pnlDBConfig.Size = New System.Drawing.Size(540, 320)
+        Me.pnlDBConfig.TabIndex = 1
+        Me.pnlDBConfig.Visible = False
+        '
+        'txtDBPass
+        '
+        Me.txtDBPass.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtDBPass.Location = New System.Drawing.Point(5, 260)
+        Me.txtDBPass.Name = "txtDBPass"
+        Me.txtDBPass.Size = New System.Drawing.Size(530, 27)
+        Me.txtDBPass.TabIndex = 7
+        Me.txtDBPass.UseSystemPasswordChar = True
+        '
+        'lblDBPass
+        '
+        Me.lblDBPass.AutoSize = True
+        Me.lblDBPass.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblDBPass.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.lblDBPass.Location = New System.Drawing.Point(1, 235)
+        Me.lblDBPass.Name = "lblDBPass"
+        Me.lblDBPass.Size = New System.Drawing.Size(77, 19)
+        Me.lblDBPass.TabIndex = 6
+        Me.lblDBPass.Text = "Password:"
+        '
+        'txtDBUser
+        '
+        Me.txtDBUser.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtDBUser.Location = New System.Drawing.Point(5, 190)
+        Me.txtDBUser.Name = "txtDBUser"
+        Me.txtDBUser.Size = New System.Drawing.Size(530, 27)
+        Me.txtDBUser.TabIndex = 5
+        '
+        'lblDBUser
+        '
+        Me.lblDBUser.AutoSize = True
+        Me.lblDBUser.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblDBUser.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.lblDBUser.Location = New System.Drawing.Point(1, 165)
+        Me.lblDBUser.Name = "lblDBUser"
+        Me.lblDBUser.Size = New System.Drawing.Size(80, 19)
+        Me.lblDBUser.TabIndex = 4
+        Me.lblDBUser.Text = "Username:"
+        '
+        'txtDBName
+        '
+        Me.txtDBName.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtDBName.Location = New System.Drawing.Point(5, 120)
+        Me.txtDBName.Name = "txtDBName"
+        Me.txtDBName.Size = New System.Drawing.Size(530, 27)
+        Me.txtDBName.TabIndex = 3
+        '
+        'lblDBName
+        '
+        Me.lblDBName.AutoSize = True
+        Me.lblDBName.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblDBName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.lblDBName.Location = New System.Drawing.Point(1, 95)
+        Me.lblDBName.Name = "lblDBName"
+        Me.lblDBName.Size = New System.Drawing.Size(119, 19)
+        Me.lblDBName.TabIndex = 2
+        Me.lblDBName.Text = "Database Name:"
+        '
+        'txtServerIP
+        '
+        Me.txtServerIP.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtServerIP.Location = New System.Drawing.Point(5, 50)
+        Me.txtServerIP.Name = "txtServerIP"
+        Me.txtServerIP.Size = New System.Drawing.Size(530, 27)
+        Me.txtServerIP.TabIndex = 1
+        '
+        'lblServerIP
+        '
+        Me.lblServerIP.AutoSize = True
+        Me.lblServerIP.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblServerIP.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.lblServerIP.Location = New System.Drawing.Point(1, 25)
+        Me.lblServerIP.Name = "lblServerIP"
+        Me.lblServerIP.Size = New System.Drawing.Size(75, 19)
+        Me.lblServerIP.TabIndex = 0
+        Me.lblServerIP.Text = "Server IP:"
+        '
+        'pnlAdminInfo
+        '
+        Me.pnlAdminInfo.Controls.Add(Me.chkShowPassword)
+        Me.pnlAdminInfo.Controls.Add(Me.txtNewPassword)
+        Me.pnlAdminInfo.Controls.Add(Me.lblNewPassword)
+        Me.pnlAdminInfo.Controls.Add(Me.txtCurrentPassword)
+        Me.pnlAdminInfo.Controls.Add(Me.lblCurrentPassword)
+        Me.pnlAdminInfo.Controls.Add(Me.txtUsername)
+        Me.pnlAdminInfo.Controls.Add(Me.lblUsername)
+        Me.pnlAdminInfo.Controls.Add(Me.txtName)
+        Me.pnlAdminInfo.Controls.Add(Me.lblName)
+        Me.pnlAdminInfo.Location = New System.Drawing.Point(30, 30)
+        Me.pnlAdminInfo.Name = "pnlAdminInfo"
+        Me.pnlAdminInfo.Size = New System.Drawing.Size(540, 320)
+        Me.pnlAdminInfo.TabIndex = 0
+        '
+        'chkShowPassword
+        '
+        Me.chkShowPassword.AutoSize = True
+        Me.chkShowPassword.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.chkShowPassword.Location = New System.Drawing.Point(5, 250)
+        Me.chkShowPassword.Name = "chkShowPassword"
+        Me.chkShowPassword.Size = New System.Drawing.Size(108, 19)
+        Me.chkShowPassword.TabIndex = 14
+        Me.chkShowPassword.Text = "Show Password"
+        Me.chkShowPassword.UseVisualStyleBackColor = True
+        '
+        'txtNewPassword
+        '
+        Me.txtNewPassword.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtNewPassword.Location = New System.Drawing.Point(5, 215)
+        Me.txtNewPassword.Name = "txtNewPassword"
+        Me.txtNewPassword.Size = New System.Drawing.Size(530, 27)
+        Me.txtNewPassword.TabIndex = 13
+        Me.txtNewPassword.UseSystemPasswordChar = True
+        '
+        'lblNewPassword
+        '
+        Me.lblNewPassword.AutoSize = True
+        Me.lblNewPassword.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblNewPassword.Location = New System.Drawing.Point(1, 190)
+        Me.lblNewPassword.Name = "lblNewPassword"
+        Me.lblNewPassword.Size = New System.Drawing.Size(309, 19)
+        Me.lblNewPassword.TabIndex = 0
+        Me.lblNewPassword.Text = "New Password (leave blank to keep current):"
+        '
+        'txtCurrentPassword
+        '
+        Me.txtCurrentPassword.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtCurrentPassword.Location = New System.Drawing.Point(5, 155)
+        Me.txtCurrentPassword.Name = "txtCurrentPassword"
+        Me.txtCurrentPassword.Size = New System.Drawing.Size(530, 27)
+        Me.txtCurrentPassword.TabIndex = 12
+        Me.txtCurrentPassword.UseSystemPasswordChar = True
+        '
+        'lblCurrentPassword
+        '
+        Me.lblCurrentPassword.AutoSize = True
+        Me.lblCurrentPassword.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblCurrentPassword.Location = New System.Drawing.Point(1, 130)
+        Me.lblCurrentPassword.Name = "lblCurrentPassword"
+        Me.lblCurrentPassword.Size = New System.Drawing.Size(131, 19)
+        Me.lblCurrentPassword.TabIndex = 0
+        Me.lblCurrentPassword.Text = "Current Password:"
+        '
+        'txtUsername
+        '
+        Me.txtUsername.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtUsername.Location = New System.Drawing.Point(5, 95)
+        Me.txtUsername.Name = "txtUsername"
+        Me.txtUsername.Size = New System.Drawing.Size(530, 27)
+        Me.txtUsername.TabIndex = 11
+        '
+        'lblUsername
+        '
+        Me.lblUsername.AutoSize = True
+        Me.lblUsername.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblUsername.Location = New System.Drawing.Point(1, 70)
+        Me.lblUsername.Name = "lblUsername"
+        Me.lblUsername.Size = New System.Drawing.Size(80, 19)
+        Me.lblUsername.TabIndex = 0
+        Me.lblUsername.Text = "Username:"
+        '
+        'txtName
+        '
+        Me.txtName.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtName.Location = New System.Drawing.Point(5, 35)
+        Me.txtName.Name = "txtName"
+        Me.txtName.ReadOnly = True
+        Me.txtName.Size = New System.Drawing.Size(530, 27)
+        Me.txtName.TabIndex = 10
+        Me.txtName.TabStop = False
+        '
+        'lblName
+        '
+        Me.lblName.AutoSize = True
+        Me.lblName.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblName.Location = New System.Drawing.Point(1, 10)
+        Me.lblName.Name = "lblName"
+        Me.lblName.Size = New System.Drawing.Size(53, 19)
+        Me.lblName.TabIndex = 0
+        Me.lblName.Text = "Name:"
         '
         'btnCancel
         '
@@ -189,198 +385,6 @@ Partial Class Setting
         Me.btnSave.Text = "Save Changes"
         Me.btnSave.UseVisualStyleBackColor = False
         '
-        'txtName
-        '
-        Me.txtName.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtName.Location = New System.Drawing.Point(5, 35)
-        Me.txtName.Name = "txtName"
-        Me.txtName.ReadOnly = True
-        Me.txtName.Size = New System.Drawing.Size(530, 27)
-        Me.txtName.TabIndex = 10
-        Me.txtName.TabStop = False
-        '
-        'lblName
-        '
-        Me.lblName.AutoSize = True
-        Me.lblName.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblName.Location = New System.Drawing.Point(1, 10)
-        Me.lblName.Name = "lblName"
-        Me.lblName.Size = New System.Drawing.Size(53, 19)
-        Me.lblName.TabIndex = 0
-        Me.lblName.Text = "Name:"
-        '
-        'txtUsername
-        '
-        Me.txtUsername.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtUsername.Location = New System.Drawing.Point(5, 95)
-        Me.txtUsername.Name = "txtUsername"
-        Me.txtUsername.Size = New System.Drawing.Size(530, 27)
-        Me.txtUsername.TabIndex = 11
-        '
-        'lblUsername
-        '
-        Me.lblUsername.AutoSize = True
-        Me.lblUsername.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblUsername.Location = New System.Drawing.Point(1, 70)
-        Me.lblUsername.Name = "lblUsername"
-        Me.lblUsername.Size = New System.Drawing.Size(80, 19)
-        Me.lblUsername.TabIndex = 0
-        Me.lblUsername.Text = "Username:"
-        '
-        'txtCurrentPassword
-        '
-        Me.txtCurrentPassword.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtCurrentPassword.Location = New System.Drawing.Point(5, 155)
-        Me.txtCurrentPassword.Name = "txtCurrentPassword"
-        Me.txtCurrentPassword.Size = New System.Drawing.Size(530, 27)
-        Me.txtCurrentPassword.TabIndex = 12
-        Me.txtCurrentPassword.UseSystemPasswordChar = True
-        '
-        'lblCurrentPassword
-        '
-        Me.lblCurrentPassword.AutoSize = True
-        Me.lblCurrentPassword.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblCurrentPassword.Location = New System.Drawing.Point(1, 130)
-        Me.lblCurrentPassword.Name = "lblCurrentPassword"
-        Me.lblCurrentPassword.Size = New System.Drawing.Size(133, 19)
-        Me.lblCurrentPassword.TabIndex = 0
-        Me.lblCurrentPassword.Text = "Current Password:"
-        '
-        'txtNewPassword
-        '
-        Me.txtNewPassword.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtNewPassword.Location = New System.Drawing.Point(5, 215)
-        Me.txtNewPassword.Name = "txtNewPassword"
-        Me.txtNewPassword.Size = New System.Drawing.Size(530, 27)
-        Me.txtNewPassword.TabIndex = 13
-        Me.txtNewPassword.UseSystemPasswordChar = True
-        '
-        'lblNewPassword
-        '
-        Me.lblNewPassword.AutoSize = True
-        Me.lblNewPassword.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblNewPassword.Location = New System.Drawing.Point(1, 190)
-        Me.lblNewPassword.Name = "lblNewPassword"
-        Me.lblNewPassword.Size = New System.Drawing.Size(216, 19)
-        Me.lblNewPassword.TabIndex = 0
-        Me.lblNewPassword.Text = "New Password (leave blank to keep current):"
-        '
-        'chkShowPassword
-        '
-        Me.chkShowPassword.AutoSize = True
-        Me.chkShowPassword.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.chkShowPassword.Location = New System.Drawing.Point(5, 250)
-        Me.chkShowPassword.Name = "chkShowPassword"
-        Me.chkShowPassword.Size = New System.Drawing.Size(108, 19)
-        Me.chkShowPassword.TabIndex = 14
-        Me.chkShowPassword.Text = "Show Password"
-        Me.chkShowPassword.UseVisualStyleBackColor = True
-        '
-        'pnlAdminInfo
-        '
-        Me.pnlAdminInfo.Controls.Add(Me.chkShowPassword)
-        Me.pnlAdminInfo.Controls.Add(Me.txtNewPassword)
-        Me.pnlAdminInfo.Controls.Add(Me.lblNewPassword)
-        Me.pnlAdminInfo.Controls.Add(Me.txtCurrentPassword)
-        Me.pnlAdminInfo.Controls.Add(Me.lblCurrentPassword)
-        Me.pnlAdminInfo.Controls.Add(Me.txtUsername)
-        Me.pnlAdminInfo.Controls.Add(Me.lblUsername)
-        Me.pnlAdminInfo.Controls.Add(Me.txtName)
-        Me.pnlAdminInfo.Controls.Add(Me.lblName)
-        Me.pnlAdminInfo.Location = New System.Drawing.Point(30, 30)
-        Me.pnlAdminInfo.Name = "pnlAdminInfo"
-        Me.pnlAdminInfo.Size = New System.Drawing.Size(540, 320)
-        Me.pnlAdminInfo.TabIndex = 0
-        '
-        'pnlDBConfig
-        '
-        Me.pnlDBConfig.Controls.Add(Me.txtDBPass)
-        Me.pnlDBConfig.Controls.Add(Me.lblDBPass)
-        Me.pnlDBConfig.Controls.Add(Me.txtDBUser)
-        Me.pnlDBConfig.Controls.Add(Me.lblDBUser)
-        Me.pnlDBConfig.Controls.Add(Me.txtDBName)
-        Me.pnlDBConfig.Controls.Add(Me.lblDBName)
-        Me.pnlDBConfig.Controls.Add(Me.txtServerIP)
-        Me.pnlDBConfig.Controls.Add(Me.lblServerIP)
-        Me.pnlDBConfig.Location = New System.Drawing.Point(30, 30)
-        Me.pnlDBConfig.Name = "pnlDBConfig"
-        Me.pnlDBConfig.Size = New System.Drawing.Size(540, 320)
-        Me.pnlDBConfig.TabIndex = 1
-        Me.pnlDBConfig.Visible = False
-        '
-        'txtDBPass
-        '
-        Me.txtDBPass.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtDBPass.Location = New System.Drawing.Point(5, 260)
-        Me.txtDBPass.Name = "txtDBPass"
-        Me.txtDBPass.Size = New System.Drawing.Size(530, 27)
-        Me.txtDBPass.TabIndex = 7
-        Me.txtDBPass.UseSystemPasswordChar = True
-        '
-        'lblDBPass
-        '
-        Me.lblDBPass.AutoSize = True
-        Me.lblDBPass.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblDBPass.Location = New System.Drawing.Point(1, 235)
-        Me.lblDBPass.Name = "lblDBPass"
-        Me.lblDBPass.Size = New System.Drawing.Size(77, 19)
-        Me.lblDBPass.TabIndex = 6
-        Me.lblDBPass.Text = "Password:"
-        '
-        'txtDBUser
-        '
-        Me.txtDBUser.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtDBUser.Location = New System.Drawing.Point(5, 190)
-        Me.txtDBUser.Name = "txtDBUser"
-        Me.txtDBUser.Size = New System.Drawing.Size(530, 27)
-        Me.txtDBUser.TabIndex = 5
-        '
-        'lblDBUser
-        '
-        Me.lblDBUser.AutoSize = True
-        Me.lblDBUser.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblDBUser.Location = New System.Drawing.Point(1, 165)
-        Me.lblDBUser.Name = "lblDBUser"
-        Me.lblDBUser.Size = New System.Drawing.Size(80, 19)
-        Me.lblDBUser.TabIndex = 4
-        Me.lblDBUser.Text = "Username:"
-        '
-        'txtDBName
-        '
-        Me.txtDBName.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtDBName.Location = New System.Drawing.Point(5, 120)
-        Me.txtDBName.Name = "txtDBName"
-        Me.txtDBName.Size = New System.Drawing.Size(530, 27)
-        Me.txtDBName.TabIndex = 3
-        '
-        'lblDBName
-        '
-        Me.lblDBName.AutoSize = True
-        Me.lblDBName.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblDBName.Location = New System.Drawing.Point(1, 95)
-        Me.lblDBName.Name = "lblDBName"
-        Me.lblDBName.Size = New System.Drawing.Size(121, 19)
-        Me.lblDBName.TabIndex = 2
-        Me.lblDBName.Text = "Database Name:"
-        '
-        'txtServerIP
-        '
-        Me.txtServerIP.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.txtServerIP.Location = New System.Drawing.Point(5, 50)
-        Me.txtServerIP.Name = "txtServerIP"
-        Me.txtServerIP.Size = New System.Drawing.Size(530, 27)
-        Me.txtServerIP.TabIndex = 1
-        '
-        'lblServerIP
-        '
-        Me.lblServerIP.AutoSize = True
-        Me.lblServerIP.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
-        Me.lblServerIP.Location = New System.Drawing.Point(1, 25)
-        Me.lblServerIP.Name = "lblServerIP"
-        Me.lblServerIP.Size = New System.Drawing.Size(75, 19)
-        Me.lblServerIP.TabIndex = 0
-        Me.lblServerIP.Text = "Server IP:"
-                '
         'Setting
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -397,13 +401,12 @@ Partial Class Setting
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         Me.Panel2.ResumeLayout(False)
-        Me.Panel2.PerformLayout()
-        Me.pnlAdminInfo.ResumeLayout(False)
-        Me.pnlAdminInfo.PerformLayout()
         Me.pnlDBConfig.ResumeLayout(False)
         Me.pnlDBConfig.PerformLayout()
+        Me.pnlAdminInfo.ResumeLayout(False)
+        Me.pnlAdminInfo.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
 
-    End Class
+End Class

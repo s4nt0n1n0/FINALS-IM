@@ -7,7 +7,9 @@ Public Class FormEdit
     Private Sub FormEdit_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         RoundButton(btnAddUser)
         RoundButton(btnCancel)
+        chkShowPass.Checked = True
     End Sub
+    
 
     Public Sub LoadUserData(empId As Integer, username As String, role As String)
         LinkedEmployeeID = empId

@@ -30,7 +30,8 @@ Public Class Employee
         TextBoxSearch.Text = "Search employees..."
         TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
     End Sub
-      '====================================
+
+    '====================================
     ' MAIN LOADER
     '====================================
     Public Async Sub LoadEmployees(Optional condition As String = "", Optional searchText As String = "", Optional resetPage As Boolean = False)
@@ -40,9 +41,9 @@ Public Class Employee
 
         If resetPage Then currentPage = 1
         If condition <> "" OrElse (condition = "" AndAlso Not resetPage AndAlso _currentCondition <> "") Then
-             If condition <> "" Then _currentCondition = condition
+            If condition <> "" Then _currentCondition = condition
         Else
-             _currentCondition = ""
+            _currentCondition = ""
         End If
 
         Try
@@ -52,14 +53,14 @@ Public Class Employee
             End If
 
             If searchText = "Search employees..." Then searchText = ""
-              ' Get total count
+            ' Get total count
             totalRecords = Await Task.Run(Function() FetchTotalEmployeeCount(searchText, _currentCondition))
             totalPages = Math.Ceiling(totalRecords / recordsPerPage)
             If totalPages = 0 Then totalPages = 1
             If currentPage > totalPages Then currentPage = totalPages
 
             Dim offset As Integer = (currentPage - 1) * recordsPerPage
-            
+
             Dim query As String =
                 "SELECT EmployeeID, FirstName, LastName, Gender, DateOfBirth, ContactNumber, Email, Address, HireDate, Position, MaritalStatus, EmploymentStatus, EmploymentType, EmergencyContact, WorkShift, Salary FROM employee"
 
@@ -102,7 +103,7 @@ Public Class Employee
     Private Function FetchTotalEmployeeCount(searchText As String, condition As String) As Integer
         Dim query As String = "SELECT COUNT(*) FROM employee"
         Dim finalCondition As String = condition
-        
+
         If searchText <> "" Then
             Dim searchPart As String = "(FirstName LIKE @search OR LastName LIKE @search OR Position LIKE @search)"
             If finalCondition <> "" Then
@@ -142,11 +143,11 @@ Public Class Employee
                 End If
                 cmd.Parameters.AddWithValue("@limit", limit)
                 cmd.Parameters.AddWithValue("@offset", offset)
-                
+
                 Using adapter As New MySqlDataAdapter(cmd)
                     Dim table As New DataTable()
                     adapter.Fill(table)
-                    
+
                     Me.Invoke(Sub()
                                   dgv.DataSource = table
                                   ' ✅ HIDE EMPLOYEE ID COLUMN
@@ -167,7 +168,7 @@ Public Class Employee
                                   dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
                                   dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
                                   dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-                                  
+
                                   ' Default Cell Style
                                   dgv.DefaultCellStyle.BackColor = SystemColors.Window
                                   dgv.DefaultCellStyle.Font = New Font("Segoe UI", 8.25F)
@@ -196,7 +197,7 @@ Public Class Employee
             AddEmployee.Enabled = Not isLoading
             EditEmployee.Enabled = Not isLoading
             btnDelete.Enabled = Not isLoading
-            
+
             ' Pagination buttons are handled in UpdatePaginationControls
         Catch
         End Try
@@ -266,11 +267,11 @@ Public Class Employee
             ' 2. Position Center Group
             btnFirstPage.Location = New Point(startX, 10)
             btnPrevPage.Location = New Point(btnFirstPage.Right + spacing, 10)
-            
+
             lblPageInfo.AutoSize = True
             lblPageInfo.Location = New Point(btnPrevPage.Right + spacing, 16)
             lblPageInfo.Top = (Panel4.Height - lblPageInfo.Height) \ 2
-            
+
             btnNextPage.Location = New Point(lblPageInfo.Right + spacing, 10)
             btnLastPage.Location = New Point(btnNextPage.Right + spacing, 10)
 
@@ -310,35 +311,7 @@ Public Class Employee
     ' =======================================================
     ' SEARCH FUNCTIONALITY
     ' =======================================================
-    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
-        If isInitializing Then Return
-
-        Dim currentSearch = TextBoxSearch.Text.Trim()
-        If currentSearch = "Search employees..." Then currentSearch = ""
-
-        ' Only refresh if the actual search criteria changed
-        If currentSearch = _lastSearchText Then Return
-
-        _lastSearchText = currentSearch
-        LoadEmployees(resetPage:=True, searchText:=currentSearch)
-    End Sub
-
-    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
-        If TextBoxSearch.Text = "Search employees..." Then
-            TextBoxSearch.Text = ""
-            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
-            txtSearch.BorderColor = Color.FromArgb(99, 102, 241)
-        End If
-    End Sub
-
-    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
-        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
-            TextBoxSearch.Text = "Search employees..."
-            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
-            txtSearch.BorderColor = Color.FromArgb(226, 232, 240)
-        End If
-    End Sub
-      '====================================
+    '====================================
     ' ADD EMPLOYEE
     '====================================
     Private Sub AddEmployee_Click(sender As Object, e As EventArgs) Handles AddEmployee.Click
@@ -367,6 +340,38 @@ Public Class Employee
         frm.Show()
         frm.BringToFront()
 
+    End Sub
+
+    ' =======================================================
+    ' SEARCH FUNCTIONALITY
+    ' =======================================================
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search employees..." Then currentSearch = ""
+
+        ' Only reload if search term actually changed
+        If currentSearch = _lastSearchText Then Return
+        _lastSearchText = currentSearch
+
+        LoadEmployees(searchText:=currentSearch, resetPage:=True)
+    End Sub
+
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search employees..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42) ' Dark slate color
+        End If
+        txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search employees..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184) ' Slate-400
+        End If
+        txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
     End Sub
 
     '====================================

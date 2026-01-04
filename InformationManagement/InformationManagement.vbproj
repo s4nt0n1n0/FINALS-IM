@@ -560,6 +560,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Admin\ActivityLogsForm.resx">
+      <DependentUpon>ActivityLogsForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Admin\AddEmployee.resx">
       <DependentUpon>AddEmployee.vb</DependentUpon>
     </EmbeddedResource>
@@ -673,6 +676,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Admin\Reservations.resx">
       <DependentUpon>Reservations.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Admin\Setting.resx">
+      <DependentUpon>Setting.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Admin\UsersAccounts.resx">
       <DependentUpon>UsersAccounts.vb</DependentUpon>

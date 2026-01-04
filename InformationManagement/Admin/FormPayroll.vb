@@ -22,31 +22,35 @@ Public Class FormPayroll
     '====================================
     Private Sub SetupDataGridView()
         With DataGridView1
-            .AutoGenerateColumns = False
-            .BackgroundColor = Color.White
-            .BorderStyle = BorderStyle.None
-            .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-            .ColumnHeadersDefaultCellStyle.ForeColor = Color.DimGray
-            .ColumnHeadersHeight = 50
-            .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
-            .DefaultCellStyle.SelectionBackColor = Color.FromArgb(243, 244, 246)
-            .DefaultCellStyle.SelectionForeColor = Color.Black
-            .EnableHeadersVisualStyles = False
-            .RowHeadersVisible = False
-            .RowTemplate.Height = 50
-            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+             .AutoGenerateColumns = False
+                .AllowUserToAddRows = False
+                .AllowUserToDeleteRows = False
+                .ReadOnly = True
+                .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                .RowHeadersVisible = False
+                .BackgroundColor = Color.White
+                .BorderStyle = BorderStyle.None
+                .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
+                .GridColor = Color.FromArgb(241, 245, 249)
+                .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
+                .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+                .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.White
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
+                .ColumnHeadersHeight = 50
+                .RowTemplate.Height = 50
+                .EnableHeadersVisualStyles = False
             
             .Columns.Clear()
             .Columns.Add(CreateColumn("EmployeeName", "Employee", 200))
             .Columns.Add(CreateColumn("Position", "Role/Type", 120))
-            .Columns.Add(CreateColumn("BasicSalary", "Basic Pay", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("Overtime", "OT Pay", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("Bonuses", "Tips/Bonus", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("GrossPay", "Gross", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("Deductions", "Deductions", 100, "₱#,##0"))
-            .Columns.Add(CreateColumn("NetPay", "Net Pay", 100, "₱#,##0"))
+            .Columns.Add(CreateColumn("BasicSalary", "Basic Pay", 120, "₱#,##0"))
+            .Columns.Add(CreateColumn("Overtime", "OT Pay", 120, "₱#,##0"))
+            .Columns.Add(CreateColumn("Bonuses", "Tips/Bonus", 120, "₱#,##0"))
+            .Columns.Add(CreateColumn("GrossPay", "Gross", 120, "₱#,##0"))
+            .Columns.Add(CreateColumn("Deductions", "Deductions", 120, "₱#,##0"))
+            .Columns.Add(CreateColumn("NetPay", "Net Pay", 120, "₱#,##0"))
             ' Status column or Action button could be added here
         End With
     End Sub

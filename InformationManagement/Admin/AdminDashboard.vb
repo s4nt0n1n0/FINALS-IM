@@ -2,6 +2,7 @@
 
 Public Class AdminDashboard
     Private ReportsInstance As Reports = Nothing
+    Private isLoggingOut As Boolean = False
     Public Sub New()
         InitializeComponent()
         Me.DoubleBuffered = True
@@ -215,8 +216,10 @@ Public Class AdminDashboard
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to log out?", "Logout", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If result = DialogResult.Yes Then
-            Application.Exit()
-
+            isLoggingOut = True
+            Dim loginForm As New Adminlogin()
+            loginForm.Show()
+            Me.Close()
         End If
     End Sub
 
@@ -246,7 +249,9 @@ Public Class AdminDashboard
 
 
     Private Sub AdminDashboard_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
-        Application.Exit()
+        If Not isLoggingOut Then
+            Application.Exit()
+        End If
     End Sub
 
     Private Sub ActivityLogs_Click(sender As Object, e As EventArgs) Handles ActivityLogs.Click

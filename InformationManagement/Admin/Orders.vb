@@ -430,8 +430,8 @@ Public Class Orders
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
                 .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
                 .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-                .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White
-                .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                .ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
                 .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
 
                 ' Default Cell Style

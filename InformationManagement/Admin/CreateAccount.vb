@@ -6,7 +6,9 @@ Public Class CreateAccount
     Private Sub CreateAccount_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         RoundButton(btnCreate)
         RoundButton(btnCancel)
+        chkShowPass.Checked = True
     End Sub
+    
 
     Public Sub LoadEmployeeData(id As Integer, name As String, role As String)
         LinkedEmployeeID = id
