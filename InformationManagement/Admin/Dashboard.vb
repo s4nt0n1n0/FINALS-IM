@@ -138,6 +138,34 @@ Public Class Dashboard
 
 
     ' ============================================
+    ' CLICKABLE CONTAINER HELPER
+    ' ============================================
+    Private Sub SetupClickableControl(ctrl As Control, handler As EventHandler)
+        If ctrl Is Nothing Then Return
+
+        ' Fix hit-testing for the main container: Transparent panels often pass clicks to the parent.
+        ' Setting a non-transparent color ensures it catches mouse events.
+        If ctrl.BackColor = Color.Transparent Then
+            ctrl.BackColor = Me.BackColor
+        End If
+
+        ' Recursively attach handlers and set cursors
+        AttachHandlersRecursive(ctrl, handler)
+    End Sub
+
+    Private Sub AttachHandlersRecursive(ctrl As Control, handler As EventHandler)
+        If ctrl Is Nothing Then Return
+
+        ctrl.Cursor = Cursors.Hand
+        RemoveHandler ctrl.Click, handler
+        AddHandler ctrl.Click, handler
+
+        For Each child As Control In ctrl.Controls
+            AttachHandlersRecursive(child, handler)
+        Next
+    End Sub
+
+    ' ============================================
     ' TOP METRICS
     ' ============================================
 
@@ -160,9 +188,35 @@ Public Class Dashboard
             Dim revenue As Decimal = Convert.ToDecimal(cmd.ExecuteScalar())
             lblTotalRevenue.Text = "₱" & revenue.ToString("N2")
             closeConn()
+
+            ' Apply recursive click handling to the entire metric card
+            SetupClickableControl(RoundedPane215, AddressOf Revenue_Click)
         Catch ex As Exception
             lblTotalRevenue.Text = "₱0.00"
             closeConn()
+        End Try
+    End Sub
+
+    Private Sub Revenue_Click(sender As Object, e As EventArgs)
+        Try
+            Dim adminDashboard = TryCast(Me.ParentForm, AdminDashboard)
+            If adminDashboard Is Nothing Then
+                adminDashboard = Application.OpenForms.OfType(Of AdminDashboard)().FirstOrDefault()
+            End If
+
+            If adminDashboard IsNot Nothing Then
+                adminDashboard.btnReports.PerformClick()
+
+                ' Wait a bit for Reports to load
+                Application.DoEvents()
+
+                ' Find Reports form instance and switch to Sales
+                If Reports.Instance IsNot Nothing Then
+                    Reports.Instance.LoadSalesReport()
+                End If
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error navigating to Revenue report: " & ex.Message)
         End Try
     End Sub
 
@@ -181,9 +235,27 @@ Public Class Dashboard
             Dim totalOrders As Integer = Convert.ToInt32(cmd.ExecuteScalar())
             lblTotalOrder.Text = totalOrders.ToString("#,##0")
             closeConn()
+
+            ' Apply recursive click handling to the entire metric card
+            SetupClickableControl(RoundedPane21, AddressOf Orders_Click)
         Catch ex As Exception
             lblTotalOrder.Text = "0"
             closeConn()
+        End Try
+    End Sub
+
+    Private Sub Orders_Click(sender As Object, e As EventArgs)
+        Try
+            Dim adminDashboard = TryCast(Me.ParentForm, AdminDashboard)
+            If adminDashboard Is Nothing Then
+                adminDashboard = Application.OpenForms.OfType(Of AdminDashboard)().FirstOrDefault()
+            End If
+
+            If adminDashboard IsNot Nothing Then
+                adminDashboard.btnOrders.PerformClick()
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error navigating to Orders screen: " & ex.Message)
         End Try
     End Sub
     Private Sub LoadActiveReservations()
@@ -201,9 +273,27 @@ Public Class Dashboard
             Dim activeReservations As Integer = Convert.ToInt32(cmd.ExecuteScalar())
             lblActiveReservations.Text = activeReservations.ToString()
             closeConn()
+
+            ' Apply recursive click handling to the entire metric card
+            SetupClickableControl(RoundedPane24, AddressOf Reservations_Click)
         Catch ex As Exception
             lblActiveReservations.Text = "0"
             closeConn()
+        End Try
+    End Sub
+
+    Private Sub Reservations_Click(sender As Object, e As EventArgs)
+        Try
+            Dim adminDashboard = TryCast(Me.ParentForm, AdminDashboard)
+            If adminDashboard Is Nothing Then
+                adminDashboard = Application.OpenForms.OfType(Of AdminDashboard)().FirstOrDefault()
+            End If
+
+            If adminDashboard IsNot Nothing Then
+                adminDashboard.btnReservations.PerformClick()
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error navigating to Reservations screen: " & ex.Message)
         End Try
     End Sub
 
@@ -284,6 +374,9 @@ LIMIT 8;"
         ChartTopProducts.FlowDirection = FlowDirection.TopDown
         ChartTopProducts.WrapContents = False
         ChartTopProducts.BackColor = Color.White
+
+        ' Apply recursive click handling to the entire container
+        SetupClickableControl(RoundedPane223, AddressOf TopProducts_Click)
     End Sub
 
     ' ============================================
@@ -291,8 +384,6 @@ LIMIT 8;"
     Private Sub UpdateTopProductsChart(data As DataTable)
         ' Clear the FlowLayoutPanel
         ChartTopProducts.Controls.Clear()
-
-
 
         If data.Rows.Count = 0 Then
             ' Show "No data" message
@@ -302,6 +393,8 @@ LIMIT 8;"
             noDataLabel.ForeColor = Color.Gray
             noDataLabel.Margin = New Padding(20, 20, 20, 20)
             noDataLabel.AutoSize = True
+            noDataLabel.Cursor = Cursors.Hand ' Make it look clickable
+            AddHandler noDataLabel.Click, AddressOf TopProducts_Click ' Add click handler
             ChartTopProducts.Controls.Add(noDataLabel)
             Return
         End If
@@ -328,7 +421,6 @@ LIMIT 8;"
             Dim itemPanel As New Panel()
             itemPanel.Size = New Size(ChartTopProducts.Width - 23, 60)
             itemPanel.BackColor = Color.FromArgb(255, 250, 240)
-            itemPanel.Cursor = Cursors.Hand
             itemPanel.Margin = New Padding(10, 5, 10, 5)
 
             ' Rank badge (circular)
@@ -374,6 +466,11 @@ LIMIT 8;"
             lblRevenue.TextAlign = ContentAlignment.MiddleRight
             itemPanel.Controls.Add(lblRevenue)
 
+            ' Apply recursive click handling to the item panel and its labels/badges
+            SetupClickableControl(itemPanel, AddressOf TopProducts_Click)
+
+            ' Add separator line (except for last item)
+
             ' Add separator line (except for last item)
             If i < Math.Min(data.Rows.Count - 1, 7) Then
                 Dim separator As New Panel()
@@ -386,6 +483,26 @@ LIMIT 8;"
 
             ChartTopProducts.Controls.Add(itemPanel)
         Next
+    End Sub
+
+    Private Sub TopProducts_Click(sender As Object, e As EventArgs)
+        Try
+            Dim adminDashboard = TryCast(Me.ParentForm, AdminDashboard)
+            If adminDashboard Is Nothing Then
+                adminDashboard = Application.OpenForms.OfType(Of AdminDashboard)().FirstOrDefault()
+            End If
+
+            If adminDashboard IsNot Nothing Then
+                adminDashboard.btnReports.PerformClick()
+                Application.DoEvents()
+
+                If Reports.Instance IsNot Nothing Then
+                    Reports.Instance.LoadProductPerformanceReport()
+                End If
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error navigating to Product Performance report: " & ex.Message)
+        End Try
     End Sub
 
     ' ============================================
@@ -427,9 +544,32 @@ LIMIT 8;"
             Dim avgOrder As Decimal = Convert.ToDecimal(cmd.ExecuteScalar())
             lblAverageOrder.Text = "₱" & avgOrder.ToString("N2")
             closeConn()
+
+            ' Apply recursive click handling to the entire metric card
+            SetupClickableControl(RoundedPane217, AddressOf AverageOrder_Click)
         Catch ex As Exception
             lblAverageOrder.Text = "₱0.00"
             closeConn()
+        End Try
+    End Sub
+
+    Private Sub AverageOrder_Click(sender As Object, e As EventArgs)
+        Try
+            Dim adminDashboard = TryCast(Me.ParentForm, AdminDashboard)
+            If adminDashboard Is Nothing Then
+                adminDashboard = Application.OpenForms.OfType(Of AdminDashboard)().FirstOrDefault()
+            End If
+
+            If adminDashboard IsNot Nothing Then
+                adminDashboard.btnReports.PerformClick()
+                Application.DoEvents()
+
+                If Reports.Instance IsNot Nothing Then
+                    Reports.Instance.LoadOrderTrends()
+                End If
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error navigating to Average Order report: " & ex.Message)
         End Try
     End Sub
 
@@ -496,6 +636,12 @@ LIMIT 8;"
             ' Clear chart and annotations first - ADD THIS BEFORE THE IF STATEMENT
             Chart2.Series(0).Points.Clear()
             Chart2.Annotations.Clear()
+
+            ' Apply recursive click handling to the entire card
+            SetupClickableControl(RoundedPane28, AddressOf Revenue_Click)
+
+            ' Chart control specifically needs its own handler as it can sometimes consume events
+            SetupClickableControl(Chart2, AddressOf Revenue_Click)
 
             If totalSales > 0 Then
                 Dim dineInPercent As Decimal = (dineInSales / totalSales) * 100
