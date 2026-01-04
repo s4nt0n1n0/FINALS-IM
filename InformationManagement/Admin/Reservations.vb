@@ -14,7 +14,9 @@ Public Class Reservations
     Private CurrentSourceFilter As String = ""  ' Tracks: All, Walk-in, Online
     Private CurrentStatusFilter As String = ""  ' Tracks: All, Pending, Confirmed, Completed, Cancelled
 
-    ' Configuration for proof of payment
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
+      ' Configuration for proof of payment
     Private Const WEB_BASE_URL As String = "http://localhost/TrialWeb/TrialWorkIM/Tabeya/"
 
     Private Sub Reservations_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -26,6 +28,9 @@ Public Class Reservations
         RoundPaginationButtons()
         CenterPaginationControls()
 
+        InitializeSearchBox()
+        isInitializing = False
+    
 
     End Sub
 
@@ -1031,29 +1036,63 @@ Public Class Reservations
     ' ==========================================
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
         CurrentPage = 1
+        InitializeSearchBox()
+        _lastSearchText = ""
         LoadReservations(CurrentCondition)
         If CurrentCondition = "" Then
             lblFilter.Text = "Showing: All Reservations"
         End If
     End Sub
-
+      ' ==========================================
+    ' SEARCH BAR - UPDATED
+    ' ==========================================
     ' ==========================================
     ' SEARCH BAR - UPDATED
     ' ==========================================
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        Dim keyword As String = txtSearch.Text.Trim()
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
 
-        If keyword = "" Then
+        Dim currentSearch As String = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search reservations..." Then currentSearch = ""
+
+        ' Only reload if search term actually changed
+        If currentSearch = _lastSearchText Then Return
+        _lastSearchText = currentSearch
+
+        If currentSearch = "" Then
             CurrentPage = 1
             LoadReservations()
             Exit Sub
         End If
 
         CurrentPage = 1
-        SearchReservations(keyword)
+        SearchReservations(currentSearch)
     End Sub
 
-    ' ==========================================
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search reservations..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42) ' Dark slate color
+        End If
+        txtSearch.BorderColor = Color.FromArgb(99, 102, 241) ' Purple/Indigo border
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search reservations..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184) ' Slate-400
+        End If
+        txtSearch.BorderColor = Color.FromArgb(226, 232, 240) ' Default slate-200
+    End Sub
+
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search reservations..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+    End Sub
+      ' ==========================================
     ' SEARCH RESERVATIONS - UPDATED
     ' ==========================================
     Private Sub SearchReservations(keyword As String)
@@ -1195,8 +1234,11 @@ Public Class Reservations
     Private Sub btnFirstPage_Click(sender As Object, e As EventArgs) Handles btnFirstPage.Click
         CurrentPage = 1
 
-        If txtSearch.Text.Trim() <> "" Then
-            SearchReservations(txtSearch.Text.Trim())
+        Dim currentSearch As String = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search reservations..." Then currentSearch = ""
+
+        If currentSearch <> "" Then
+            SearchReservations(currentSearch)
         Else
             LoadReservations(CurrentCondition)
         End If
@@ -1206,8 +1248,11 @@ Public Class Reservations
         If CurrentPage > 1 Then
             CurrentPage -= 1
 
-            If txtSearch.Text.Trim() <> "" Then
-                SearchReservations(txtSearch.Text.Trim())
+            Dim currentSearch As String = TextBoxSearch.Text.Trim()
+            If currentSearch = "Search reservations..." Then currentSearch = ""
+
+            If currentSearch <> "" Then
+                SearchReservations(currentSearch)
             Else
                 LoadReservations(CurrentCondition)
             End If
@@ -1219,8 +1264,11 @@ Public Class Reservations
         If CurrentPage < totalPages Then
             CurrentPage += 1
 
-            If txtSearch.Text.Trim() <> "" Then
-                SearchReservations(txtSearch.Text.Trim())
+            Dim currentSearch As String = TextBoxSearch.Text.Trim()
+            If currentSearch = "Search reservations..." Then currentSearch = ""
+
+            If currentSearch <> "" Then
+                SearchReservations(currentSearch)
             Else
                 LoadReservations(CurrentCondition)
             End If
@@ -1231,8 +1279,11 @@ Public Class Reservations
         Dim totalPages As Integer = If(TotalRecords > 0, Math.Ceiling(TotalRecords / RecordsPerPage), 1)
         CurrentPage = totalPages
 
-        If txtSearch.Text.Trim() <> "" Then
-            SearchReservations(txtSearch.Text.Trim())
+        Dim currentSearch As String = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search reservations..." Then currentSearch = ""
+
+        If currentSearch <> "" Then
+            SearchReservations(currentSearch)
         Else
             LoadReservations(CurrentCondition)
         End If
@@ -1243,8 +1294,11 @@ Public Class Reservations
             RecordsPerPage = CInt(cboRecordsPerPage.SelectedItem)
             CurrentPage = 1
 
-            If txtSearch.Text.Trim() <> "" Then
-                SearchReservations(txtSearch.Text.Trim())
+            Dim currentSearch As String = TextBoxSearch.Text.Trim()
+            If currentSearch = "Search reservations..." Then currentSearch = ""
+
+            If currentSearch <> "" Then
+                SearchReservations(currentSearch)
             Else
                 LoadReservations(CurrentCondition)
             End If
@@ -1269,8 +1323,11 @@ Public Class Reservations
                 If pageNumber >= 1 AndAlso pageNumber <= totalPages Then
                     CurrentPage = pageNumber
 
-                    If txtSearch.Text.Trim() <> "" Then
-                        SearchReservations(txtSearch.Text.Trim())
+                    Dim currentSearch As String = TextBoxSearch.Text.Trim()
+                    If currentSearch = "Search reservations..." Then currentSearch = ""
+
+                    If currentSearch <> "" Then
+                        SearchReservations(currentSearch)
                     Else
                         LoadReservations(CurrentCondition)
                     End If

@@ -128,18 +128,18 @@ Partial Class MenuItems
         Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.txtSearch.Location = New System.Drawing.Point(108, 9)
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(657, 40)
+        Me.txtSearch.Size = New System.Drawing.Size(657, 38)
         Me.txtSearch.TabIndex = 12
         '
         'TextBoxSearch
         '
         Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
         Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
-        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 12)
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
         Me.TextBoxSearch.Name = "TextBoxSearch"
-        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 20)
+        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 18)
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search orders..."
         '
@@ -154,10 +154,10 @@ Partial Class MenuItems
         '
         'lblSearch
         '
-        Me.lblSearch.Font = New System.Drawing.Font("Segoe UI", 11.0!, System.Drawing.FontStyle.Bold)
-        Me.lblSearch.Location = New System.Drawing.Point(34, 21)
+        Me.lblSearch.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.lblSearch.Location = New System.Drawing.Point(34, 19)
         Me.lblSearch.Name = "lblSearch"
-        Me.lblSearch.Size = New System.Drawing.Size(68, 23)
+        Me.lblSearch.Size = New System.Drawing.Size(52, 23)
         Me.lblSearch.TabIndex = 0
         Me.lblSearch.Text = "Search:"
         '

@@ -3,6 +3,8 @@ Imports System.Data
 
 Public Class Employee
     Private _isLoading As Boolean = False
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
     
     ' Pagination state
     Private currentPage As Integer = 1
@@ -17,10 +19,18 @@ Public Class Employee
         RoundPaginationButtons()
         
         LoadEmployees()
-
+        InitializeSearchBox()
+        isInitializing = False
     End Sub
 
-    '====================================
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search employees..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+    End Sub
+      '====================================
     ' MAIN LOADER
     '====================================
     Public Async Sub LoadEmployees(Optional condition As String = "", Optional searchText As String = "", Optional resetPage As Boolean = False)
@@ -37,11 +47,12 @@ Public Class Employee
 
         Try
             ' Get search text from UI if not provided
-            If String.IsNullOrEmpty(searchText) AndAlso txtSearch IsNot Nothing Then
-                searchText = txtSearch.Text.Trim()
+            If String.IsNullOrEmpty(searchText) AndAlso TextBoxSearch IsNot Nothing Then
+                searchText = TextBoxSearch.Text.Trim()
             End If
 
-            ' Get total count
+            If searchText = "Search employees..." Then searchText = ""
+              ' Get total count
             totalRecords = Await Task.Run(Function() FetchTotalEmployeeCount(searchText, _currentCondition))
             totalPages = Math.Ceiling(totalRecords / recordsPerPage)
             If totalPages = 0 Then totalPages = 1
@@ -153,8 +164,8 @@ Public Class Employee
                                   dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(26, 38, 50)
                                   dgv.ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.75F, FontStyle.Bold)
                                   dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-                                  dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White
-                                  dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(26, 38, 50)
+                                  dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(26, 38, 50)
+                                  dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White
                                   dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                                   
                                   ' Default Cell Style
@@ -296,11 +307,38 @@ Public Class Employee
         LoadEmployees()
     End Sub
 
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        LoadEmployees(resetPage:=True)
+    ' =======================================================
+    ' SEARCH FUNCTIONALITY
+    ' =======================================================
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search employees..." Then currentSearch = ""
+
+        ' Only refresh if the actual search criteria changed
+        If currentSearch = _lastSearchText Then Return
+
+        _lastSearchText = currentSearch
+        LoadEmployees(resetPage:=True, searchText:=currentSearch)
     End Sub
 
-    '====================================
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search employees..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
+            txtSearch.BorderColor = Color.FromArgb(99, 102, 241)
+        End If
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search employees..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+            txtSearch.BorderColor = Color.FromArgb(226, 232, 240)
+        End If
+    End Sub
+      '====================================
     ' ADD EMPLOYEE
     '====================================
     Private Sub AddEmployee_Click(sender As Object, e As EventArgs) Handles AddEmployee.Click
@@ -358,11 +396,12 @@ Public Class Employee
     ' REFRESH LIST
     '====================================
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        InitializeSearchBox()
+        _lastSearchText = ""
         LoadEmployees(resetPage:=True)
         lblFilter.Text = "Showing: All Employees"
     End Sub
-
-    '====================================
+      '====================================
     ' DELETE EMPLOYEE
     '====================================
     Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click

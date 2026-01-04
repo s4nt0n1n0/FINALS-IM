@@ -34,7 +34,8 @@ Partial Class Inventory
         Me.Actions = New System.Windows.Forms.DataGridViewButtonColumn()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.txtSearch = New InformationManagement.RoundedPane2()
+        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.Category = New System.Windows.Forms.ComboBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -53,6 +54,7 @@ Partial Class Inventory
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label11 = New System.Windows.Forms.Label()
         CType(Me.InventoryGrid, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.txtSearch.SuspendLayout()
         Me.pnlSummaryCards.SuspendLayout()
         Me.RoundedPane21.SuspendLayout()
         Me.RoundedPane23.SuspendLayout()
@@ -81,7 +83,7 @@ Partial Class Inventory
         Me.InventoryGrid.ColumnHeadersHeight = 40
         Me.InventoryGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.ItemName, Me.InventoryID, Me.ProductID, Me.Quantity, Me.Status, Me.CostUnit, Me.TotalValue, Me.LostStock, Me.Type, Me.ExpirationDate, Me.Actions})
         Me.InventoryGrid.EnableHeadersVisualStyles = False
-        Me.InventoryGrid.Location = New System.Drawing.Point(31, 299)
+        Me.InventoryGrid.Location = New System.Drawing.Point(34, 294)
         Me.InventoryGrid.Name = "InventoryGrid"
         Me.InventoryGrid.ReadOnly = True
         Me.InventoryGrid.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
@@ -210,7 +212,7 @@ Partial Class Inventory
         '
         Me.Label7.AutoSize = True
         Me.Label7.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(763, 248)
+        Me.Label7.Location = New System.Drawing.Point(759, 258)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(73, 19)
         Me.Label7.TabIndex = 39
@@ -220,20 +222,36 @@ Partial Class Inventory
         '
         Me.Label6.AutoSize = True
         Me.Label6.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.Location = New System.Drawing.Point(30, 248)
+        Me.Label6.Location = New System.Drawing.Point(30, 258)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(90, 19)
         Me.Label6.TabIndex = 32
         Me.Label6.Text = "Search Item :"
         '
-        'TextBox1
+        'txtSearch
         '
-        Me.TextBox1.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.TextBox1.Location = New System.Drawing.Point(31, 269)
-        Me.TextBox1.Margin = New System.Windows.Forms.Padding(2)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(728, 25)
-        Me.TextBox1.TabIndex = 38
+        Me.txtSearch.BackColor = System.Drawing.Color.Transparent
+        Me.txtSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.txtSearch.BorderThickness = 1
+        Me.txtSearch.Controls.Add(Me.TextBoxSearch)
+        Me.txtSearch.CornerRadius = 10
+        Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.txtSearch.Location = New System.Drawing.Point(126, 248)
+        Me.txtSearch.Name = "txtSearch"
+        Me.txtSearch.Size = New System.Drawing.Size(618, 38)
+        Me.txtSearch.TabIndex = 38
+        '
+        'TextBoxSearch
+        '
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
+        Me.TextBoxSearch.Name = "TextBoxSearch"
+        Me.TextBoxSearch.Size = New System.Drawing.Size(579, 18)
+        Me.TextBoxSearch.TabIndex = 0
+        Me.TextBoxSearch.Text = "Search inventory..."
         '
         'Category
         '
@@ -241,7 +259,7 @@ Partial Class Inventory
         Me.Category.ForeColor = System.Drawing.SystemColors.WindowText
         Me.Category.FormattingEnabled = True
         Me.Category.Items.AddRange(New Object() {"Meat & Poultry", "Vegetables", "Dairy", "Dry Goods", "Oils & Condiments", "Herbs & Spices", "Beverages", "Seafood"})
-        Me.Category.Location = New System.Drawing.Point(767, 269)
+        Me.Category.Location = New System.Drawing.Point(841, 255)
         Me.Category.Margin = New System.Windows.Forms.Padding(2)
         Me.Category.Name = "Category"
         Me.Category.Size = New System.Drawing.Size(188, 25)
@@ -453,7 +471,7 @@ Partial Class Inventory
         Me.Controls.Add(Me.InventoryGrid)
         Me.Controls.Add(Me.Label7)
         Me.Controls.Add(Me.Label6)
-        Me.Controls.Add(Me.TextBox1)
+        Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.Category)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
@@ -463,6 +481,8 @@ Partial Class Inventory
         Me.Name = "Inventory"
         Me.Text = "Inventory"
         CType(Me.InventoryGrid, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.txtSearch.ResumeLayout(False)
+        Me.txtSearch.PerformLayout()
         Me.pnlSummaryCards.ResumeLayout(False)
         Me.RoundedPane21.ResumeLayout(False)
         Me.RoundedPane21.PerformLayout()
@@ -487,7 +507,8 @@ Partial Class Inventory
     Friend WithEvents InventoryGrid As DataGridView
     Friend WithEvents Label7 As Label
     Friend WithEvents Label6 As Label
-    Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents txtSearch As RoundedPane2
+    Friend WithEvents TextBoxSearch As TextBox
     Friend WithEvents Category As ComboBox
     Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label

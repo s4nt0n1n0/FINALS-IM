@@ -16,6 +16,7 @@ Public Class Orders
     ' Performance optimization
     Private searchDebounceTimer As Timer
     Private lastSearchText As String = ""
+    Private isInitializing As Boolean = True
     Private Const WEB_BASE_URL As String = "http://localhost/TrialWeb/TrialWorkIM/Tabeya/"
     Private Sub Orders_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         InitializeSearchDebounce()
@@ -34,9 +35,18 @@ Public Class Orders
 
         SetupPaginationControls()
         RoundPaginationButtons()
+        InitializeSearchBox()
+        isInitializing = False
     End Sub
 
-    Private Sub Orders_Shown(sender As Object, e As EventArgs) Handles Me.Shown
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search orders..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+    End Sub
+      Private Sub Orders_Shown(sender As Object, e As EventArgs) Handles Me.Shown
         LoadOrdersAsync()
         UpdateFilterLabel()
     End Sub
@@ -1164,7 +1174,7 @@ Public Class Orders
 
             details &= $"Order Type: {row.Cells("OrderType").Value}" & vbCrLf &
                   $"Delivery Option: {deliveryOption}" & vbCrLf &
-                  $"Number of Diners: {row.Cells("NumberOfDiners").Value}" & vbCrLf &
+                  $"NumberOfDiners: {row.Cells("NumberOfDiners").Value}" & vbCrLf &
                   $"Order Date: {row.Cells("OrderDate").Value}" & vbCrLf &
                   $"Order Time: {row.Cells("OrderTime").Value}" & vbCrLf &
                   $"Items Ordered: {row.Cells("ItemsOrderedCount").Value}" & vbCrLf &
@@ -1188,15 +1198,38 @@ Public Class Orders
     ' ============================================================
     ' SEARCH WITH DEBOUNCE (Optimized for performance)
     ' ============================================================
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        lastSearchText = txtSearch.Text.Trim()
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
 
-        ' Reset and restart timer
+        Dim currentSearch = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search orders..." Then currentSearch = ""
+
+        ' Only refresh if the actual search criteria changed
+        If currentSearch = lastSearchText Then Return
+
+        lastSearchText = currentSearch
+
+        ' Reset and restart timer for debouncing
         searchDebounceTimer.Stop()
         searchDebounceTimer.Start()
     End Sub
 
-    Private Sub PerformSearch(search As String)
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search orders..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
+            txtSearch.BorderColor = Color.FromArgb(99, 102, 241)
+        End If
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search orders..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+            txtSearch.BorderColor = Color.FromArgb(226, 232, 240)
+        End If
+    End Sub
+      Private Sub PerformSearch(search As String)
         Try
             CurrentPage = 1
 
@@ -1228,13 +1261,12 @@ Public Class Orders
     ' REFRESH
     ' ============================================================
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        InitializeSearchBox()
         CurrentPage = 1
-        txtSearch.Text = ""
         lastSearchText = ""
         LoadOrdersAsync(CurrentCondition)
     End Sub
-
-    ' ============================================================
+      ' ============================================================
     ' btnConfirm - Handle order status update
     ' ============================================================
     Private Sub btnConfirm_Click(sender As Object, e As EventArgs) Handles btnConfirm.Click

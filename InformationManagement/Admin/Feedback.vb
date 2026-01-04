@@ -15,6 +15,8 @@ Public Class Feedback
     Private totalPages As Integer = 0
     Private currentFilter As String = ""
     Private currentSearchTerm As String = ""
+    Private _lastSearchText As String = ""
+    Private isInitializing As Boolean = True
 
     ' Form Load Event
     Private Sub Feedback_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -23,6 +25,16 @@ Public Class Feedback
         SetupDataGridView()
         UpdatePaginationControls()
         RoundPaginationButtons()
+        InitializeSearchBox()
+        isInitializing = False
+    End Sub
+
+    ' =======================================================
+    ' INITIALIZE SEARCH BOX
+    ' =======================================================
+    Private Sub InitializeSearchBox()
+        TextBoxSearch.Text = "Search feedback..."
+        TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
     End Sub
 
     ' Initialize Database Connection
@@ -622,6 +634,8 @@ Public Class Feedback
 
     ' Button Event Handlers
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
+        InitializeSearchBox()
+        _lastSearchText = ""
         currentPage = 1
         LoadFeedback(currentFilter)
     End Sub
@@ -647,13 +661,35 @@ Public Class Feedback
         LoadFeedback()
     End Sub
 
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
-        If txtSearch.Text.Trim() <> "" Then
-            SearchFeedback(txtSearch.Text.Trim())
-        Else
-            currentSearchTerm = ""
-            currentPage = 1
-            LoadFeedback(currentFilter)
+    ' =======================================================
+    ' SEARCH FUNCTIONALITY
+    ' =======================================================
+    Private Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
+        If isInitializing Then Return
+
+        Dim currentSearch = TextBoxSearch.Text.Trim()
+        If currentSearch = "Search feedback..." Then currentSearch = ""
+
+        ' Only refresh if the actual search criteria changed
+        If currentSearch = _lastSearchText Then Return
+
+        _lastSearchText = currentSearch
+        SearchFeedback(currentSearch)
+    End Sub
+
+    Private Sub TextBoxSearch_Enter(sender As Object, e As EventArgs) Handles TextBoxSearch.Enter
+        If TextBoxSearch.Text = "Search feedback..." Then
+            TextBoxSearch.Text = ""
+            TextBoxSearch.ForeColor = Color.FromArgb(15, 23, 42)
+            txtSearch.BorderColor = Color.FromArgb(99, 102, 241)
+        End If
+    End Sub
+
+    Private Sub TextBoxSearch_Leave(sender As Object, e As EventArgs) Handles TextBoxSearch.Leave
+        If String.IsNullOrWhiteSpace(TextBoxSearch.Text) Then
+            TextBoxSearch.Text = "Search feedback..."
+            TextBoxSearch.ForeColor = Color.FromArgb(148, 163, 184)
+            txtSearch.BorderColor = Color.FromArgb(226, 232, 240)
         End If
     End Sub
 

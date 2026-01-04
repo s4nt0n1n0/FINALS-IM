@@ -39,7 +39,8 @@ Partial Class Payroll
         Me.Actions = New System.Windows.Forms.DataGridViewButtonColumn()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
-        Me.txtSearch = New System.Windows.Forms.TextBox()
+        Me.txtSearch = New InformationManagement.RoundedPane2()
+        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.PaginationPanel = New System.Windows.Forms.Panel()
         Me.btnFirstPage = New System.Windows.Forms.Button()
@@ -72,6 +73,7 @@ Partial Class Payroll
         Me.Label2 = New System.Windows.Forms.Label()
         Me.AddNewPayrollRecordbtn = New InformationManagement.RoundedButton()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.txtSearch.SuspendLayout()
         Me.PaginationPanel.SuspendLayout()
         Me.RoundedPane24.SuspendLayout()
         Me.RoundedPane27.SuspendLayout()
@@ -249,11 +251,28 @@ Partial Class Payroll
         '
         'txtSearch
         '
-        Me.txtSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.txtSearch.Location = New System.Drawing.Point(94, 233)
+        Me.txtSearch.BackColor = System.Drawing.Color.Transparent
+        Me.txtSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.txtSearch.BorderThickness = 1
+        Me.txtSearch.Controls.Add(Me.TextBoxSearch)
+        Me.txtSearch.CornerRadius = 10
+        Me.txtSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.txtSearch.Location = New System.Drawing.Point(94, 226)
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(382, 25)
+        Me.txtSearch.Size = New System.Drawing.Size(382, 38)
         Me.txtSearch.TabIndex = 8
+        '
+        'TextBoxSearch
+        '
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
+        Me.TextBoxSearch.Name = "TextBoxSearch"
+        Me.TextBoxSearch.Size = New System.Drawing.Size(350, 18)
+        Me.TextBoxSearch.TabIndex = 0
+        Me.TextBoxSearch.Text = "Search payroll..."
         '
         'Label4
         '
@@ -653,7 +672,7 @@ Partial Class Payroll
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoScroll = True
         Me.BackColor = System.Drawing.Color.GhostWhite
-        Me.ClientSize = New System.Drawing.Size(1235, 609)
+        Me.ClientSize = New System.Drawing.Size(1252, 609)
         Me.Controls.Add(Me.PaginationPanel)
         Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.Label4)
@@ -674,6 +693,8 @@ Partial Class Payroll
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show
         Me.Text = "Payroll"
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.txtSearch.ResumeLayout(False)
+        Me.txtSearch.PerformLayout()
         Me.PaginationPanel.ResumeLayout(False)
         Me.PaginationPanel.PerformLayout()
         Me.RoundedPane24.ResumeLayout(False)
@@ -729,7 +750,8 @@ Partial Class Payroll
     Friend WithEvents NetPay As DataGridViewTextBoxColumn
     Friend WithEvents Status As DataGridViewTextBoxColumn
     Friend WithEvents Actions As DataGridViewButtonColumn
-    Friend WithEvents txtSearch As TextBox
+    Friend WithEvents txtSearch As InformationManagement.RoundedPane2
+    Friend WithEvents TextBoxSearch As TextBox
     Friend WithEvents Label4 As Label
     Friend WithEvents PaginationPanel As Panel
     Friend WithEvents btnFirstPage As Button
