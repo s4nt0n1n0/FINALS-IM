@@ -15,12 +15,11 @@ Public Class FormDineInOrders
     Private _currentPage As Integer = 1
     Private ReadOnly _pageSize As Integer = 50
     Private _totalRecords As Integer = 0
-    Private _totalPage As Integer = 0 ' Fixed variable name typo from previous versions if any
+    Private _totalPages As Integer = 0
 
     Private originalData As DataTable
     Private isInitialLoad As Boolean = True
     Private _lastSearchText As String = ""
-    Private _totalPageCount As Integer = 0 ' Using a clearer name for total pages
 
     Private Async Sub FormDineInOrders_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Set initial loading state
@@ -34,6 +33,10 @@ Public Class FormDineInOrders
         isInitialLoad = False
         ' ConfigureDateFilter()
     End Sub
+
+
+
+
 
     Private Sub InitializeModernUI()
         ' Enhanced form appearance
@@ -50,18 +53,17 @@ Public Class FormDineInOrders
                 .RowHeadersVisible = False
                 .BackgroundColor = Color.White
                 .BorderStyle = BorderStyle.None
-                .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-                .GridColor = Color.FromArgb(241, 245, 249)
-                .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-                .DefaultCellStyle.SelectionForeColor = Color.Black
+    .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
                 .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
-                .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(108, 117, 125)    
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
                 .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
-                .ColumnHeadersHeight = 50
-                .RowTemplate.Height = 50
-                .EnableHeadersVisualStyles = False
+                 .ColumnHeadersHeight = 45
+                .RowTemplate.Height = 45
+                .EnableHeadersVisualStyles = True
         End With
+
 
         ' Style the label
         Label2.Font = New Font("Segoe UI", 14, FontStyle.Bold)
@@ -91,9 +93,9 @@ Public Class FormDineInOrders
 
             ' Get total count with filter
             _totalRecords = Await Task.Run(Function() FetchTotalDineInCount(searchText))
-            _totalPageCount = Math.Max(1, CInt(Math.Ceiling(CDbl(_totalRecords) / _pageSize)))
+            _totalPages = Math.Max(1, CInt(Math.Ceiling(CDbl(_totalRecords) / _pageSize)))
             
-            If _currentPage > _totalPageCount Then _currentPage = _totalPageCount
+            If _currentPage > _totalPages Then _currentPage = _totalPages
             If _currentPage < 1 Then _currentPage = 1
 
             Dim offset As Integer = (_currentPage - 1) * _pageSize
@@ -107,6 +109,8 @@ Public Class FormDineInOrders
             DataGridView1.DataSource = table
             ConfigureGrid()
             ApplyStatusColors()
+            UpdatePaginationUI() 
+            ' UpdateSummaryTiles(table) ' Replaced with UpdateTotalSummaryAsync
             
             ' Update summary with total stats (non-paginated)
             Await UpdateTotalSummaryAsync(searchText)
@@ -121,31 +125,34 @@ Public Class FormDineInOrders
     End Function
 
     Private Function FetchTotalDineInCount(searchText As String) As Integer
+        ' Get period filter from Reports form
         Dim periodFilter As String = ""
         Dim selectedYear As Integer = Reports.SelectedYear
         Dim selectedMonth As Integer = Reports.SelectedMonth
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                If selectedMonth = 0 Then
-                    periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
+                If selectedYear = DateTime.Now.Year Then
+                    periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 Else
-                    periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                    periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' " ' Use picker date for historic daily too if desired, or keep as is.
+                    ' Actually, if Daily is selected, we usually want specific day regardless of year logic if we have a picker.
+                    ' But to be safe and consistent with other forms:
+                    periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
                 End If
+
             Case "Weekly"
-                If selectedMonth = 0 Then
-                    periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
-                Else
-                    periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
-                End If
+                periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+
             Case "Monthly"
                 If selectedMonth = 0 Then
                     periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
                 Else
                     periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                 End If
+
             Case "Yearly"
-                periodFilter = $" AND YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
+                periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
         End Select
 
         Dim query As String = "SELECT COUNT(*) FROM orders WHERE OrderType = 'Dine-in' " & periodFilter & " AND (OrderID LIKE @search OR OrderStatus LIKE @search)"
@@ -159,33 +166,30 @@ Public Class FormDineInOrders
     End Function
 
     Private Function FetchDineInOrdersTable(searchText As String, offset As Integer, limit As Integer) As DataTable
+        ' Get period filter from Reports form
         Dim periodFilter As String = ""
         Dim selectedYear As Integer = Reports.SelectedYear
         Dim selectedMonth As Integer = Reports.SelectedMonth
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                If selectedMonth = 0 Then
-                    periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
-                Else
-                    periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
-                End If
+                periodFilter = $" AND DATE(o.OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+
             Case "Weekly"
-                If selectedMonth = 0 Then
-                    periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
-                Else
-                    periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
-                End If
+                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+
             Case "Monthly"
                 If selectedMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
                 End If
+
             Case "Yearly"
-                periodFilter = $" AND YEAR(o.OrderDate) <= {selectedYear} AND YEAR(o.OrderDate) >= {selectedYear - 4} "
+                periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
         End Select
 
+        ' Build query with LIMIT, OFFSET and search
         Dim query As String =
             "SELECT " &
             "o.OrderID, " &
@@ -196,9 +200,11 @@ Public Class FormDineInOrders
             "   LIMIT 10) AS ItemsOrdered, " &
             "o.TotalAmount, " &
             "o.OrderStatus AS Status, " &
+            "COALESCE(p.PaymentMethod, 'Cash') AS PaymentMethod, " &
             "DATE_FORMAT(CONCAT(o.OrderDate, ' ', o.OrderTime), '%Y-%m-%d %H:%i') AS OrderDateTime " &
             "FROM orders o " &
-            "WHERE o.OrderType = 'Dine-in' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search) " &
+            "LEFT JOIN payments p ON o.OrderID = p.OrderID " &
+            "WHERE o.OrderType = 'Dine-in' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search OR p.PaymentMethod LIKE @search) " &
             "ORDER BY o.OrderDate DESC, o.OrderTime DESC, o.OrderID DESC " &
             "LIMIT @limit OFFSET @offset"
 
@@ -221,35 +227,30 @@ Public Class FormDineInOrders
         Dim totalCount As Integer = 0
         Dim totalRevenue As Decimal = 0
         Dim avgValue As Decimal = 0
-        Dim prevYearRevenue As Decimal = 0
 
         Try
             Await Task.Run(Sub()
+                               ' Get period filter from Reports form
                                Dim periodFilter As String = ""
                                Dim selectedYear As Integer = Reports.SelectedYear
                                Dim selectedMonth As Integer = Reports.SelectedMonth
 
                                Select Case Reports.SelectedPeriod
                                    Case "Daily"
-                                        If selectedMonth = 0 Then
-                                            periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
-                                        Else
-                                            periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
-                                        End If
+                                       periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+
                                    Case "Weekly"
-                                        If selectedMonth = 0 Then
-                                            periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
-                                        Else
-                                            periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
-                                        End If
+                                       periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+
                                    Case "Monthly"
                                        If selectedMonth = 0 Then
                                            periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
                                        Else
                                            periodFilter = $" AND YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                                        End If
+
                                    Case "Yearly"
-                                       periodFilter = $" AND YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
+                                       periodFilter = $" AND YEAR(OrderDate) = {selectedYear} "
                                End Select
 
                                Using conn As New MySqlConnection(connectionString)
@@ -264,42 +265,60 @@ Public Class FormDineInOrders
                                            End If
                                        End Using
                                    End Using
-                                   
-                                   If Reports.SelectedPeriod = "Yearly" Then
-                                       Dim sqlCompare = $"SELECT COALESCE(SUM(TotalAmount), 0) FROM orders WHERE OrderType = 'Dine-in' AND YEAR(OrderDate) = {selectedYear - 1}"
-                                       Using cmdComp As New MySqlCommand(sqlCompare, conn)
-                                           prevYearRevenue = Convert.ToDecimal(cmdComp.ExecuteScalar())
-                                       End Using
-                                   End If
                                End Using
                            End Sub)
 
             If totalCount > 0 Then avgValue = totalRevenue / totalCount
 
+            ' Update UI labels
             Me.Invoke(Sub()
                           Label4.Text = totalCount.ToString("N0")
                           Label6.Text = "₱" & totalRevenue.ToString("N2")
                           Label7.Text = "₱" & avgValue.ToString("N2")
-                          
-                          If Reports.SelectedPeriod = "Yearly" Then
-                              Label6.Text &= " (5-yr Total)"
-                              If prevYearRevenue > 0 Then
-                                  Dim diff As Decimal = totalRevenue - prevYearRevenue
-                                  Dim percent As Decimal = (diff / prevYearRevenue) * 100
-                                  Dim sign As String = If(diff >= 0, "+", "")
-                                  Label6.Text &= $" ({sign}{percent:N1}% YoY)"
-                              End If
-                          End If
                       End Sub)
         Catch
+            ' Silent fail
         End Try
     End Function
 
+    Private Sub UpdateSummaryTiles(dt As DataTable)
+        Try
+            Dim totalOrders As Integer = dt.Rows.Count
+            Dim totalRevenue As Decimal = 0
+            Dim avgOrderValue As Decimal = 0
+
+            For Each row As DataRow In dt.Rows
+                If Not IsDBNull(row("TotalAmount")) Then
+                    totalRevenue += Convert.ToDecimal(row("TotalAmount"))
+                End If
+            Next
+
+            If totalOrders > 0 Then
+                avgOrderValue = totalRevenue / totalOrders
+            End If
+
+            ' Safe UI updates
+            Label4.Text = totalOrders.ToString("N0")
+            Label6.Text = "₱" & totalRevenue.ToString("N2")
+            Label7.Text = "₱" & avgOrderValue.ToString("N2")
+
+        Catch ex As Exception
+            ' Silent fail for stats
+        End Try
+    End Sub
+
+    ' =============================
+    ' SEARCH FUNCTIONALITY
+    ' =============================
     Private Async Sub TextBoxSearch_TextChanged(sender As Object, e As EventArgs) Handles TextBoxSearch.TextChanged
         If isInitialLoad Then Return
+        
         Dim currentSearch = TextBoxSearch.Text.Trim()
         If currentSearch = "Search orders..." Then currentSearch = ""
+        
+        ' Only refresh if the actual search criteria changed
         If currentSearch = _lastSearchText Then Return
+        
         _lastSearchText = currentSearch
         _currentPage = 1
         Await BeginLoadDineInOrders()
@@ -321,13 +340,21 @@ Public Class FormDineInOrders
         End If
     End Sub
 
+
+
+    ' FIXED: Improved status color application
     Private Sub ApplyStatusColors()
         Try
+            ' Add visual indicators for order status
             For Each row As DataGridViewRow In DataGridView1.Rows
                 If Not row.IsNewRow AndAlso row.Cells("Status").Value IsNot Nothing Then
                     Dim status As String = row.Cells("Status").Value.ToString().Trim().ToLower()
+
+                    ' Reset to default first
                     row.Cells("Status").Style.ForeColor = Color.FromArgb(44, 62, 80)
                     row.Cells("Status").Style.Font = New Font("Segoe UI", 9, FontStyle.Regular)
+
+                    ' Apply status-specific colors
                     Select Case status
                         Case "completed", "paid"
                             row.Cells("Status").Style.ForeColor = Color.FromArgb(16, 185, 129)
@@ -338,16 +365,22 @@ Public Class FormDineInOrders
                     End Select
                 End If
             Next
+
+            ' Force redraw
             DataGridView1.InvalidateColumn(DataGridView1.Columns("Status").Index)
         Catch ex As Exception
+            ' Silently handle errors in color application
             Debug.WriteLine("Error applying status colors: " & ex.Message)
         End Try
     End Sub
+
+
 
     Private Sub DataGridView1_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DataGridView1.CellFormatting
         Try
             If DataGridView1.Columns(e.ColumnIndex).Name = "Status" AndAlso e.Value IsNot Nothing Then
                 Dim status As String = e.Value.ToString().Trim().ToLower()
+
                 Select Case status
                     Case "completed", "paid"
                         e.CellStyle.ForeColor = Color.FromArgb(39, 174, 96)
@@ -360,16 +393,20 @@ Public Class FormDineInOrders
                         e.CellStyle.Font = New Font("Segoe UI", 9, FontStyle.Bold)
                 End Select
             End If
-        Catch
+        Catch ex As Exception
+            ' Silently handle formatting errors
         End Try
     End Sub
 
     Private Sub SetLoadingState(isLoading As Boolean)
         Try
             Me.UseWaitCursor = isLoading
+
             If btnPrev IsNot Nothing Then btnPrev.Enabled = Not isLoading AndAlso _currentPage > 1
-            If btnNext IsNot Nothing Then btnNext.Enabled = Not isLoading AndAlso _currentPage < _totalPageCount
+            If btnNext IsNot Nothing Then btnNext.Enabled = Not isLoading AndAlso _currentPage < _totalPages
             LabelHeader.Text = If(isLoading, _baseTitle & " (Updating...)", _baseTitle)
+
+
         Catch
         End Try
     End Sub
@@ -384,6 +421,7 @@ Public Class FormDineInOrders
             .AllowUserToAddRows = False
         End With
 
+        ' Optimized column configuration
         If DataGridView1.Columns.Contains("OrderID") Then
             With DataGridView1.Columns("OrderID")
                 .HeaderText = "Order #"
@@ -413,6 +451,14 @@ Public Class FormDineInOrders
             End With
         End If
 
+        If DataGridView1.Columns.Contains("PaymentMethod") Then
+            With DataGridView1.Columns("PaymentMethod")
+                .HeaderText = "Payment"
+                .Width = 110
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            End With
+        End If
+
         If DataGridView1.Columns.Contains("Status") Then
             With DataGridView1.Columns("Status")
                 .HeaderText = "Status"
@@ -431,110 +477,52 @@ Public Class FormDineInOrders
     End Sub
 
     Private Async Sub btnPrev_Click(sender As Object, e As EventArgs) Handles btnPrev.Click
-        if _currentPage > 1 Then
+        If _currentPage > 1 Then
             _currentPage -= 1
             Await BeginLoadDineInOrders()
         End If
     End Sub
 
     Private Async Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
-        If _currentPage < _totalPageCount Then
+        If _currentPage < _totalPages Then
             _currentPage += 1
             Await BeginLoadDineInOrders()
         End If
     End Sub
 
+
     Protected Overrides Sub OnFormClosing(e As FormClosingEventArgs)
         _dataCache?.Dispose()
         MyBase.OnFormClosing(e)
     End Sub
-
     ' =======================================================================
     ' REFRESH DATA
     ' =======================================================================
     Public Async Sub RefreshData()
+        ' ConfigureDateFilter()
         _currentPage = 1
         Await BeginLoadDineInOrders()
-        LoadOrderBreakdownAsync()
     End Sub
 
-    ' =======================================================================
-    ' LOAD ORDER BREAKDOWN ASYNC
-    ' =======================================================================
-    Private Async Sub LoadOrderBreakdownAsync()
+
+    Private Sub UpdatePaginationUI()
         Try
-            Dim dt As New DataTable()
-            Dim selectedPeriod As String = Reports.SelectedPeriod
-            Dim selectedYear As Integer = Reports.SelectedYear
-            Dim selectedMonth As Integer = Reports.SelectedMonth
+            ' Update page status label
+            If lblPageStatus IsNot Nothing Then
+                lblPageStatus.Text = $"Page {_currentPage} of {_totalPages} (Total Records: {_totalRecords:N0})"
+            End If
 
-            Await System.Threading.Tasks.Task.Run(Sub()
-                                                      Try
-                                                          Using conn As New MySqlConnection(connectionString)
-                                                              conn.Open()
-                                                              Dim query As String = ""
-                                                              Dim params As New List(Of MySqlParameter)
+            ' Update button states
+            If btnPrev IsNot Nothing Then
+                btnPrev.Enabled = (_currentPage > 1) AndAlso (Not _isLoading)
+            End If
 
-                                                              Select Case selectedPeriod
-                                                                  Case "Daily"
-                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Dine-in' AND YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
-                                                                      params.Add(New MySqlParameter("@Month", selectedMonth))
-                                                                  Case "Weekly"
-                                                                      query = "SELECT CONCAT('Week ', WEEK(OrderDate, 1)) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Dine-in' AND YEAR(OrderDate) = @Year GROUP BY YEARWEEK(OrderDate, 1) ORDER BY YEARWEEK(OrderDate, 1) DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
-                                                                  Case "Monthly"
-                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%M') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Dine-in' AND YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY MONTH(OrderDate) DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
-                                                                  Case "Yearly"
-                                                                      query = "SELECT YEAR(OrderDate) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Dine-in' AND YEAR(OrderDate) <= @Year AND YEAR(OrderDate) >= @Year - 4 GROUP BY YEAR(OrderDate) ORDER BY Period DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
-                                                              End Select
-
-                                                              If Not String.IsNullOrEmpty(query) Then
-                                                                  Using cmd As New MySqlCommand(query, conn)
-                                                                      cmd.Parameters.AddRange(params.ToArray())
-                                                                      Using adapter As New MySqlDataAdapter(cmd)
-                                                                          adapter.Fill(dt)
-                                                                      End Using
-                                                                  End Using
-                                                              End If
-                                                          End Using
-                                                      Catch
-                                                      End Try
-                                                  End Sub)
-
-            If DataGridViewBreakdown IsNot Nothing Then
-                DataGridViewBreakdown.DataSource = dt
-                FormatBreakdownDataGridView()
+            If btnNext IsNot Nothing Then
+                btnNext.Enabled = (_currentPage < _totalPages) AndAlso (Not _isLoading)
             End If
         Catch ex As Exception
+            ' Ignore errors in updating pagination UI
         End Try
     End Sub
 
-    Private Sub FormatBreakdownDataGridView()
-        Try
-            With DataGridViewBreakdown
-                .ReadOnly = True
-                .AllowUserToAddRows = False
-                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-                .RowHeadersVisible = False
-                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.5F, FontStyle.Bold)
-                .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
-                .AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 250)
-
-                If .Columns.Contains("Period") Then .Columns("Period").HeaderText = "Time Period"
-                If .Columns.Contains("OrderCount") Then .Columns("OrderCount").HeaderText = "Orders"
-                If .Columns.Contains("TotalRevenue") Then
-                    .Columns("TotalRevenue").HeaderText = "Revenue"
-                    .Columns("TotalRevenue").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
-                End If
-                If .Columns.Contains("AvgValue") Then
-                    .Columns("AvgValue").HeaderText = "Avg Value"
-                    .Columns("AvgValue").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
-                End If
-            End With
-        Catch
-        End Try
-    End Sub
 End Class

@@ -538,8 +538,8 @@ LIMIT 8;"
         Return newPanel
     End Function
     Private Sub LoadAverageOrder()
-        Try
-            openConn()
+
+        openConn()
             Dim dateFilterOrder As String = GetDateFilterCondition("OrderDate")
             Dim dateFilterPayment As String = GetDateFilterCondition("PaymentDate")
 
@@ -561,15 +561,9 @@ LIMIT 8;"
                 ) as counts", conn)
 
             Dim avgOrder As Decimal = Convert.ToDecimal(cmd.ExecuteScalar())
-            lblAverageOrder.Text = "₱" & avgOrder.ToString("N2")
             closeConn()
 
-            ' Apply recursive click handling to the entire metric card
-            SetupClickableControl(RoundedPane217, AddressOf AverageOrder_Click)
-        Catch ex As Exception
-            lblAverageOrder.Text = "₱0.00"
-            closeConn()
-        End Try
+
     End Sub
 
     Private Sub AverageOrder_Click(sender As Object, e As EventArgs)

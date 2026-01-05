@@ -210,7 +210,9 @@ Public Class BatchManagement
     Private Sub FormatBatchGrid()
         With dgvBatches
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .RowTemplate.Height = 35
+             .RowTemplate.Height = 35
+                .DefaultCellStyle.Font = New Font("Segoe UI", 9)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 10, FontStyle.Bold)
             .ReadOnly = True
             .AllowUserToAddRows = False
             .AllowUserToDeleteRows = False

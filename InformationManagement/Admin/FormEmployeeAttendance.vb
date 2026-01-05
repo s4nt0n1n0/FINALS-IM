@@ -111,7 +111,7 @@ Public Class FormEmployeeAttendance
     Private Sub SetupDataGridView()
         Try
             With DataGridView1
-                .AutoGenerateColumns = False
+                 .AutoGenerateColumns = False
                 .AllowUserToAddRows = False
                 .AllowUserToDeleteRows = False
                 .ReadOnly = True
@@ -119,17 +119,15 @@ Public Class FormEmployeeAttendance
                 .RowHeadersVisible = False
                 .BackgroundColor = Color.White
                 .BorderStyle = BorderStyle.None
-                .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-                .GridColor = Color.FromArgb(241, 245, 249)
-                .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-                .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+    .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
                 .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
-                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
-                .ColumnHeadersHeight = 50
-                .RowTemplate.Height = 50
-                .EnableHeadersVisualStyles = False
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 9)
+                .RowTemplate.Height = 45
+                .ColumnHeadersHeight = 45
+                .EnableHeadersVisualStyles = True
             End With
 
             ' Clear existing columns
@@ -555,9 +553,6 @@ Public Class FormEmployeeAttendance
     Public Async Sub RefreshData()
         Await RefreshAttendanceAsync(True)
     End Sub
-
-
-
 
 
 End Class

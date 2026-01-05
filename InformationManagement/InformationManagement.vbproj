@@ -460,6 +460,12 @@
     <Compile Include="Admin\FormCustomerHistory.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Admin\FormCustomerOrderHistory.Designer.vb">
+      <DependentUpon>FormCustomerOrderHistory.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\FormCustomerOrderHistory.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Admin\FormDineInOrders.Designer.vb">
       <DependentUpon>FormDineInOrders.vb</DependentUpon>
     </Compile>
@@ -622,6 +628,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Admin\FormCustomerHistory.resx">
       <DependentUpon>FormCustomerHistory.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Admin\FormCustomerOrderHistory.resx">
+      <DependentUpon>FormCustomerOrderHistory.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Admin\FormEditMenu.resx">
       <DependentUpon>FormEditMenu.vb</DependentUpon>

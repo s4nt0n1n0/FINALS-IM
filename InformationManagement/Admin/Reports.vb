@@ -56,22 +56,11 @@ Public Class Reports
 
         childForm.TopLevel = False
         childForm.FormBorderStyle = FormBorderStyle.None
-        childForm.AutoScroll = False
-        childForm.AutoSize = True
-        childForm.AutoSizeMode = AutoSizeMode.GrowAndShrink
-        childForm.Dock = DockStyle.None
+        childForm.Dock = DockStyle.Fill
 
         ' Add to panel and show
         Panel1.Controls.Add(childForm)
-        childForm.Location = New Point(0, 0)
         childForm.Show()
-
-        ' Force layout update
-        childForm.PerformLayout()
-        Application.DoEvents()
-
-        ' Set AutoScrollMinSize based on child form's actual size
-        Panel1.AutoScrollMinSize = New Size(childForm.Width, childForm.Height)
     End Sub
 
 

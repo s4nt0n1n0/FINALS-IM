@@ -17,8 +17,8 @@ Partial Class Inventory
 
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Inventory))
         Me.InventoryGrid = New System.Windows.Forms.DataGridView()
         Me.ItemName = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -53,6 +53,7 @@ Partial Class Inventory
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label11 = New System.Windows.Forms.Label()
+        Me.btnInventoryAlerts = New System.Windows.Forms.Button()
         CType(Me.InventoryGrid, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.txtSearch.SuspendLayout()
         Me.pnlSummaryCards.SuspendLayout()
@@ -72,14 +73,14 @@ Partial Class Inventory
         Me.InventoryGrid.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.InventoryGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
         Me.InventoryGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.InventoryGrid.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle3.ForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
+        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.InventoryGrid.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle3
         Me.InventoryGrid.ColumnHeadersHeight = 40
         Me.InventoryGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.ItemName, Me.InventoryID, Me.ProductID, Me.Quantity, Me.Status, Me.CostUnit, Me.TotalValue, Me.LostStock, Me.Type, Me.ExpirationDate, Me.Actions})
         Me.InventoryGrid.EnableHeadersVisualStyles = False
@@ -87,14 +88,14 @@ Partial Class Inventory
         Me.InventoryGrid.Name = "InventoryGrid"
         Me.InventoryGrid.ReadOnly = True
         Me.InventoryGrid.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.InventoryGrid.RowHeadersDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(CType(CType(44, Byte), Integer), CType(CType(62, Byte), Integer), CType(CType(80, Byte), Integer))
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.White
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.InventoryGrid.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.InventoryGrid.RowHeadersVisible = False
         Me.InventoryGrid.RowHeadersWidth = 51
         Me.InventoryGrid.Size = New System.Drawing.Size(1137, 353)
@@ -310,7 +311,7 @@ Partial Class Inventory
         Me.btnNotifications.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnNotifications.FlatAppearance.BorderSize = 0
         Me.btnNotifications.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnNotifications.Font = New System.Drawing.Font("Segoe UI", 11.0!, System.Drawing.FontStyle.Bold)
+        Me.btnNotifications.Font = New System.Drawing.Font("Segoe UI Semibold", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnNotifications.ForeColor = System.Drawing.Color.White
         Me.btnNotifications.Location = New System.Drawing.Point(788, 98)
         Me.btnNotifications.Margin = New System.Windows.Forms.Padding(2)
@@ -465,12 +466,30 @@ Partial Class Inventory
         Me.Label11.TabIndex = 3
         Me.Label11.Text = "₱10,750,000.00"
         '
+        'btnInventoryAlerts
+        '
+        Me.btnInventoryAlerts.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnInventoryAlerts.BackColor = System.Drawing.Color.FromArgb(CType(CType(111, Byte), Integer), CType(CType(66, Byte), Integer), CType(CType(193, Byte), Integer))
+        Me.btnInventoryAlerts.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnInventoryAlerts.FlatAppearance.BorderSize = 0
+        Me.btnInventoryAlerts.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnInventoryAlerts.Font = New System.Drawing.Font("Segoe UI Semibold", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnInventoryAlerts.ForeColor = System.Drawing.Color.White
+        Me.btnInventoryAlerts.Location = New System.Drawing.Point(788, 149)
+        Me.btnInventoryAlerts.Margin = New System.Windows.Forms.Padding(2)
+        Me.btnInventoryAlerts.Name = "btnInventoryAlerts"
+        Me.btnInventoryAlerts.Size = New System.Drawing.Size(240, 44)
+        Me.btnInventoryAlerts.TabIndex = 52
+        Me.btnInventoryAlerts.Text = "🔔 View Usage History"
+        Me.btnInventoryAlerts.UseVisualStyleBackColor = False
+        '
         'Inventory
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.GhostWhite
         Me.ClientSize = New System.Drawing.Size(1028, 676)
+        Me.Controls.Add(Me.btnInventoryAlerts)
         Me.Controls.Add(Me.pnlSummaryCards)
         Me.Controls.Add(Me.btnNotifications)
         Me.Controls.Add(Me.InventoryGrid)
@@ -536,4 +555,5 @@ Partial Class Inventory
     Friend WithEvents PictureBox3 As PictureBox
     Friend WithEvents RoundedPane221 As RoundedPane2
     Friend WithEvents PictureBox11 As PictureBox
+    Friend WithEvents btnInventoryAlerts As Button
 End Class

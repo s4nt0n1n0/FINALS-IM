@@ -2,7 +2,6 @@
 
 Public Class Inventory
     Private isShowingAlerts As Boolean = False
-    Private WithEvents btnInventoryAlerts As Button
     Private _lastSearchText As String = ""
     Private isInitializing As Boolean = True
     Private Sub Inventory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -198,36 +197,86 @@ Public Class Inventory
     End Sub
 
     ' Load main inventory grid
+    ' Load main inventory grid with proper unit conversion
     Private Sub LoadInventorySummary()
         Try
             openConn()
 
             Dim sql As String = "
-                SELECT 
-                    i.IngredientID AS 'Ingredient ID',
-                    i.IngredientName AS 'Item Name',
-                    COALESCE(ic.CategoryName, 'Uncategorized') AS 'Category',
-                    COALESCE(SUM(ib.StockQuantity), 0) AS 'Total Quantity',
-                    i.UnitType AS 'Unit',
+            SELECT 
+                i.IngredientID AS 'Ingredient ID',
+                i.IngredientName AS 'Item Name',
+                COALESCE(ic.CategoryName, 'Uncategorized') AS 'Category',
+                COALESCE(SUM(
                     CASE 
-                        WHEN COALESCE(SUM(ib.StockQuantity), 0) = 0 THEN 'Out of Stock'
-                        WHEN COALESCE(SUM(ib.StockQuantity), 0) < i.MinStockLevel THEN 'Low Stock'
-                        WHEN COALESCE(SUM(ib.StockQuantity), 0) > i.MaxStockLevel THEN 'Overstocked'
-                        ELSE 'In Stock'
-                    END AS 'Status',
-                    COUNT(CASE WHEN ib.BatchStatus = 'Active' THEN 1 END) AS 'Active Batches',
-                    MIN(CASE WHEN ib.BatchStatus = 'Active' THEN ib.ExpirationDate END) AS 'Next Expiration',
-                    COALESCE(SUM(CASE WHEN ib.BatchStatus = 'Active' THEN ib.StockQuantity * ib.CostPerUnit END), 0) AS 'Total Value',
-                    i.MinStockLevel AS 'Min Level',
-                    i.MaxStockLevel AS 'Max Level'
-                FROM ingredients i
-                LEFT JOIN ingredient_categories ic ON i.CategoryID = ic.CategoryID
-                LEFT JOIN inventory_batches ib ON i.IngredientID = ib.IngredientID
-                WHERE i.IsActive = 1
-                GROUP BY i.IngredientID, i.IngredientName, ic.CategoryName, 
-                         i.UnitType, i.MinStockLevel, i.MaxStockLevel
-                ORDER BY i.IngredientName
-            "
+                        -- Convert batch quantities to base unit matching ingredient
+                        WHEN i.UnitType IN ('g', 'gram', 'grams') AND ib.UnitType IN ('kg', 'kilogram', 'kilograms') 
+                            THEN ib.StockQuantity * 1000
+                        WHEN i.UnitType IN ('kg', 'kilogram', 'kilograms') AND ib.UnitType IN ('g', 'gram', 'grams') 
+                            THEN ib.StockQuantity / 1000
+                        WHEN i.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') AND ib.UnitType IN ('L', 'liter', 'liters', 'l') 
+                            THEN ib.StockQuantity * 1000
+                        WHEN i.UnitType IN ('L', 'liter', 'liters', 'l') AND ib.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') 
+                            THEN ib.StockQuantity / 1000
+                        ELSE ib.StockQuantity
+                    END
+                ), 0) AS 'Total Quantity',
+                i.UnitType AS 'Unit',
+                CASE 
+                    WHEN COALESCE(SUM(
+                        CASE 
+                            WHEN i.UnitType IN ('g', 'gram', 'grams') AND ib.UnitType IN ('kg', 'kilogram', 'kilograms') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('kg', 'kilogram', 'kilograms') AND ib.UnitType IN ('g', 'gram', 'grams') 
+                                THEN ib.StockQuantity / 1000
+                            WHEN i.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') AND ib.UnitType IN ('L', 'liter', 'liters', 'l') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('L', 'liter', 'liters', 'l') AND ib.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') 
+                                THEN ib.StockQuantity / 1000
+                            ELSE ib.StockQuantity
+                        END
+                    ), 0) = 0 THEN 'Out of Stock'
+                    WHEN COALESCE(SUM(
+                        CASE 
+                            WHEN i.UnitType IN ('g', 'gram', 'grams') AND ib.UnitType IN ('kg', 'kilogram', 'kilograms') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('kg', 'kilogram', 'kilograms') AND ib.UnitType IN ('g', 'gram', 'grams') 
+                                THEN ib.StockQuantity / 1000
+                            WHEN i.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') AND ib.UnitType IN ('L', 'liter', 'liters', 'l') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('L', 'liter', 'liters', 'l') AND ib.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') 
+                                THEN ib.StockQuantity / 1000
+                            ELSE ib.StockQuantity
+                        END
+                    ), 0) < i.MinStockLevel THEN 'Low Stock'
+                    WHEN COALESCE(SUM(
+                        CASE 
+                            WHEN i.UnitType IN ('g', 'gram', 'grams') AND ib.UnitType IN ('kg', 'kilogram', 'kilograms') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('kg', 'kilogram', 'kilograms') AND ib.UnitType IN ('g', 'gram', 'grams') 
+                                THEN ib.StockQuantity / 1000
+                            WHEN i.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') AND ib.UnitType IN ('L', 'liter', 'liters', 'l') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('L', 'liter', 'liters', 'l') AND ib.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') 
+                                THEN ib.StockQuantity / 1000
+                            ELSE ib.StockQuantity
+                        END
+                    ), 0) > i.MaxStockLevel THEN 'Overstocked'
+                    ELSE 'In Stock'
+                END AS 'Status',
+                COUNT(CASE WHEN ib.BatchStatus = 'Active' THEN 1 END) AS 'Active Batches',
+                MIN(CASE WHEN ib.BatchStatus = 'Active' THEN ib.ExpirationDate END) AS 'Next Expiration',
+                COALESCE(SUM(CASE WHEN ib.BatchStatus = 'Active' THEN ib.StockQuantity * ib.CostPerUnit END), 0) AS 'Total Value',
+                i.MinStockLevel AS 'Min Level',
+                i.MaxStockLevel AS 'Max Level'
+            FROM ingredients i
+            LEFT JOIN ingredient_categories ic ON i.CategoryID = ic.CategoryID
+            LEFT JOIN inventory_batches ib ON i.IngredientID = ib.IngredientID
+            WHERE i.IsActive = 1
+            GROUP BY i.IngredientID, i.IngredientName, ic.CategoryName, 
+                     i.UnitType, i.MinStockLevel, i.MaxStockLevel
+            ORDER BY i.IngredientName
+        "
 
             Dim cmd As New MySqlCommand(sql, conn)
             Dim da As New MySqlDataAdapter(cmd)
@@ -253,8 +302,7 @@ Public Class Inventory
             ' Format grid FIRST
             FormatInventoryGrid()
 
-            ' IMPORTANT: Apply color coding AFTER the grid is fully bound and formatted
-            ' Use BeginInvoke to ensure DataGridView has finished rendering
+            ' Apply color coding AFTER the grid is fully bound and formatted
             Me.BeginInvoke(New MethodInvoker(Sub()
                                                  ColorCodeStatusColumn()
                                              End Sub))
@@ -267,9 +315,9 @@ Public Class Inventory
 
         Catch ex As Exception
             MessageBox.Show("Error loading inventory: " & ex.Message,
-                          "Database Error",
-                          MessageBoxButtons.OK,
-                          MessageBoxIcon.Error)
+                      "Database Error",
+                      MessageBoxButtons.OK,
+                      MessageBoxIcon.Error)
         Finally
             closeConn()
         End Try
@@ -289,16 +337,17 @@ Public Class Inventory
                 .AllowUserToDeleteRows = False
                 .SelectionMode = DataGridViewSelectionMode.FullRowSelect
 
-                ' Format columns
+                ' Format Total Quantity column to show clean numbers
+                If .Columns.Contains("Total Quantity") Then
+                    .Columns("Total Quantity").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                    .Columns("Total Quantity").DefaultCellStyle.Format = "0.##"
+                    .Columns("Total Quantity").ReadOnly = True
+                End If
+
                 If .Columns.Contains("Total Value") Then
                     .Columns("Total Value").DefaultCellStyle.Format = "#,##0.00"
                     .Columns("Total Value").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
                     .Columns("Total Value").ReadOnly = True
-                End If
-
-                If .Columns.Contains("Total Quantity") Then
-                    .Columns("Total Quantity").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-                    .Columns("Total Quantity").ReadOnly = True
                 End If
 
                 If .Columns.Contains("Active Batches") Then
@@ -368,6 +417,32 @@ Public Class Inventory
 
         Catch ex As Exception
             MessageBox.Show("Error formatting grid: " & ex.Message)
+        End Try
+    End Sub
+
+    ' Add this event handler
+    Private Sub InventoryGrid_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) _
+    Handles InventoryGrid.CellFormatting
+
+        Try
+            ' Format Total Quantity column
+            If InventoryGrid.Columns(e.ColumnIndex).Name = "Total Quantity" AndAlso e.Value IsNot Nothing Then
+                If IsNumeric(e.Value) Then
+                    Dim quantity As Decimal = Convert.ToDecimal(e.Value)
+
+                    ' If whole number, show without decimals
+                    If quantity = Math.Floor(quantity) Then
+                        e.Value = quantity.ToString("N0") ' 5, 100, 250
+                    Else
+                        e.Value = quantity.ToString("0.##") ' 5.5, 2.75, 0.25
+                    End If
+
+                    e.FormattingApplied = True
+                End If
+            End If
+
+        Catch ex As Exception
+            ' Silent fail
         End Try
     End Sub
 
@@ -457,6 +532,7 @@ Public Class Inventory
     End Sub
 
     ' Load statistics in the top panels
+    ' Load statistics in the top panels with unit conversion
     Private Sub LoadInventoryStatistics()
         Try
             openConn()
@@ -491,7 +567,6 @@ Public Class Inventory
             closeConn()
         End Try
     End Sub
-
     ' Handle View Batches button click
     Private Sub InventoryGrid_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles InventoryGrid.CellContentClick
         Try
@@ -771,8 +846,8 @@ Public Class Inventory
             btnInventoryAlerts = New Button()
             btnInventoryAlerts.Name = "btnInventoryAlerts"
             btnInventoryAlerts.FlatStyle = FlatStyle.Flat
+
             btnInventoryAlerts.FlatAppearance.BorderSize = 0
-            btnInventoryAlerts.Font = New Font("Segoe UI", 10, FontStyle.Bold)
             btnInventoryAlerts.ForeColor = Color.White
             btnInventoryAlerts.Cursor = Cursors.Hand
             btnInventoryAlerts.Anchor = AnchorStyles.Top Or AnchorStyles.Right
@@ -785,56 +860,67 @@ Public Class Inventory
         Try
             openConn()
 
-            ' 1. Inventory Alerts (Low Stock)
+            ' Inventory Alerts (Low Stock) with unit conversion
             Dim sqlAlerts As String = "
-                SELECT COUNT(*) 
-                FROM (
-                    SELECT 
-                        i.IngredientID,
-                        COALESCE(SUM(ib.StockQuantity), 0) AS TotalStock,
-                        i.MinStockLevel
-                    FROM ingredients i
-                    LEFT JOIN inventory_batches ib ON i.IngredientID = ib.IngredientID AND ib.BatchStatus = 'Active'
-                    WHERE i.IsActive = 1
-                    GROUP BY i.IngredientID, i.MinStockLevel
-                    HAVING TotalStock < i.MinStockLevel
-                ) AS LowStockItems
-            "
+            SELECT COUNT(*) 
+            FROM (
+                SELECT 
+                    i.IngredientID,
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN i.UnitType IN ('g', 'gram', 'grams') AND ib.UnitType IN ('kg', 'kilogram', 'kilograms') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('kg', 'kilogram', 'kilograms') AND ib.UnitType IN ('g', 'gram', 'grams') 
+                                THEN ib.StockQuantity / 1000
+                            WHEN i.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') AND ib.UnitType IN ('L', 'liter', 'liters', 'l') 
+                                THEN ib.StockQuantity * 1000
+                            WHEN i.UnitType IN ('L', 'liter', 'liters', 'l') AND ib.UnitType IN ('ml', 'milliliter', 'milliliters', 'mL') 
+                                THEN ib.StockQuantity / 1000
+                            ELSE ib.StockQuantity
+                        END
+                    ), 0) AS TotalStock,
+                    i.MinStockLevel
+                FROM ingredients i
+                LEFT JOIN inventory_batches ib ON i.IngredientID = ib.IngredientID AND ib.BatchStatus = 'Active'
+                WHERE i.IsActive = 1
+                GROUP BY i.IngredientID, i.MinStockLevel
+                HAVING TotalStock < i.MinStockLevel
+            ) AS LowStockItems
+        "
             Dim cmdAlerts As New MySqlCommand(sqlAlerts, conn)
             Dim alertCount As Integer = Convert.ToInt32(cmdAlerts.ExecuteScalar())
 
             If btnInventoryAlerts IsNot Nothing Then
                 If alertCount > 0 Then
                     btnInventoryAlerts.Text = $"🚨 {alertCount} Alerts"
-                    btnInventoryAlerts.BackColor = Color.FromArgb(220, 53, 69) ' Crimson/Red
+                    btnInventoryAlerts.BackColor = Color.FromArgb(220, 53, 69)
                 Else
                     btnInventoryAlerts.Text = "✅ No Alerts"
-                    btnInventoryAlerts.BackColor = Color.FromArgb(40, 167, 69) ' Green
+                    btnInventoryAlerts.BackColor = Color.FromArgb(40, 167, 69)
                 End If
                 btnInventoryAlerts.Visible = True
             End If
 
-            ' 2. Usage History Notifications (Recent Deductions)
-            ' Count "Rows" (Distinct Orders/Reservations) not raw log entries
+            ' Usage History Notifications
             Dim sqlUsage As String = "
-                SELECT COUNT(DISTINCT 
-                    CASE 
-                        WHEN OrderID IS NOT NULL THEN CONCAT('ORDER-', OrderID)
-                        WHEN ReservationID IS NOT NULL THEN CONCAT('RES-', ReservationID)
-                        ELSE 'MANUAL'
-                    END
-                ) 
-                FROM inventory_movement_log 
-                WHERE ChangeType = 'DEDUCT' 
-                AND MovementDate >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-            "
+            SELECT COUNT(DISTINCT 
+                CASE 
+                    WHEN OrderID IS NOT NULL THEN CONCAT('ORDER-', OrderID)
+                    WHEN ReservationID IS NOT NULL THEN CONCAT('RES-', ReservationID)
+                    ELSE 'MANUAL'
+                END
+            ) 
+            FROM inventory_movement_log 
+            WHERE ChangeType = 'DEDUCT' 
+            AND MovementDate >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        "
             Dim cmdUsage As New MySqlCommand(sqlUsage, conn)
             Dim usageCount As Integer = Convert.ToInt32(cmdUsage.ExecuteScalar())
 
             If btnNotifications IsNot Nothing Then
                 If usageCount > 0 Then
                     btnNotifications.Text = $"🔔 View Usage History ({usageCount})"
-                    btnNotifications.BackColor = Color.FromArgb(111, 66, 193) ' Keep original purple
+                    btnNotifications.BackColor = Color.FromArgb(111, 66, 193)
                 Else
                     btnNotifications.Text = "🔔 View Usage History"
                     btnNotifications.BackColor = Color.FromArgb(111, 66, 193)
@@ -843,7 +929,6 @@ Public Class Inventory
             End If
 
         Catch ex As Exception
-            ' Silent fail for background badge update
             Debug.WriteLine("Error updating badges: " & ex.Message)
         Finally
             closeConn()
@@ -872,7 +957,16 @@ Public Class Inventory
             closeConn()
         End Try
     End Function
-
+    ' Add this helper method to your class
+    Private Function FormatQuantity(quantity As Decimal) As String
+        ' If it's a whole number, show without decimals
+        If quantity = Math.Floor(quantity) Then
+            Return quantity.ToString("N0") ' Shows: 5, 100, 250
+        Else
+            ' Show up to 2 decimals, but remove trailing zeros
+            Return quantity.ToString("0.##") ' Shows: 5.5, 2.75, 0.25
+        End If
+    End Function
     Private Sub UpdateNotificationButton()
         ' Method kept for compatibility but does nothing since button is hidden
     End Sub
@@ -894,6 +988,10 @@ Public Class Inventory
     End Sub
 
     Private Sub Label6_Click(sender As Object, e As EventArgs) Handles Label6.Click
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnInventoryAlerts.Click
 
     End Sub
 End Class
