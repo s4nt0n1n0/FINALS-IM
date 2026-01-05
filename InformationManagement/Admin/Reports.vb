@@ -12,6 +12,21 @@ Public Class Reports
     Public Shared SelectedMonth As Integer = DateTime.Now.Month
     Private Shared _filterDate As DateTime = DateTime.Now
 
+    ' === SHARED PROPERTY TO ACCESS SELECTED DATE ===
+    Public Shared Property CustomDate As DateTime
+        Get
+            If Instance IsNot Nothing AndAlso Instance.dtpDate IsNot Nothing Then
+                Return Instance.dtpDate.Value
+            End If
+            Return DateTime.Now
+        End Get
+        Set(value As DateTime)
+            If Instance IsNot Nothing AndAlso Instance.dtpDate IsNot Nothing Then
+                Instance.dtpDate.Value = value
+            End If
+        End Set
+    End Property
+
     Public Shared Property GlobalFilterDate As DateTime
         Get
             Return _filterDate
@@ -302,6 +317,12 @@ Public Class Reports
         RefreshCurrentlyLoadedForm()
     End Sub
 
+    ' === DATE SELECTION CHANGED ===
+    Private Sub dtpDate_ValueChanged(sender As Object, e As EventArgs) Handles dtpDate.ValueChanged
+        _filterDate = dtpDate.Value
+        RefreshCurrentlyLoadedForm()
+    End Sub
+
     ' === SHARED PROPERTY FOR GLOBAL DATE FILTER ===
 
 
@@ -311,14 +332,25 @@ Public Class Reports
         cmbMonth.Enabled = isMonthly
         lblMonth.Enabled = isMonthly
 
-        ' Date Picker is needed for Daily and Weekly
-        Dim isDateSpecific As Boolean = (SelectedPeriod = "Daily" OrElse SelectedPeriod = "Weekly")
+        ' Date Picker is needed only for Weekly (if specific week selection is needed by date)
+        ' For Daily and Weekly, we now use Year/Month selectors to show the Data breakdown
+        Dim isDateSpecific As Boolean = False
 
-        ' Year is usually relevant for Monthly and Yearly, or as context for Daily/Weekly if needed
-        ' But for Daily/Weekly, the DatePicker value is the source of truth.
-        ' However, we keep it enabled to allow quick shifting if the child form uses it.
-        cmbYear.Enabled = True
-        lblYear.Enabled = True
+        dtpDate.Visible = isDateSpecific
+        
+        ' Hide Year/Month if DatePicker is active
+        cmbYear.Visible = Not isDateSpecific
+        lblYear.Visible = Not isDateSpecific
+        
+        ' Month combo is visible for Monthly, Daily AND Weekly
+        Dim isMonthNeeded As Boolean = (SelectedPeriod = "Monthly" OrElse SelectedPeriod = "Daily" OrElse SelectedPeriod = "Weekly")
+        cmbMonth.Visible = isMonthNeeded
+        lblMonth.Visible = isMonthNeeded
+
+        If isDateSpecific Then
+             ' Ensure the date picker initializes with the current global filter date
+             dtpDate.Value = _filterDate
+        End If
     End Sub
 
     Private Sub btnRefresh_Click(sender As Object, e As EventArgs) Handles btnRefresh.Click
@@ -544,10 +576,15 @@ Public Class Reports
             m_SummaryLabels.Add("Pending", f.lblPending.Text)
             m_SummaryLabels.Add("Confirmed", f.lblConfirmed.Text)
             m_SummaryLabels.Add("Cancelled", f.lblCancelled.Text)
-        ElseIf TypeOf currentForm Is FormOrders Then
-             ' Add logic for FormOrders if needed, e.g.
-             ' Dim f = DirectCast(currentForm, FormOrders)
-             ' m_SummaryLabels.Add("Total Orders", f.Label4.Text) 
+        ElseIf TypeOf currentForm Is FormOrders OrElse TypeOf currentForm Is FormDineInOrders OrElse TypeOf currentForm Is FormTakeOutOrders Then
+             ' Extract Summary Cards (Label4, Label6, Label7)
+             Dim lblTotal As Control = currentForm.Controls.Find("Label4", True).FirstOrDefault()
+             Dim lblRev As Control = currentForm.Controls.Find("Label6", True).FirstOrDefault()
+             Dim lblAvg As Control = currentForm.Controls.Find("Label7", True).FirstOrDefault()
+
+             If lblTotal IsNot Nothing Then m_SummaryLabels.Add("Total Orders", lblTotal.Text)
+             If lblRev IsNot Nothing Then m_SummaryLabels.Add("Total Revenue", lblRev.Text)
+             If lblAvg IsNot Nothing Then m_SummaryLabels.Add("Avg Order Value", lblAvg.Text)
         End If
         
         ' Fallback: Scrape standard labels if no specific extraction above
@@ -760,7 +797,9 @@ Public Class Reports
         ' ---------------------------------------------------------
         While m_GridIndex < activeGrids.Count
             Dim grid = activeGrids(m_GridIndex)
-            If Not grid.Visible OrElse grid.Columns.Count = 0 Then
+            ' Allow printing grids even if they are in hidden tabs (Visible=False)
+            ' As long as they have columns and rows, they are relevant for "Full Report"
+            If grid.Columns.Count = 0 OrElse grid.Rows.Count = 0 Then
                 m_GridIndex += 1
                 m_RowIndex = 0
                 Continue While

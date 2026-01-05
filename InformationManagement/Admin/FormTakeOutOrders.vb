@@ -32,11 +32,6 @@ Public Class FormTakeOutOrders
         'ConfigureDateFilter()
     End Sub
 
-
-
-
-
-
     Private Sub InitializePaginationControls()
         ' Make sure pagination controls exist and are enabled
         If btnPrev IsNot Nothing Then
@@ -133,10 +128,18 @@ Public Class FormTakeOutOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                periodFilter = $" AND o.OrderDate = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                If sMonth = 0 Then
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                Else
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
+                End If
 
             Case "Weekly"
-                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                If sMonth = 0 Then
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                Else
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
+                End If
 
             Case "Monthly"
                 If sMonth = 0 Then
@@ -146,7 +149,8 @@ Public Class FormTakeOutOrders
                 End If
 
             Case "Yearly"
-                periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                ' 5-year historical summary
+                periodFilter = $" AND YEAR(o.OrderDate) <= {sYear} AND YEAR(o.OrderDate) >= {sYear - 4} "
         End Select
 
         Dim query As String = "SELECT COUNT(*) FROM orders o WHERE o.OrderType = 'Takeout' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search)"
@@ -173,10 +177,18 @@ Public Class FormTakeOutOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                periodFilter = $" AND o.OrderDate = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                If sMonth = 0 Then
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                Else
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
+                End If
 
             Case "Weekly"
-                periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                If sMonth = 0 Then
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                Else
+                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
+                End If
 
             Case "Monthly"
                 If sMonth = 0 Then
@@ -186,7 +198,8 @@ Public Class FormTakeOutOrders
                 End If
 
             Case "Yearly"
-                periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                ' 5-year historical summary
+                periodFilter = $" AND YEAR(o.OrderDate) <= {sYear} AND YEAR(o.OrderDate) >= {sYear - 4} "
         End Select
 
         Dim dt As New DataTable()
@@ -225,6 +238,8 @@ Public Class FormTakeOutOrders
         Dim totalCount As Integer = 0
         Dim totalRevenue As Decimal = 0
         Dim avgValue As Decimal = 0
+        
+        Dim prevYearRevenue As Decimal = 0
 
         Try
             Await Task.Run(Sub()
@@ -235,10 +250,18 @@ Public Class FormTakeOutOrders
 
                                Select Case Reports.SelectedPeriod
                                    Case "Daily"
-                                       periodFilter = $" AND o.OrderDate = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                                        If sMonth = 0 Then
+                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                                        Else
+                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
+                                        End If
 
                                    Case "Weekly"
-                                       periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                                        If sMonth = 0 Then
+                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                                        Else
+                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
+                                        End If
 
                                    Case "Monthly"
                                        If sMonth = 0 Then
@@ -248,7 +271,8 @@ Public Class FormTakeOutOrders
                                        End If
 
                                    Case "Yearly"
-                                       periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
+                                       ' 5-year historical summary
+                                       periodFilter = $" AND YEAR(o.OrderDate) <= {sYear} AND YEAR(o.OrderDate) >= {sYear - 4} "
                                End Select
 
                                Using conn As New MySqlConnection(connectionString)
@@ -263,29 +287,39 @@ Public Class FormTakeOutOrders
                                            End If
                                        End Using
                                    End Using
+
+                                   ' If Yearly, get comparison
+                                   If Reports.SelectedPeriod = "Yearly" Then
+                                       Dim sqlCompare = $"SELECT COALESCE(SUM(TotalAmount), 0) FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = {sYear - 1}"
+                                       Using cmdComp As New MySqlCommand(sqlCompare, conn)
+                                           prevYearRevenue = Convert.ToDecimal(cmdComp.ExecuteScalar())
+                                       End Using
+                                   End If
                                End Using
                            End Sub)
 
             If totalCount > 0 Then avgValue = totalRevenue / totalCount
 
             ' Update UI labels
-            If Me.InvokeRequired Then
-                Me.Invoke(Sub()
-                              Label4.Text = totalCount.ToString("N0")
-                              Label6.Text = "₱" & totalRevenue.ToString("N2")
-                              Label7.Text = "₱" & avgValue.ToString("N2")
-                          End Sub)
-            Else
-                Label4.Text = totalCount.ToString("N0")
-                Label6.Text = "₱" & totalRevenue.ToString("N2")
-                Label7.Text = "₱" & avgValue.ToString("N2")
-            End If
+            Me.Invoke(Sub()
+                          Label4.Text = totalCount.ToString("N0")
+                          Label6.Text = "₱" & totalRevenue.ToString("N2")
+                          Label7.Text = "₱" & avgValue.ToString("N2")
+                          
+                          If Reports.SelectedPeriod = "Yearly" Then
+                              Label6.Text &= " (5-yr Total)"
+                              If prevYearRevenue > 0 Then
+                                  Dim diff As Decimal = totalRevenue - prevYearRevenue
+                                  Dim percent As Decimal = (diff / prevYearRevenue) * 100
+                                  Dim sign As String = If(diff >= 0, "+", "")
+                                  Label6.Text &= $" ({sign}{percent:N1}% YoY)"
+                              End If
+                          End If
+                      End Sub)
         Catch
             ' Silent fail
         End Try
     End Function
-
-
 
     Private Sub UpdateSummaryTiles(dt As DataTable)
         Try
@@ -323,7 +357,6 @@ Public Class FormTakeOutOrders
         If currentSearch = "Search orders..." Then currentSearch = ""
         
         ' Only refresh if the actual search criteria changed
-        ' This prevents resets when placeholder text is toggled on Focus/Leave
         If currentSearch = _lastSearchText Then Return
         
         _lastSearchText = currentSearch
@@ -334,7 +367,6 @@ Public Class FormTakeOutOrders
         Try
             Me.UseWaitCursor = isLoading
             DataGridView1.Enabled = Not isLoading
-
 
             ' Update pagination buttons based on loading state AND current page position
             If btnPrev IsNot Nothing Then
@@ -421,7 +453,7 @@ Public Class FormTakeOutOrders
                 .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
                 .GridColor = Color.FromArgb(241, 245, 249)
                 .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-                .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+                .DefaultCellStyle.SelectionForeColor = Color.Black
                 .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.White
                 .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
@@ -471,14 +503,18 @@ Public Class FormTakeOutOrders
                 Dim status = statusCell.Value.ToString().ToLower()
                 Select Case status
                     Case "paid", "completed"
-                        statusCell.Style.ForeColor = Color.FromArgb(16, 185, 129) ' Success Green
+                        statusCell.Style.ForeColor = Color.FromArgb(16, 185, 129)
                     Case "pending"
-                        statusCell.Style.ForeColor = Color.FromArgb(245, 158, 11) ' Warning Amber
+                        statusCell.Style.ForeColor = Color.FromArgb(245, 158, 11)
                     Case "cancelled"
-                        statusCell.Style.ForeColor = Color.FromArgb(239, 68, 68) ' Danger Red
+                        statusCell.Style.ForeColor = Color.FromArgb(239, 68, 68)
                 End Select
             End If
         Next
+    End Sub
+
+    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
+        Reports.Instance.ExportCurrentReport()
     End Sub
 
     ' =============================
@@ -488,12 +524,92 @@ Public Class FormTakeOutOrders
         Handles DataGridView1.DataError
         e.ThrowException = False
     End Sub
+
     ' =======================================================================
     ' REFRESH DATA
     ' =======================================================================
     Public Async Sub RefreshData()
-        ' ConfigureDateFilter()
         Await RefreshOrdersAsync(True)
+        LoadOrderBreakdownAsync()
     End Sub
 
+    ' =======================================================================
+    ' LOAD ORDER BREAKDOWN ASYNC
+    ' =======================================================================
+    Private Async Sub LoadOrderBreakdownAsync()
+        Try
+            Dim dt As New DataTable()
+            Dim selectedPeriod As String = Reports.SelectedPeriod
+            Dim selectedYear As Integer = Reports.SelectedYear
+            Dim selectedMonth As Integer = Reports.SelectedMonth
+
+            Await System.Threading.Tasks.Task.Run(Sub()
+                                                      Try
+                                                          Using conn As New MySqlConnection(connectionString)
+                                                              conn.Open()
+                                                              Dim query As String = ""
+                                                              Dim params As New List(Of MySqlParameter)
+
+                                                              Select Case selectedPeriod
+                                                                  Case "Daily"
+                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                  Case "Weekly"
+                                                                      query = "SELECT CONCAT('Week ', WEEK(OrderDate, 1)) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY YEARWEEK(OrderDate, 1) ORDER BY YEARWEEK(OrderDate, 1) DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  Case "Monthly"
+                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%M') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY MONTH(OrderDate) DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  Case "Yearly"
+                                                                      query = "SELECT YEAR(OrderDate) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) <= @Year AND YEAR(OrderDate) >= @Year - 4 GROUP BY YEAR(OrderDate) ORDER BY Period DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                              End Select
+
+                                                              If Not String.IsNullOrEmpty(query) Then
+                                                                  Using cmd As New MySqlCommand(query, conn)
+                                                                      cmd.Parameters.AddRange(params.ToArray())
+                                                                      Using adapter As New MySqlDataAdapter(cmd)
+                                                                          adapter.Fill(dt)
+                                                                      End Using
+                                                                  End Using
+                                                              End If
+                                                          End Using
+                                                      Catch
+                                                      End Try
+                                                  End Sub)
+
+            If DataGridViewBreakdown IsNot Nothing Then
+                DataGridViewBreakdown.DataSource = dt
+                FormatBreakdownDataGridView()
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    Private Sub FormatBreakdownDataGridView()
+        Try
+            With DataGridViewBreakdown
+                .ReadOnly = True
+                .AllowUserToAddRows = False
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                .RowHeadersVisible = False
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.5F, FontStyle.Bold)
+                .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
+                .AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 250)
+
+                If .Columns.Contains("Period") Then .Columns("Period").HeaderText = "Time Period"
+                If .Columns.Contains("OrderCount") Then .Columns("OrderCount").HeaderText = "Orders"
+                If .Columns.Contains("TotalRevenue") Then
+                    .Columns("TotalRevenue").HeaderText = "Revenue"
+                    .Columns("TotalRevenue").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
+                End If
+                If .Columns.Contains("AvgValue") Then
+                    .Columns("AvgValue").HeaderText = "Avg Value"
+                    .Columns("AvgValue").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
+                End If
+            End With
+        Catch
+        End Try
+    End Sub
 End Class

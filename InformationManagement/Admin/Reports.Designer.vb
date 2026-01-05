@@ -40,7 +40,9 @@ Partial Class Reports
         Me.lblYear = New System.Windows.Forms.Label()
         Me.cmbYear = New System.Windows.Forms.ComboBox()
         Me.lblMonth = New System.Windows.Forms.Label()
+        Me.lblMonth = New System.Windows.Forms.Label()
         Me.cmbMonth = New System.Windows.Forms.ComboBox()
+        Me.dtpDate = New System.Windows.Forms.DateTimePicker()
         Me.btnRefresh = New System.Windows.Forms.Button()
         Me.btnExportGlobal = New System.Windows.Forms.Button()
         Me.FlowLayoutPanel1.SuspendLayout()
@@ -362,6 +364,17 @@ Partial Class Reports
         Me.cmbMonth.Size = New System.Drawing.Size(120, 29)
         Me.cmbMonth.TabIndex = 10
         '
+        'dtpDate
+        '
+        Me.dtpDate.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.dtpDate.Font = New System.Drawing.Font("Segoe UI", 9.75!)
+        Me.dtpDate.Format = System.Windows.Forms.DateTimePickerFormat.Short
+        Me.dtpDate.Location = New System.Drawing.Point(860, 51)
+        Me.dtpDate.Name = "dtpDate"
+        Me.dtpDate.Size = New System.Drawing.Size(120, 29)
+        Me.dtpDate.TabIndex = 11
+        Me.dtpDate.Visible = False
+        '
         'btnRefresh
         '
         Me.btnRefresh.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -409,6 +422,7 @@ Partial Class Reports
         Me.Controls.Add(Me.lblYear)
         Me.Controls.Add(Me.reportPeriod)
         Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.dtpDate)
         Me.Controls.Add(Me.FlowLayoutPanel1)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Label1)
@@ -444,6 +458,7 @@ Partial Class Reports
     Friend WithEvents cmbYear As ComboBox
     Friend WithEvents lblMonth As Label
     Friend WithEvents cmbMonth As ComboBox
+    Friend WithEvents dtpDate As DateTimePicker
 
     Friend WithEvents btnRefresh As Button
     Friend WithEvents btnExportGlobal As Button

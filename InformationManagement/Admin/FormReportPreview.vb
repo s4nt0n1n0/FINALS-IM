@@ -5,9 +5,9 @@ Imports System.Drawing
 Public Class FormReportPreview
     Inherits Form
 
-    Private WithEvents btnPrint As Button
+    Private WithEvents btnPrint, btnZoomIn, btnZoomOut As Button
     Private previewControl As PrintPreviewControl
-    Private lblTitle As Label
+    Private lblTitle, lblZoom As Label
     Private headerPanel As Panel, separatorLine As Panel
     Private loadingPanel As Panel
     Private WithEvents _doc As PrintDocument
@@ -21,7 +21,10 @@ Public Class FormReportPreview
         loadingPanel.Visible = True
         
         previewControl.Document = doc
-        previewControl.Zoom = 0.75
+        previewControl.Zoom = 1.0 ' Default to full page visibility or standard zoom
+        UpdateZoomLabel()
+
+        AddHandler Me.Load, Sub() previewControl.Focus()
     End Sub
     
     Private Sub OnPrintEnd(sender As Object, e As PrintEventArgs) Handles _doc.EndPrint
@@ -34,12 +37,13 @@ Public Class FormReportPreview
     End Sub
 
     Private Sub InitializeCustomComponent()
-        Me.Size = New Size(950, 850)
+        Me.Size = New Size(1000, 850)
         Me.StartPosition = FormStartPosition.CenterScreen
         Me.FormBorderStyle = FormBorderStyle.Sizable
         Me.BackColor = Color.White
         Me.ShowIcon = False
-        Me.Text = "Print Preview"
+        Me.Text = "Report Preview"
+        Me.KeyPreview = True ' Important for form-level key handling
 
         ' 1. Header Panel
         headerPanel = New Panel()
@@ -70,8 +74,41 @@ Public Class FormReportPreview
         btnPrint.Font = New Font("Segoe UI Semibold", 10)
         btnPrint.Cursor = Cursors.Hand
 
+        ' --- Zoom Controls ---
+        btnZoomIn = New Button()
+        btnZoomIn.Text = "+"
+        btnZoomIn.Size = New Size(40, 40)
+        btnZoomIn.Location = New Point(Me.Width - 360, 15)
+        btnZoomIn.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnZoomIn.FlatStyle = FlatStyle.Flat
+        btnZoomIn.Font = New Font("Segoe UI", 12, FontStyle.Bold)
+        btnZoomIn.Cursor = Cursors.Hand
+        AddHandler btnZoomIn.Click, Sub() AdjustZoom(0.1)
+
+        btnZoomOut = New Button()
+        btnZoomOut.Text = "-"
+        btnZoomOut.Size = New Size(40, 40)
+        btnZoomOut.Location = New Point(Me.Width - 460, 15)
+        btnZoomOut.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnZoomOut.FlatStyle = FlatStyle.Flat
+        btnZoomOut.Font = New Font("Segoe UI", 12, FontStyle.Bold)
+        btnZoomOut.Cursor = Cursors.Hand
+        AddHandler btnZoomOut.Click, Sub() AdjustZoom(-0.1)
+
+        lblZoom = New Label()
+        lblZoom.AutoSize = False
+        lblZoom.TextAlign = ContentAlignment.MiddleCenter
+        lblZoom.Size = New Size(60, 40)
+        lblZoom.Location = New Point(Me.Width - 420, 15)
+        lblZoom.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        lblZoom.Font = New Font("Segoe UI", 10)
+        lblZoom.Text = "100%"
+
         headerPanel.Controls.Add(lblTitle)
         headerPanel.Controls.Add(btnPrint)
+        headerPanel.Controls.Add(btnZoomIn)
+        headerPanel.Controls.Add(btnZoomOut)
+        headerPanel.Controls.Add(lblZoom)
         
         ' Separator Line
         separatorLine = New Panel()
@@ -88,6 +125,12 @@ Public Class FormReportPreview
         previewControl.Columns = 1
         previewControl.Rows = 1
         previewControl.UseAntiAlias = True
+        
+        ' Enable double buffering for smoother scroll
+        Dim pi = GetType(Control).GetProperty("DoubleBuffered", Reflection.BindingFlags.Instance Or Reflection.BindingFlags.NonPublic)
+        pi?.SetValue(previewControl, True, Nothing)
+
+        AddHandler previewControl.MouseWheel, AddressOf OnMouseWheel
         
         ' 3. Loading/Progress Panel (Centered Overlay)
         loadingPanel = New Panel()
@@ -121,6 +164,71 @@ Public Class FormReportPreview
         Me.Controls.Add(headerPanel)
         
         loadingPanel.BringToFront()
+    End Sub
+
+    Private Sub AdjustZoom(delta As Double)
+        Dim newZoom As Double = previewControl.Zoom + delta
+        If newZoom < 0.3 Then newZoom = 0.3
+        If newZoom > 3.0 Then newZoom = 3.0
+        previewControl.Zoom = newZoom
+        UpdateZoomLabel()
+    End Sub
+
+    Private Sub UpdateZoomLabel()
+        lblZoom.Text = Math.Round(previewControl.Zoom * 100).ToString() & "%"
+    End Sub
+
+    Private Sub OnMouseWheel(sender As Object, e As MouseEventArgs)
+        ' Intercept mouse wheel to scroll or change page
+        ' PrintPreviewControl is a bit picky about scrolling via wheel if not focused correctly
+        Try
+            ' If no modifiers, scroll page or change page if at boundary
+            ' For simplicity, we just change StartPage if zoomed out, or scroll if zoomed in
+            If previewControl.Zoom <= 1.0 Then
+                If e.Delta < 0 Then
+                    ' Scroll Down / Next Page
+                    If previewControl.StartPage < 100 Then ' Arbitrary limit
+                        previewControl.StartPage += 1
+                    End If
+                Else
+                    ' Scroll Up / Prev Page
+                    If previewControl.StartPage > 0 Then
+                        previewControl.StartPage -= 1
+                    End If
+                End If
+            Else
+                ' Zoomed in: We need to send WM_VSCROLL messages to the control
+                ' For now, simpler approach: change page
+                 If e.Delta < 0 Then
+                    previewControl.StartPage = Math.Min(100, previewControl.StartPage + 1)
+                Else
+                    previewControl.StartPage = Math.Max(0, previewControl.StartPage - 1)
+                End If
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Protected Overrides Sub OnKeyDown(e As KeyEventArgs)
+        MyBase.OnKeyDown(e)
+        
+        Select Case e.KeyCode
+            Case Keys.PageDown, Keys.Right, Keys.Down
+                previewControl.StartPage += 1
+                e.Handled = True
+            Case Keys.PageUp, Keys.Left, Keys.Up
+                If previewControl.StartPage > 0 Then
+                    previewControl.StartPage -= 1
+                End If
+                e.Handled = True
+            Case Keys.Home
+                previewControl.StartPage = 0
+                e.Handled = True
+            Case Keys.Add, Keys.Oemplus
+                If e.Control Then AdjustZoom(0.1)
+            Case Keys.Subtract, Keys.OemMinus
+                If e.Control Then AdjustZoom(-0.1)
+        End Select
     End Sub
 
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click

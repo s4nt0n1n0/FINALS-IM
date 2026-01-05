@@ -44,6 +44,10 @@ Partial Class FormDineInOrders
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.LabelHeader = New System.Windows.Forms.Label()
         Me.LabelSubHeader = New System.Windows.Forms.Label()
+        Me.TabControlReports = New System.Windows.Forms.TabControl()
+        Me.TabPageDetailed = New System.Windows.Forms.TabPage()
+        Me.TabPageBreakdown = New System.Windows.Forms.TabPage()
+        Me.DataGridViewBreakdown = New System.Windows.Forms.DataGridView()
         Me.RoundedPane21.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane22.SuspendLayout()
@@ -54,6 +58,10 @@ Partial Class FormDineInOrders
         Me.PaginationContainer.SuspendLayout()
         Me.SearchContainer.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabControlReports.SuspendLayout()
+        Me.TabPageDetailed.SuspendLayout()
+        Me.TabPageBreakdown.SuspendLayout()
+        CType(Me.DataGridViewBreakdown, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'RoundedPane21
@@ -246,16 +254,81 @@ Partial Class FormDineInOrders
         '
         Me.RoundedPane24.BorderColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
         Me.RoundedPane24.BorderThickness = 1
+        Me.RoundedPane24.Controls.Add(Me.TabControlReports)
         Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane24.Controls.Add(Me.SearchContainer)
         Me.RoundedPane24.Controls.Add(Me.Label10)
-        Me.RoundedPane24.Controls.Add(Me.DataGridView1)
         Me.RoundedPane24.CornerRadius = 15
         Me.RoundedPane24.FillColor = System.Drawing.Color.White
         Me.RoundedPane24.Location = New System.Drawing.Point(30, 255)
         Me.RoundedPane24.Name = "RoundedPane24"
         Me.RoundedPane24.Size = New System.Drawing.Size(1126, 470)
         Me.RoundedPane24.TabIndex = 7
+        '
+        'TabControlReports
+        '
+        Me.TabControlReports.Controls.Add(Me.TabPageDetailed)
+        Me.TabControlReports.Controls.Add(Me.TabPageBreakdown)
+        Me.TabControlReports.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.TabControlReports.Location = New System.Drawing.Point(24, 75)
+        Me.TabControlReports.Name = "TabControlReports"
+        Me.TabControlReports.SelectedIndex = 0
+        Me.TabControlReports.Size = New System.Drawing.Size(1075, 339)
+        Me.TabControlReports.TabIndex = 13
+        '
+        'TabPageDetailed
+        '
+        Me.TabPageDetailed.Controls.Add(Me.DataGridView1)
+        Me.TabPageDetailed.Location = New System.Drawing.Point(4, 32)
+        Me.TabPageDetailed.Name = "TabPageDetailed"
+        Me.TabPageDetailed.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageDetailed.Size = New System.Drawing.Size(1067, 303)
+        Me.TabPageDetailed.TabIndex = 0
+        Me.TabPageDetailed.Text = "Detailed List"
+        Me.TabPageDetailed.UseVisualStyleBackColor = True
+        '
+        'DataGridView1
+        '
+        Me.DataGridView1.AllowUserToAddRows = False
+        Me.DataGridView1.AllowUserToDeleteRows = False
+        Me.DataGridView1.AllowUserToResizeRows = False
+        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
+        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
+        Me.DataGridView1.ColumnHeadersHeight = 50
+        Me.DataGridView1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DataGridView1.Location = New System.Drawing.Point(3, 3)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.ReadOnly = True
+        Me.DataGridView1.RowHeadersVisible = False
+        Me.DataGridView1.RowHeadersWidth = 51
+        Me.DataGridView1.RowTemplate.Height = 50
+        Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+        Me.DataGridView1.Size = New System.Drawing.Size(1061, 297)
+        Me.DataGridView1.TabIndex = 10
+        '
+        'TabPageBreakdown
+        '
+        Me.TabPageBreakdown.Controls.Add(Me.DataGridViewBreakdown)
+        Me.TabPageBreakdown.Location = New System.Drawing.Point(4, 32)
+        Me.TabPageBreakdown.Name = "TabPageBreakdown"
+        Me.TabPageBreakdown.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageBreakdown.Size = New System.Drawing.Size(1067, 303)
+        Me.TabPageBreakdown.TabIndex = 1
+        Me.TabPageBreakdown.Text = "Order Breakdown"
+        Me.TabPageBreakdown.UseVisualStyleBackColor = True
+        '
+        'DataGridViewBreakdown
+        '
+        Me.DataGridViewBreakdown.BackgroundColor = System.Drawing.Color.White
+        Me.DataGridViewBreakdown.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.DataGridViewBreakdown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridViewBreakdown.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DataGridViewBreakdown.Location = New System.Drawing.Point(3, 3)
+        Me.DataGridViewBreakdown.Name = "DataGridViewBreakdown"
+        Me.DataGridViewBreakdown.RowHeadersWidth = 51
+        Me.DataGridViewBreakdown.Size = New System.Drawing.Size(1061, 297)
+        Me.DataGridViewBreakdown.TabIndex = 0
         '
         'PaginationContainer
         '
@@ -414,6 +487,10 @@ Partial Class FormDineInOrders
         Me.PaginationContainer.PerformLayout()
         Me.SearchContainer.ResumeLayout(False)
         Me.SearchContainer.PerformLayout()
+        Me.TabControlReports.ResumeLayout(False)
+        Me.TabPageDetailed.ResumeLayout(False)
+        Me.TabPageBreakdown.ResumeLayout(False)
+        CType(Me.DataGridViewBreakdown, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -444,6 +521,10 @@ Partial Class FormDineInOrders
 
     Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
+    Friend WithEvents TabControlReports As System.Windows.Forms.TabControl
+    Friend WithEvents TabPageDetailed As System.Windows.Forms.TabPage
+    Friend WithEvents TabPageBreakdown As System.Windows.Forms.TabPage
+    Friend WithEvents DataGridViewBreakdown As System.Windows.Forms.DataGridView
     Friend WithEvents PaginationContainer As System.Windows.Forms.Panel
     Friend WithEvents btnNext As System.Windows.Forms.Button
     Friend WithEvents btnPrev As System.Windows.Forms.Button
