@@ -53,17 +53,15 @@ Public Class FormDineInOrders
                 .RowHeadersVisible = False
                 .BackgroundColor = Color.White
                 .BorderStyle = BorderStyle.None
-                .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
-                .GridColor = Color.FromArgb(241, 245, 249)
-                .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-                .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+    .DefaultCellStyle.SelectionBackColor = SystemColors.Highlight
+                .DefaultCellStyle.SelectionForeColor = SystemColors.HighlightText
                 .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
-                .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(108, 117, 125)    
+                .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
                 .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
-                .ColumnHeadersHeight = 50
-                .RowTemplate.Height = 50
-                .EnableHeadersVisualStyles = False
+                 .ColumnHeadersHeight = 45
+                .RowTemplate.Height = 45
+                .EnableHeadersVisualStyles = True
         End With
 
 
@@ -111,7 +109,7 @@ Public Class FormDineInOrders
             DataGridView1.DataSource = table
             ConfigureGrid()
             ApplyStatusColors()
-            ' UpdatePaginationUI() ' This function is not yet defined, will be added later
+            UpdatePaginationUI() 
             ' UpdateSummaryTiles(table) ' Replaced with UpdateTotalSummaryAsync
             
             ' Update summary with total stats (non-paginated)
@@ -202,9 +200,11 @@ Public Class FormDineInOrders
             "   LIMIT 10) AS ItemsOrdered, " &
             "o.TotalAmount, " &
             "o.OrderStatus AS Status, " &
+            "COALESCE(p.PaymentMethod, 'Cash') AS PaymentMethod, " &
             "DATE_FORMAT(CONCAT(o.OrderDate, ' ', o.OrderTime), '%Y-%m-%d %H:%i') AS OrderDateTime " &
             "FROM orders o " &
-            "WHERE o.OrderType = 'Dine-in' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search) " &
+            "LEFT JOIN payments p ON o.OrderID = p.OrderID " &
+            "WHERE o.OrderType = 'Dine-in' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search OR p.PaymentMethod LIKE @search) " &
             "ORDER BY o.OrderDate DESC, o.OrderTime DESC, o.OrderID DESC " &
             "LIMIT @limit OFFSET @offset"
 
@@ -451,6 +451,14 @@ Public Class FormDineInOrders
             End With
         End If
 
+        If DataGridView1.Columns.Contains("PaymentMethod") Then
+            With DataGridView1.Columns("PaymentMethod")
+                .HeaderText = "Payment"
+                .Width = 110
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            End With
+        End If
+
         If DataGridView1.Columns.Contains("Status") Then
             With DataGridView1.Columns("Status")
                 .HeaderText = "Status"
@@ -496,5 +504,25 @@ Public Class FormDineInOrders
         Await BeginLoadDineInOrders()
     End Sub
 
+
+    Private Sub UpdatePaginationUI()
+        Try
+            ' Update page status label
+            If lblPageStatus IsNot Nothing Then
+                lblPageStatus.Text = $"Page {_currentPage} of {_totalPages} (Total Records: {_totalRecords:N0})"
+            End If
+
+            ' Update button states
+            If btnPrev IsNot Nothing Then
+                btnPrev.Enabled = (_currentPage > 1) AndAlso (Not _isLoading)
+            End If
+
+            If btnNext IsNot Nothing Then
+                btnNext.Enabled = (_currentPage < _totalPages) AndAlso (Not _isLoading)
+            End If
+        Catch ex As Exception
+            ' Ignore errors in updating pagination UI
+        End Try
+    End Sub
 
 End Class

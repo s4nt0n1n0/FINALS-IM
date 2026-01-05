@@ -239,6 +239,10 @@ Public Class FormSales
 
                         Dim periodValue As Object = reader("PeriodGroup")
                         Dim periodLabel As String = GetPeriodLabel(periodValue)
+                        
+                        ' For multi-year, the label might be repeated in chart logic if not careful
+                        ' but we use periodLabel as the key in salesData
+                        
                         Dim revenue As Decimal = If(IsDBNull(reader("TotalRevenue")), 0D, Convert.ToDecimal(reader("TotalRevenue")))
                         Dim expenses As Decimal = If(IsDBNull(reader("TotalExpenses")), 0D, Convert.ToDecimal(reader("TotalExpenses")))
                         Dim profit As Decimal = revenue - expenses
@@ -287,7 +291,7 @@ Public Class FormSales
                     Return New DateTime(currentYear, monthNum, 1).ToString("MMM")
 
                 Case "Yearly"
-                    ' Format: "2025"
+                    ' periodValue will be the year number
                     Return periodValue.ToString()
 
                 Case Else
@@ -342,7 +346,7 @@ Public Class FormSales
             SELECT {orderDateGrouping} AS PeriodGroup, TotalAmount AS Amount, 'Revenue' AS Type
             FROM orders
             WHERE OrderStatus = 'Completed'
-            AND YEAR(OrderDate) = @Year
+            {GetYearFilter("OrderDate")}
             {orderMonthFilter}
         ")
 
@@ -359,7 +363,7 @@ Public Class FormSales
                 FROM payments
                 WHERE ReservationID IS NOT NULL 
                 AND PaymentStatus = 'Completed'
-                AND YEAR(PaymentDate) = @Year
+                {GetYearFilter("PaymentDate")}
                 {resMonthFilter}
             ")
         End If
@@ -376,7 +380,7 @@ Public Class FormSales
                 SELECT {purchaseDateGrouping} AS PeriodGroup, TotalCost AS Amount, 'Expenses' AS Type
                 FROM inventory_batches
                 WHERE BatchStatus = 'Active'
-                AND YEAR(PurchaseDate) = @Year
+                {GetYearFilter("PurchaseDate")}
                 {purchaseMonthFilter}
             ")
         End If
@@ -398,23 +402,14 @@ Public Class FormSales
     ' =======================================================================
     ' GET DATE GROUPING FOR SQL COLUMN
     ' =======================================================================
-    Private Function GetDateGroupingForColumn(columnName As String) As String
-        Select Case currentPeriod
-            Case "Daily"
-                Return $"DATE({columnName})"
 
-            Case "Weekly"
-                Return $"YEARWEEK({columnName}, 1)"
-
-            Case "Monthly"
-                Return $"MONTH({columnName})"
-
-            Case "Yearly"
-                Return $"YEAR({columnName})"
-
-            Case Else
-                Return $"DATE({columnName})"
-        End Select
+    ' Helper to handle multi-year filter
+    Private Function GetYearFilter(columnName As String) As String
+        If currentPeriod = "Yearly" Then
+            Return $" AND YEAR({columnName}) <= @Year AND YEAR({columnName}) >= @Year - 4 "
+        Else
+            Return $" AND YEAR({columnName}) = @Year "
+        End If
     End Function
 
     ' =======================================================================
@@ -526,6 +521,19 @@ Public Class FormSales
                 Label14.Text = $"₱{filteredProfit:N2}"
             End If
 
+            ' If Yearly, show YoY change in Revenue card
+            If currentPeriod = "Yearly" AndAlso lblTotalRevenue IsNot Nothing Then
+                Dim prevYearRevenue As Decimal = GetSingleYearRevenue(currentYear - 1)
+                Dim currYearRevenue As Decimal = GetSingleYearRevenue(currentYear)
+                
+                If prevYearRevenue > 0 Then
+                    Dim diff As Decimal = currYearRevenue - prevYearRevenue
+                    Dim percent As Decimal = (diff / prevYearRevenue) * 100
+                    Dim sign As String = If(diff >= 0, "+", "")
+                    lblTotalRevenue.Text &= $" ({sign}{percent:N1}%)"
+                End If
+            End If
+
         Catch ex As Exception
             MessageBox.Show("Error updating summary cards: " & ex.Message,
                           "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -550,18 +558,19 @@ Public Class FormSales
                 SELECT COALESCE(SUM(TotalAmount), 0) AS Amount
                 FROM orders
                 WHERE OrderStatus = 'Completed'
-                {whereClauseOrders}
+                {GetYearFilter("OrderDate")} 
+                {If(currentPeriod = "Daily", " AND MONTH(OrderDate) = @Month ", "")}
             ")
 
             ' PAYMENTS TABLE - Revenue
             If TableExists("payments") Then
-                Dim whereClause As String = GetPeriodWhereClause("PaymentDate")
                 q.Add($"
                     SELECT COALESCE(SUM(AmountPaid), 0) AS Amount
                     FROM payments
                     WHERE ReservationID IS NOT NULL 
                     AND PaymentStatus = 'Completed'
-                    {whereClause}
+                    {GetYearFilter("PaymentDate")}
+                    {If(currentPeriod = "Daily", " AND MONTH(PaymentDate) = @Month ", "")}
                 ")
             End If
 
@@ -596,12 +605,12 @@ Public Class FormSales
 
             ' INVENTORY_BATCHES TABLE - Expenses
             If TableExists("inventory_batches") Then
-                Dim whereClause As String = GetPeriodWhereClause("PurchaseDate")
                 q.Add($"
                     SELECT COALESCE(SUM(TotalCost), 0) AS Amount
                     FROM inventory_batches
                     WHERE BatchStatus = 'Active'
-                    {whereClause}
+                    {GetYearFilter("PurchaseDate")}
+                    {If(currentPeriod = "Daily", " AND MONTH(PurchaseDate) = @Month ", "")}
                 ")
             End If
 
@@ -623,6 +632,46 @@ Public Class FormSales
         End Try
     End Function
 
+    ' Helper to get single year revenue for YoY calculation
+    Private Function GetSingleYearRevenue(year As Integer) As Decimal
+        Try
+            Dim q As New List(Of String)
+            q.Add($"SELECT COALESCE(SUM(TotalAmount), 0) FROM orders WHERE OrderStatus = 'Completed' AND YEAR(OrderDate) = {year}")
+            If TableExists("payments") Then
+                q.Add($"SELECT COALESCE(SUM(AmountPaid), 0) FROM payments WHERE ReservationID IS NOT NULL AND PaymentStatus = 'Completed' AND YEAR(PaymentDate) = {year}")
+            End If
+            Dim sql As String = $"SELECT SUM(val) FROM ({String.Join(" UNION ALL ", q.Select(Function(s) $"SELECT ({s}) as val"))}) as t"
+            Using cmd As New MySqlCommand(sql, conn)
+                Dim res = cmd.ExecuteScalar()
+                Return If(IsDBNull(res) OrElse res Is Nothing, 0D, Convert.ToDecimal(res))
+            End Using
+        Catch
+            Return 0D
+        End Try
+    End Function
+
+    ' =======================================================================
+    ' GET DATE GROUPING FOR SQL COLUMN
+    ' =======================================================================
+    Private Function GetDateGroupingForColumn(columnName As String) As String
+        Select Case currentPeriod
+            Case "Daily"
+                Return $"DATE({columnName})"
+
+            Case "Weekly"
+                Return $"YEARWEEK({columnName}, 1)"
+
+            Case "Monthly"
+                Return $"MONTH({columnName})"
+
+            Case "Yearly"
+                Return $"YEAR({columnName})"
+
+            Case Else
+                Return $"DATE({columnName})"
+        End Select
+    End Function
+
     ' =======================================================================
     ' GET PERIOD WHERE CLAUSE FOR FILTERING
     ' =======================================================================
@@ -636,17 +685,13 @@ Public Class FormSales
                     Return $"AND YEAR({dateColumn}) = @Year"
                 End If
 
-            Case "Weekly"
-                ' Show breakdown of weeks in the selected year
+            Case "Weekly", "Monthly"
+                ' Show breakdown of weeks/months in the selected year
                 Return $"AND YEAR({dateColumn}) = @Year"
-
-            Case "Monthly"
-                ' Show breakdown of months in the selected year (ignore selected month filter so we see the trend)
-                Return $"AND YEAR({dateColumn}) = @Year"
-
 
             Case "Yearly"
-                Return $"AND YEAR({dateColumn}) = @Year"
+                ' Multi-year range handled by GetYearFilter
+                Return ""
 
             Case Else
                 Return $"AND YEAR({dateColumn}) = @Year"

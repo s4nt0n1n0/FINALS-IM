@@ -105,12 +105,13 @@
         Me.dgvBatches.AllowUserToDeleteRows = False
         Me.dgvBatches.BackgroundColor = System.Drawing.Color.White
         Me.dgvBatches.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvBatches.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
         Me.dgvBatches.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
         DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle1.ForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(26, Byte), Integer), CType(CType(38, Byte), Integer), CType(CType(50, Byte), Integer))
         DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvBatches.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
@@ -119,6 +120,7 @@
         Me.dgvBatches.Location = New System.Drawing.Point(25, 230)
         Me.dgvBatches.Name = "dgvBatches"
         Me.dgvBatches.ReadOnly = True
+        Me.dgvBatches.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.dgvBatches.RowHeadersVisible = False
         DataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.dgvBatches.RowsDefaultCellStyle = DataGridViewCellStyle2

@@ -60,72 +60,72 @@ Public Class FormCustomerHistory
     End Sub
 
     Private Function FetchTotalHistoryCount(searchText As String) As Integer
-        ' Get period filter from Reports form
-        Dim periodFilter As String = ""
-        Dim sYear As Integer = Reports.SelectedYear
-        Dim sMonth As Integer = Reports.SelectedMonth
+        ' Calculate count of ACTIVE customers matching search (AccountStatus = 'Active')
+        Dim query As String = "SELECT COUNT(*) FROM customers c WHERE c.AccountStatus = 'Active' AND (CONCAT(c.FirstName, ' ', c.LastName) LIKE @search OR c.Email LIKE @search OR c.CustomerType LIKE @search)"
 
-        Select Case Reports.SelectedPeriod
-            Case "Daily"
-                 periodFilter = $" AND DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
-            Case "Weekly"
-                 periodFilter = $" AND YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
-
-            Case "Monthly"
-                If sMonth = 0 Then
-                    periodFilter = $" AND YEAR(OrderDate) = {sYear} "
-                Else
-                    periodFilter = $" AND YEAR(OrderDate) = {sYear} AND MONTH(OrderDate) = {sMonth} "
-                End If
-            Case "Yearly"
-                periodFilter = $" AND YEAR(OrderDate) = {sYear} "
-        End Select
-
-        Dim query As String = "SELECT COUNT(*) FROM orders WHERE (OrderID LIKE @search OR OrderType LIKE @search OR OrderStatus LIKE @search)" & periodFilter
         Using conn As New MySqlConnection(connectionString)
             conn.Open()
             Using cmd As New MySqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@search", "%" & searchText & "%")
-                Return Convert.ToInt32(cmd.ExecuteScalar())
+                Dim result = cmd.ExecuteScalar()
+                Return If(IsDBNull(result), 0, Convert.ToInt32(result))
             End Using
         End Using
     End Function
 
     Private Function FetchCustomerHistoryTable(searchText As String, offset As Integer, limit As Integer) As DataTable
-        ' Get period filter from Reports form
-        Dim periodFilter As String = ""
-        Dim sYear As Integer = Reports.SelectedYear
-        Dim sMonth As Integer = Reports.SelectedMonth
+        ' Helper to build date condition dynamically for a given "date column name"
+        Dim GetDateCondition As Func(Of String, String) = Function(colName)
+                                                              Dim cond As String = ""
+                                                              Dim sYear As Integer = Reports.SelectedYear
+                                                              Dim sMonth As Integer = Reports.SelectedMonth
+                                                              Select Case Reports.SelectedPeriod
+                                                                  Case "Daily"
+                                                                      cond = $" AND DATE({colName}) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                                                                  Case "Weekly"
+                                                                      cond = $" AND YEARWEEK({colName}, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                                                                  Case "Monthly"
+                                                                      If sMonth = 0 Then
+                                                                          cond = $" AND YEAR({colName}) = {sYear} "
+                                                                      Else
+                                                                          cond = $" AND YEAR({colName}) = {sYear} AND MONTH({colName}) = {sMonth} "
+                                                                      End If
+                                                                  Case "Yearly"
+                                                                      cond = $" AND YEAR({colName}) = {sYear} "
+                                                              End Select
+                                                              Return cond
+                                                          End Function
 
-        Select Case Reports.SelectedPeriod
-            Case "Daily"
-                 periodFilter = $" AND DATE(o.OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
-            Case "Weekly"
-                 periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+        Dim orderDateCond As String = GetDateCondition("o.OrderDate")
+        Dim resDateCond As String = GetDateCondition("r.EventDate")
 
-            Case "Monthly"
-                If sMonth = 0 Then
-                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
-                Else
-                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
-                End If
-            Case "Yearly"
-                periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
-        End Select
-
-        ' Optimized query targeting only necessary columns and using paging with search
+        ' Optimizing query to aggregate Orders and Reservations efficiently using subqueries
+        ' This avoids Cartesian products and correctly sums visits from both sources.
         Dim query As String =
             "SELECT " &
-            "  o.OrderDate, " &
-            "  o.OrderID, " &
-            "  o.OrderType, " &
-            "  (SELECT GROUP_CONCAT(CONCAT(ProductName, ' (', Quantity, ')') SEPARATOR ', ') " &
-            "   FROM order_items WHERE OrderID = o.OrderID) AS Items, " &
-            "  IFNULL(o.TotalAmount, 0) AS TotalAmount, " &
-            "  o.OrderStatus " &
-            "FROM orders o " &
-            "WHERE (o.OrderID LIKE @search OR o.OrderType LIKE @search OR o.OrderStatus LIKE @search) " & periodFilter & " " &
-            "ORDER BY o.OrderDate DESC, o.OrderID DESC " &
+            "  c.CustomerID, " &
+            "  CONCAT(c.FirstName, ' ', c.LastName) AS CustomerName, " &
+            "  IF(c.ContactNumber IS NOT NULL AND c.ContactNumber <> '', c.ContactNumber, c.Email) AS ContactInfo, " &
+            "  c.CustomerType, " &
+            "  CASE WHEN oStats.LastOrder IS NULL THEN rStats.LastRes WHEN rStats.LastRes IS NULL THEN oStats.LastOrder ELSE GREATEST(oStats.LastOrder, rStats.LastRes) END AS LastVisit, " &
+            "  (COALESCE(oStats.OrderCount, 0) + COALESCE(rStats.ResCount, 0)) AS TotalVisits, " &
+            "  COALESCE(oStats.TotalSpent, 0) AS TotalSpent " &
+            "FROM customers c " &
+            "LEFT JOIN ( " &
+            "   SELECT CustomerID, COUNT(*) as OrderCount, SUM(TotalAmount) as TotalSpent, MAX(OrderDate) as LastOrder " &
+            "   FROM orders o " &
+            "   WHERE 1=1 " & orderDateCond &
+            "   GROUP BY CustomerID " &
+            ") oStats ON c.CustomerID = oStats.CustomerID " &
+            "LEFT JOIN ( " &
+            "   SELECT CustomerID, COUNT(*) as ResCount, MAX(EventDate) as LastRes " &
+            "   FROM reservations r " &
+            "   WHERE 1=1 " & resDateCond &
+            "   GROUP BY CustomerID " &
+            ") rStats ON c.CustomerID = rStats.CustomerID " &
+            "WHERE c.AccountStatus = 'Active' " &
+            "AND (CONCAT(c.FirstName, ' ', c.LastName) LIKE @search OR c.Email LIKE @search OR c.CustomerType LIKE @search) " &
+            "ORDER BY TotalSpent DESC " &
             "LIMIT @limit OFFSET @offset;"
 
         Using conn As New MySqlConnection(connectionString)
@@ -145,22 +145,52 @@ Public Class FormCustomerHistory
     End Function
 
     Private Sub ConfigureGrid()
-        ' Use the designer-defined columns; bind to a DataTable for faster loading.
         DataGridView1.AutoGenerateColumns = False
+        DataGridView1.EnableHeadersVisualStyles = True
 
-        dateid.DataPropertyName = "OrderDate"
-        Orderid.DataPropertyName = "OrderID"
-        Type.DataPropertyName = "OrderType"
-        Items.DataPropertyName = "Items"
-        Amount.DataPropertyName = "TotalAmount"
-        Status.DataPropertyName = "OrderStatus"
+        ' Ensure CustomerID column exists for reference (hidden)
+        If Not DataGridView1.Columns.Contains("colCustomerID") Then
+            Dim colID As New DataGridViewTextBoxColumn()
+            colID.Name = "colCustomerID"
+            colID.DataPropertyName = "CustomerID"
+            colID.Visible = False
+            DataGridView1.Columns.Add(colID)
+        End If
 
-        dateid.DefaultCellStyle.Format = "yyyy-MM-dd"
-        Amount.DefaultCellStyle.Format = "₱#,##0.00"
+        colCustomerName.DataPropertyName = "CustomerName"
+        colContact.DataPropertyName = "ContactInfo"
+        colType.DataPropertyName = "CustomerType"
+        colLastVisit.DataPropertyName = "LastVisit"
+        colTotalVisits.DataPropertyName = "TotalVisits"
+        colTotalSpent.DataPropertyName = "TotalSpent"
+        ' colAction is a button, so no DataPropertyName needed unless binding text, but we use static text "View History"
+
+        colLastVisit.DefaultCellStyle.Format = "yyyy-MM-dd"
+        colTotalSpent.DefaultCellStyle.Format = "₱#,##0.00"
 
         DataGridView1.ReadOnly = True
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.MultiSelect = False
+        
+        ' Ensure CellContentClick handler is attached 
+        RemoveHandler DataGridView1.CellContentClick, AddressOf DataGridView1_CellContentClick
+        AddHandler DataGridView1.CellContentClick, AddressOf DataGridView1_CellContentClick
+    End Sub
+
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
+        If e.RowIndex >= 0 AndAlso e.ColumnIndex = DataGridView1.Columns("colAction").Index Then
+            ' Retrieve data from the underlying DataRow to ensure we get the ID correctly
+            Dim row As DataRowView = TryCast(DataGridView1.Rows(e.RowIndex).DataBoundItem, DataRowView)
+
+            If row IsNot Nothing Then
+                Dim customerID As Integer = Convert.ToInt32(row("CustomerID"))
+                Dim customerName As String = row("CustomerName").ToString()
+
+                Using historyForm As New FormCustomerOrderHistory(customerID, customerName)
+                    historyForm.ShowDialog()
+                End Using
+            End If
+        End If
     End Sub
 
     Private Sub SetLoadingState(isLoading As Boolean)
@@ -221,6 +251,23 @@ Public Class FormCustomerHistory
         BeginLoadCustomerHistory()
     End Sub
 
+
+
+    ' =======================================================================
+    ' PDF EXPORT
+    ' =======================================================================
+    Private Sub btnExportPdf_Click(sender As Object, e As EventArgs) Handles btnExportPdf.Click
+        Try
+            ' Call the Reports form's export method
+            If Reports.Instance IsNot Nothing Then
+                Reports.Instance.ExportCurrentReport()
+            Else
+                MessageBox.Show("Export functionality is not available at this time.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error exporting to PDF: " & ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
 
 
 End Class

@@ -229,7 +229,7 @@ Public Class FormProductPerformance
     Private Function FetchProductPerformanceData() As DataTable
         ' Use shared period from Reports form
         Dim periodFilter As String = Reports.SelectedPeriod
-        Dim dateColumnReservations As String = "r.ReservationDate"
+        Dim dateColumnReservations As String = "r.EventDate"
         Dim dateColumnOrders As String = "o.OrderDate"
 
         Dim whereClauseReservations As String = ""
@@ -254,12 +254,19 @@ Public Class FormProductPerformance
                     whereClauseOrders = $" AND YEAR({dateColumnOrders}) = {selectedYear} AND MONTH({dateColumnOrders}) = {selectedMonth}"
                 End If
             Case "Yearly"
-                whereClauseReservations = $" AND YEAR({dateColumnReservations}) = {selectedYear}"
-                whereClauseOrders = $" AND YEAR({dateColumnOrders}) = {selectedYear}"
+                whereClauseReservations = $" AND YEAR({dateColumnReservations}) <= {selectedYear} AND YEAR({dateColumnReservations}) >= {selectedYear - 4}"
+                whereClauseOrders = $" AND YEAR({dateColumnOrders}) <= {selectedYear} AND YEAR({dateColumnOrders}) >= {selectedYear - 4}"
         End Select
 
-        Dim groupByColumn As String = If(viewType = "Category", "p.Category", "p.ProductName")
+        Dim groupByBase As String = If(viewType = "Category", "p.Category", "p.ProductName")
         Dim selectItems As String = If(viewType = "Category", "p.Category AS DisplayName", "p.ProductName AS DisplayName")
+        Dim resGroup As String = groupByBase
+        Dim ordGroup As String = groupByBase
+
+        If periodFilter = "Yearly" Then
+            resGroup &= ", YEAR(r.EventDate)"
+            ordGroup &= ", YEAR(o.OrderDate)"
+        End If
 
         ' Fix: Use TRIM to remove any extra spaces and make category comparison case-insensitive
         Dim categoryFilterLine As String = ""
@@ -269,25 +276,28 @@ Public Class FormProductPerformance
 
         Dim query As String =
 $"SELECT DisplayName,
+        {(If(periodFilter = "Yearly", "StatYear,", ""))}
         SUM(TotalOrders) AS TotalOrders,
         SUM(Revenue) AS Revenue
  FROM (
         -- Reservation items
         SELECT {selectItems},
+               {(If(periodFilter = "Yearly", "YEAR(r.EventDate) AS StatYear,", ""))}
                SUM(ri.Quantity) AS TotalOrders,
                SUM(ri.TotalPrice) AS Revenue
         FROM reservation_items ri
         INNER JOIN reservations r ON ri.ReservationID = r.ReservationID
         INNER JOIN products p ON TRIM(ri.ProductName) = TRIM(p.ProductName)
-        WHERE r.ReservationStatus IN ('Confirmed', 'Served')
+        WHERE r.ReservationStatus IN ('Confirmed', 'Served', 'Completed')
         {whereClauseReservations}
         {categoryFilterLine}
-        GROUP BY {groupByColumn}
+        GROUP BY {resGroup}
         
         UNION ALL
         
         -- Order items
         SELECT {selectItems},
+               {(If(periodFilter = "Yearly", "YEAR(o.OrderDate) AS StatYear,", ""))}
                SUM(oi.Quantity) AS TotalOrders,
                SUM(oi.Quantity * (CASE WHEN oi.UnitPrice > 0 THEN oi.UnitPrice ELSE p.Price END)) AS Revenue
         FROM order_items oi
@@ -296,16 +306,12 @@ $"SELECT DisplayName,
         WHERE o.OrderStatus IN ('Served', 'Completed')
         {whereClauseOrders}
         {categoryFilterLine}
-        GROUP BY {groupByColumn}
+        GROUP BY {ordGroup}
       ) AS combined
- GROUP BY DisplayName
+ GROUP BY DisplayName {(If(periodFilter = "Yearly", ", StatYear", ""))}
  ORDER BY Revenue DESC"
 
-        If viewType = "Product" AndAlso topProductsLimit > 0 Then
-            query &= " LIMIT " & topProductsLimit
-        End If
-
-        query &= ";"
+        query &= " ORDER BY Revenue DESC;"
 
         Dim dt As New DataTable()
 
@@ -321,52 +327,109 @@ $"SELECT DisplayName,
             End Using
         End Using
 
+        ' POST-PROCESS: For Yearly mode, identify Top X products by TOTAL revenue
+        If periodFilter = "Yearly" AndAlso topProductsLimit > 0 Then
+            Dim topNames = dt.AsEnumerable() _
+                .GroupBy(Function(r) r("DisplayName").ToString()) _
+                .Select(Function(g) New With {.Name = g.Key, .Total = g.Sum(Function(r) Convert.ToDecimal(r("Revenue")))}) _
+                .OrderByDescending(Function(x) x.Total) _
+                .Take(topProductsLimit) _
+                .Select(Function(x) x.Name) _
+                .ToList()
+
+            ' Filter the DataTable to only include these top products
+            If dt.Rows.Count > 0 Then
+                Dim dv = dt.DefaultView
+                Dim filterRows = dt.AsEnumerable().Where(Function(r) topNames.Contains(r("DisplayName").ToString()))
+                If filterRows.Any() Then
+                    dt = filterRows.CopyToDataTable()
+                Else
+                    dt.Clear()
+                End If
+            End If
+        ElseIf topProductsLimit > 0 AndAlso dt.Rows.Count > topProductsLimit Then
+            ' For other periods, just take top X (they are already sorted by DESC revenue)
+            Dim topDt = dt.Clone()
+            For i As Integer = 0 To Math.Min(dt.Rows.Count - 1, topProductsLimit - 1)
+                topDt.ImportRow(dt.Rows(i))
+            Next
+            dt = topDt
+        End If
+
         Return dt
     End Function
 
     Private Sub UpdateChart(data As DataTable)
-        Dim series = Chart1.Series("Revenue")
-        series.Points.Clear()
+        Chart1.Series.Clear()
 
         If data.Rows.Count = 0 Then
-            series.Points.AddXY("No data", 0)
+            Dim seriesNone = Chart1.Series.Add("Revenue")
+            seriesNone.Points.AddXY("No data", 0)
             Return
         End If
 
-        For Each row As DataRow In data.Rows
-            Dim displayName = row("DisplayName").ToString()
-            Dim revenue = If(IsDBNull(row("Revenue")), 0D, Convert.ToDecimal(row("Revenue")))
+        If Reports.SelectedPeriod = "Yearly" Then
+            ' Force exactly 5 years based on the selected year
+            Dim years = New List(Of Integer)
+            For i As Integer = 0 To 4
+                years.Add(Reports.SelectedYear - (4 - i))
+            Next
 
-            Dim pointIndex = series.Points.AddXY(displayName, revenue)
-            ' Add some visual polish to the points
-            Dim point = series.Points(pointIndex)
-            point.ToolTip = $"{displayName}: {String.Format(currencyCulture, "{0:C0}", revenue)}"
-        Next
+            Dim names = data.AsEnumerable().Select(Function(r) r("DisplayName").ToString()).Distinct().ToList()
+
+            For Each yr In years
+                Dim series = Chart1.Series.Add(yr.ToString())
+                series.ChartType = SeriesChartType.Column
+                series.ToolTip = "#SERIESNAME - #VALX: ₱#VALY{N0}"
+
+                For Each dName In names
+                    Dim row = data.AsEnumerable().FirstOrDefault(Function(r) r("DisplayName").ToString() = dName AndAlso Convert.ToInt32(r("StatYear")) = yr)
+                    Dim revenue = If(row IsNot Nothing, Convert.ToDecimal(row("Revenue")), 0D)
+                    series.Points.AddXY(dName, revenue)
+                Next
+            Next
+
+            Chart1.Legends.Clear()
+            Chart1.Legends.Add(New Legend("Default"))
+        Else
+            ' Standard single series
+            Dim series = Chart1.Series.Add("Revenue")
+            series.ChartType = SeriesChartType.Column
+            series.Color = Color.MediumSlateBlue
+
+            For Each row As DataRow In data.Rows
+                Dim displayName = row("DisplayName").ToString()
+                Dim revenue = If(IsDBNull(row("Revenue")), 0D, Convert.ToDecimal(row("Revenue")))
+                Dim pointIndex = series.Points.AddXY(displayName, revenue)
+                series.Points(pointIndex).ToolTip = $"{displayName}: {String.Format(currencyCulture, "{0:C0}", revenue)}"
+            Next
+        End If
 
         ' Smart label density
-        If data.Rows.Count <= 12 Then
-            series.IsValueShownAsLabel = True
-            series.LabelFormat = "₱#,##0"
-            series.LabelForeColor = Color.FromArgb(71, 85, 105)
+        If data.Rows.Count <= 12 AndAlso Reports.SelectedPeriod <> "Yearly" Then
+            Chart1.Series(0).IsValueShownAsLabel = True
+            Chart1.Series(0).LabelFormat = "₱#,##0"
+            Chart1.Series(0).LabelForeColor = Color.FromArgb(71, 85, 105)
         Else
-            series.IsValueShownAsLabel = False
+            For Each s In Chart1.Series
+                s.IsValueShownAsLabel = False
+            Next
         End If
 
         ' Axis and Scrolling
         Dim chartArea = Chart1.ChartAreas(0)
         chartArea.AxisX.Interval = 1
-        chartArea.AxisX.LabelStyle.Font = New Font("Segoe UI", 9.0!)
-        
-        If data.Rows.Count > 15 Then
+
+        If data.Rows.Count > 10 Then
             chartArea.AxisX.ScrollBar.Enabled = True
             chartArea.AxisX.ScaleView.Zoomable = True
-            chartArea.AxisX.ScaleView.Size = 15
+            chartArea.AxisX.ScaleView.Size = 10
             chartArea.AxisX.ScaleView.Position = 1
             chartArea.AxisX.LabelStyle.Angle = -45
         Else
             chartArea.AxisX.ScrollBar.Enabled = False
             chartArea.AxisX.ScaleView.ZoomReset()
-            chartArea.AxisX.LabelStyle.Angle = If(data.Rows.Count > 8, -45, 0)
+            chartArea.AxisX.LabelStyle.Angle = If(data.Rows.Count > 5, -45, 0)
         End If
 
         Dim periodPart As String = ""
@@ -374,31 +437,49 @@ $"SELECT DisplayName,
             periodPart = $" ({Reports.GlobalFilterDate:MMM dd, yyyy})"
         ElseIf Reports.SelectedPeriod = "Monthly" AndAlso Reports.SelectedMonth > 0 Then
             periodPart = $" ({System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Reports.SelectedMonth)} {Reports.SelectedYear})"
+        ElseIf Reports.SelectedPeriod = "Yearly" Then
+            periodPart = $" ({Reports.SelectedYear - 4} - {Reports.SelectedYear})"
         Else
             periodPart = $" ({Reports.SelectedPeriod} {Reports.SelectedYear})"
         End If
-        
+
         Dim filterText = If(viewType = "Product" AndAlso selectedCategory <> "All Categories", $" - {selectedCategory}", "")
         Dim viewTypeText = If(viewType = "Category", "by Category", "by Product")
-        
+
         Chart1.Titles(0).Text = $"Revenue {viewTypeText}{periodPart}{filterText}"
     End Sub
 
     Private Sub UpdateSummaryTiles(data As DataTable)
         If summaryTiles Is Nothing OrElse summaryTiles.Count = 0 Then Return
 
+        ' Group by product to get unique items for tiles (especially for Yearly view)
+        Dim productTotals = data.AsEnumerable() _
+            .GroupBy(Function(r) r("DisplayName").ToString()) _
+            .Select(Function(g) New With {
+                .Name = g.Key,
+                .TotalOrders = g.Sum(Function(r) If(IsDBNull(r("TotalOrders")), 0L, Convert.ToInt64(r("TotalOrders")))),
+                .TotalRevenue = g.Sum(Function(r) If(IsDBNull(r("Revenue")), 0D, Convert.ToDecimal(r("Revenue"))))
+            }) _
+            .OrderByDescending(Function(x) x.TotalRevenue) _
+            .ToList()
+
         For i As Integer = 0 To summaryTiles.Count - 1
             Dim tile = summaryTiles(i)
 
-            If i < data.Rows.Count Then
-                Dim row = data.Rows(i)
-                Dim displayName = row("DisplayName").ToString()
-                Dim totalOrders = If(IsDBNull(row("TotalOrders")), 0, Convert.ToInt64(row("TotalOrders")))
-                Dim revenue = If(IsDBNull(row("Revenue")), 0D, Convert.ToDecimal(row("Revenue")))
+            If i < productTotals.Count Then
+                Dim item = productTotals(i)
+                Dim displayName = item.Name
+                Dim totalOrders = item.TotalOrders
+                Dim revenue = item.TotalRevenue
                 Dim revenueText = String.Format(currencyCulture, "{0:C0}", revenue)
 
                 tile.NameLabel.Text = displayName
                 tile.DetailLabel.Text = $"{totalOrders} orders | {revenueText}"
+
+                ' Add YoY growth if yearly
+                If Reports.SelectedPeriod = "Yearly" Then
+                    tile.DetailLabel.Text &= " (5-yr Summary)"
+                End If
             Else
                 tile.NameLabel.Text = "N/A"
                 tile.DetailLabel.Text = "No data available"

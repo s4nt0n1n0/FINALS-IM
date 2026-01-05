@@ -17,7 +17,23 @@ Partial Class FormDineInOrders
 
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormDineInOrders))
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.RoundedPane24 = New InformationManagement.RoundedPane2()
+        Me.PaginationContainer = New System.Windows.Forms.Panel()
+        Me.btnNext = New System.Windows.Forms.Button()
+        Me.btnPrev = New System.Windows.Forms.Button()
+        Me.lblPageStatus = New System.Windows.Forms.Label()
+        Me.SearchContainer = New InformationManagement.RoundedPane2()
+        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.DataGridView1 = New System.Windows.Forms.DataGridView()
+        Me.LabelSubHeader = New System.Windows.Forms.Label()
+        Me.LabelHeader = New System.Windows.Forms.Label()
+        Me.Panel3 = New System.Windows.Forms.Panel()
         Me.RoundedPane21 = New InformationManagement.RoundedPane2()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
@@ -33,28 +49,215 @@ Partial Class FormDineInOrders
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.PictureBox3 = New System.Windows.Forms.PictureBox()
-        Me.RoundedPane24 = New InformationManagement.RoundedPane2()
-        Me.PaginationContainer = New System.Windows.Forms.Panel()
-        Me.btnNext = New System.Windows.Forms.Button()
-        Me.btnPrev = New System.Windows.Forms.Button()
-        Me.lblPageStatus = New System.Windows.Forms.Label()
-        Me.SearchContainer = New InformationManagement.RoundedPane2()
-        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
-        Me.Label10 = New System.Windows.Forms.Label()
-        Me.DataGridView1 = New System.Windows.Forms.DataGridView()
-        Me.LabelHeader = New System.Windows.Forms.Label()
-        Me.LabelSubHeader = New System.Windows.Forms.Label()
+        Me.Panel1.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        Me.RoundedPane24.SuspendLayout()
+        Me.PaginationContainer.SuspendLayout()
+        Me.SearchContainer.SuspendLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Panel3.SuspendLayout()
         Me.RoundedPane21.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane22.SuspendLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane23.SuspendLayout()
         CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.RoundedPane24.SuspendLayout()
-        Me.PaginationContainer.SuspendLayout()
-        Me.SearchContainer.SuspendLayout()
-        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
+        '
+        'Panel1
+        '
+        Me.Panel1.AutoScroll = True
+        Me.Panel1.Controls.Add(Me.Panel2)
+        Me.Panel1.Controls.Add(Me.LabelSubHeader)
+        Me.Panel1.Controls.Add(Me.LabelHeader)
+        Me.Panel1.Controls.Add(Me.Panel3)
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Panel1.Location = New System.Drawing.Point(0, 0)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(1186, 749)
+        Me.Panel1.TabIndex = 10
+        '
+        'Panel2
+        '
+        Me.Panel2.AutoScroll = True
+        Me.Panel2.Controls.Add(Me.RoundedPane24)
+        Me.Panel2.Location = New System.Drawing.Point(0, 220)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(1186, 529)
+        Me.Panel2.TabIndex = 10
+        '
+        'RoundedPane24
+        '
+        Me.RoundedPane24.Anchor = System.Windows.Forms.AnchorStyles.None
+        Me.RoundedPane24.AutoScroll = True
+        Me.RoundedPane24.BorderColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
+        Me.RoundedPane24.BorderThickness = 1
+        Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
+        Me.RoundedPane24.Controls.Add(Me.SearchContainer)
+        Me.RoundedPane24.Controls.Add(Me.Label10)
+        Me.RoundedPane24.Controls.Add(Me.DataGridView1)
+        Me.RoundedPane24.CornerRadius = 15
+        Me.RoundedPane24.FillColor = System.Drawing.Color.White
+        Me.RoundedPane24.Location = New System.Drawing.Point(37, 22)
+        Me.RoundedPane24.Name = "RoundedPane24"
+        Me.RoundedPane24.Size = New System.Drawing.Size(1045, 470)
+        Me.RoundedPane24.TabIndex = 7
+        '
+        'PaginationContainer
+        '
+        Me.PaginationContainer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.PaginationContainer.Controls.Add(Me.btnNext)
+        Me.PaginationContainer.Controls.Add(Me.btnPrev)
+        Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
+        Me.PaginationContainer.Location = New System.Drawing.Point(36, 425)
+        Me.PaginationContainer.Name = "PaginationContainer"
+        Me.PaginationContainer.Size = New System.Drawing.Size(978, 40)
+        Me.PaginationContainer.TabIndex = 12
+        '
+        'btnNext
+        '
+        Me.btnNext.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.btnNext.Location = New System.Drawing.Point(822, 5)
+        Me.btnNext.Name = "btnNext"
+        Me.btnNext.Size = New System.Drawing.Size(80, 30)
+        Me.btnNext.TabIndex = 2
+        Me.btnNext.Text = "Next →"
+        Me.btnNext.UseVisualStyleBackColor = True
+        '
+        'btnPrev
+        '
+        Me.btnPrev.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.btnPrev.Location = New System.Drawing.Point(732, 5)
+        Me.btnPrev.Name = "btnPrev"
+        Me.btnPrev.Size = New System.Drawing.Size(80, 30)
+        Me.btnPrev.TabIndex = 1
+        Me.btnPrev.Text = "← Prev"
+        Me.btnPrev.UseVisualStyleBackColor = True
+        '
+        'lblPageStatus
+        '
+        Me.lblPageStatus.AutoSize = True
+        Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.lblPageStatus.Location = New System.Drawing.Point(10, 13)
+        Me.lblPageStatus.Name = "lblPageStatus"
+        Me.lblPageStatus.Size = New System.Drawing.Size(124, 15)
+        Me.lblPageStatus.TabIndex = 0
+        Me.lblPageStatus.Text = "Page 1 of 1 (0 records)"
+        '
+        'SearchContainer
+        '
+        Me.SearchContainer.BackColor = System.Drawing.Color.Transparent
+        Me.SearchContainer.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.SearchContainer.BorderThickness = 1
+        Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
+        Me.SearchContainer.CornerRadius = 10
+        Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.SearchContainer.Location = New System.Drawing.Point(630, 20)
+        Me.SearchContainer.Name = "SearchContainer"
+        Me.SearchContainer.Size = New System.Drawing.Size(384, 38)
+        Me.SearchContainer.TabIndex = 11
+        '
+        'TextBoxSearch
+        '
+        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
+        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 10)
+        Me.TextBoxSearch.Name = "TextBoxSearch"
+        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 18)
+        Me.TextBoxSearch.TabIndex = 0
+        Me.TextBoxSearch.Text = "Search orders..."
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.BackColor = System.Drawing.Color.Transparent
+        Me.Label10.Font = New System.Drawing.Font("Segoe UI Semibold", 13.0!, System.Drawing.FontStyle.Bold)
+        Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
+        Me.Label10.Location = New System.Drawing.Point(32, 28)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(179, 25)
+        Me.Label10.TabIndex = 7
+        Me.Label10.Text = "Recent Table Orders"
+        '
+        'DataGridView1
+        '
+        Me.DataGridView1.AllowUserToAddRows = False
+        Me.DataGridView1.AllowUserToDeleteRows = False
+        Me.DataGridView1.AllowUserToResizeColumns = False
+        Me.DataGridView1.AllowUserToResizeRows = False
+        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
+        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
+        Me.DataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(250, Byte), Integer))
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold)
+        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(250, Byte), Integer))
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        Me.DataGridView1.ColumnHeadersHeight = 45
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
+        Me.DataGridView1.Location = New System.Drawing.Point(36, 65)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.ReadOnly = True
+        Me.DataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        Me.DataGridView1.RowHeadersVisible = False
+        Me.DataGridView1.RowHeadersWidth = 45
+        Me.DataGridView1.RowTemplate.Height = 50
+        Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+        Me.DataGridView1.Size = New System.Drawing.Size(993, 358)
+        Me.DataGridView1.TabIndex = 10
+        '
+        'LabelSubHeader
+        '
+        Me.LabelSubHeader.AutoSize = True
+        Me.LabelSubHeader.Font = New System.Drawing.Font("Segoe UI", 10.5!)
+        Me.LabelSubHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.LabelSubHeader.Location = New System.Drawing.Point(32, 64)
+        Me.LabelSubHeader.Name = "LabelSubHeader"
+        Me.LabelSubHeader.Size = New System.Drawing.Size(343, 19)
+        Me.LabelSubHeader.TabIndex = 9
+        Me.LabelSubHeader.Text = "Track and manage table orders and customer presence"
+        '
+        'LabelHeader
+        '
+        Me.LabelHeader.AutoSize = True
+        Me.LabelHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 22.0!, System.Drawing.FontStyle.Bold)
+        Me.LabelHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
+        Me.LabelHeader.Location = New System.Drawing.Point(30, 20)
+        Me.LabelHeader.Name = "LabelHeader"
+        Me.LabelHeader.Size = New System.Drawing.Size(400, 41)
+        Me.LabelHeader.TabIndex = 8
+        Me.LabelHeader.Text = "Dine-In Order Management"
+        '
+        'Panel3
+        '
+        Me.Panel3.Controls.Add(Me.RoundedPane21)
+        Me.Panel3.Controls.Add(Me.RoundedPane22)
+        Me.Panel3.Controls.Add(Me.RoundedPane23)
+        Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(1186, 220)
+        Me.Panel3.TabIndex = 11
         '
         'RoundedPane21
         '
@@ -66,7 +269,7 @@ Partial Class FormDineInOrders
         Me.RoundedPane21.Controls.Add(Me.PictureBox1)
         Me.RoundedPane21.CornerRadius = 15
         Me.RoundedPane21.FillColor = System.Drawing.Color.FromArgb(CType(CType(66, Byte), Integer), CType(CType(133, Byte), Integer), CType(CType(244, Byte), Integer))
-        Me.RoundedPane21.Location = New System.Drawing.Point(30, 105)
+        Me.RoundedPane21.Location = New System.Drawing.Point(36, 86)
         Me.RoundedPane21.Name = "RoundedPane21"
         Me.RoundedPane21.Size = New System.Drawing.Size(337, 125)
         Me.RoundedPane21.TabIndex = 3
@@ -79,7 +282,7 @@ Partial Class FormDineInOrders
         Me.Label5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.Label5.Location = New System.Drawing.Point(75, 50)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(112, 20)
+        Me.Label5.Size = New System.Drawing.Size(90, 15)
         Me.Label5.TabIndex = 2
         Me.Label5.Text = "Total for Month"
         '
@@ -91,7 +294,7 @@ Partial Class FormDineInOrders
         Me.Label4.ForeColor = System.Drawing.Color.White
         Me.Label4.Location = New System.Drawing.Point(75, 75)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(69, 41)
+        Me.Label4.Size = New System.Drawing.Size(56, 32)
         Me.Label4.TabIndex = 1
         Me.Label4.Text = "240"
         '
@@ -103,7 +306,7 @@ Partial Class FormDineInOrders
         Me.Label1.ForeColor = System.Drawing.Color.White
         Me.Label1.Location = New System.Drawing.Point(75, 25)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(115, 25)
+        Me.Label1.Size = New System.Drawing.Size(92, 20)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Total Orders"
         '
@@ -128,7 +331,7 @@ Partial Class FormDineInOrders
         Me.RoundedPane22.Controls.Add(Me.PictureBox2)
         Me.RoundedPane22.CornerRadius = 15
         Me.RoundedPane22.FillColor = System.Drawing.Color.FromArgb(CType(CType(52, Byte), Integer), CType(CType(211, Byte), Integer), CType(CType(77, Byte), Integer))
-        Me.RoundedPane22.Location = New System.Drawing.Point(384, 105)
+        Me.RoundedPane22.Location = New System.Drawing.Point(389, 86)
         Me.RoundedPane22.Name = "RoundedPane22"
         Me.RoundedPane22.Size = New System.Drawing.Size(337, 125)
         Me.RoundedPane22.TabIndex = 4
@@ -141,7 +344,7 @@ Partial Class FormDineInOrders
         Me.Label8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.Label8.Location = New System.Drawing.Point(75, 50)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(112, 20)
+        Me.Label8.Size = New System.Drawing.Size(90, 15)
         Me.Label8.TabIndex = 3
         Me.Label8.Text = "Total for Month"
         '
@@ -153,7 +356,7 @@ Partial Class FormDineInOrders
         Me.Label6.ForeColor = System.Drawing.Color.White
         Me.Label6.Location = New System.Drawing.Point(75, 75)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(189, 41)
+        Me.Label6.Size = New System.Drawing.Size(155, 32)
         Me.Label6.TabIndex = 2
         Me.Label6.Text = "₱125,420.00"
         '
@@ -165,7 +368,7 @@ Partial Class FormDineInOrders
         Me.Label2.ForeColor = System.Drawing.Color.White
         Me.Label2.Location = New System.Drawing.Point(75, 25)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(131, 25)
+        Me.Label2.Size = New System.Drawing.Size(105, 20)
         Me.Label2.TabIndex = 0
         Me.Label2.Text = "Total Revenue"
         '
@@ -190,7 +393,7 @@ Partial Class FormDineInOrders
         Me.RoundedPane23.Controls.Add(Me.PictureBox3)
         Me.RoundedPane23.CornerRadius = 15
         Me.RoundedPane23.FillColor = System.Drawing.Color.FromArgb(CType(CType(251, Byte), Integer), CType(CType(140, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.RoundedPane23.Location = New System.Drawing.Point(738, 105)
+        Me.RoundedPane23.Location = New System.Drawing.Point(738, 86)
         Me.RoundedPane23.Name = "RoundedPane23"
         Me.RoundedPane23.Size = New System.Drawing.Size(337, 125)
         Me.RoundedPane23.TabIndex = 5
@@ -203,7 +406,7 @@ Partial Class FormDineInOrders
         Me.Label9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.Label9.Location = New System.Drawing.Point(75, 50)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(108, 20)
+        Me.Label9.Size = New System.Drawing.Size(85, 15)
         Me.Label9.TabIndex = 2
         Me.Label9.Text = "Average/Order"
         '
@@ -215,7 +418,7 @@ Partial Class FormDineInOrders
         Me.Label7.ForeColor = System.Drawing.Color.White
         Me.Label7.Location = New System.Drawing.Point(75, 75)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(130, 41)
+        Me.Label7.Size = New System.Drawing.Size(106, 32)
         Me.Label7.TabIndex = 1
         Me.Label7.Text = "₱520.00"
         '
@@ -227,7 +430,7 @@ Partial Class FormDineInOrders
         Me.Label3.ForeColor = System.Drawing.Color.White
         Me.Label3.Location = New System.Drawing.Point(75, 25)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(152, 25)
+        Me.Label3.Size = New System.Drawing.Size(122, 20)
         Me.Label3.TabIndex = 0
         Me.Label3.Text = "Avg Order Value"
         '
@@ -242,163 +445,26 @@ Partial Class FormDineInOrders
         Me.PictureBox3.TabIndex = 5
         Me.PictureBox3.TabStop = False
         '
-        'RoundedPane24
-        '
-        Me.RoundedPane24.BorderColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
-        Me.RoundedPane24.BorderThickness = 1
-        Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
-        Me.RoundedPane24.Controls.Add(Me.SearchContainer)
-        Me.RoundedPane24.Controls.Add(Me.Label10)
-        Me.RoundedPane24.Controls.Add(Me.DataGridView1)
-        Me.RoundedPane24.CornerRadius = 15
-        Me.RoundedPane24.FillColor = System.Drawing.Color.White
-        Me.RoundedPane24.Location = New System.Drawing.Point(30, 255)
-        Me.RoundedPane24.Name = "RoundedPane24"
-        Me.RoundedPane24.Size = New System.Drawing.Size(1126, 470)
-        Me.RoundedPane24.TabIndex = 7
-        '
-        'PaginationContainer
-        '
-        Me.PaginationContainer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.PaginationContainer.Controls.Add(Me.btnNext)
-        Me.PaginationContainer.Controls.Add(Me.btnPrev)
-        Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
-        Me.PaginationContainer.Location = New System.Drawing.Point(24, 420)
-        Me.PaginationContainer.Name = "PaginationContainer"
-        Me.PaginationContainer.Size = New System.Drawing.Size(1075, 40)
-        Me.PaginationContainer.TabIndex = 12
-        '
-        'btnNext
-        '
-        Me.btnNext.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnNext.Location = New System.Drawing.Point(985, 5)
-        Me.btnNext.Name = "btnNext"
-        Me.btnNext.Size = New System.Drawing.Size(80, 30)
-        Me.btnNext.TabIndex = 2
-        Me.btnNext.Text = "Next →"
-        Me.btnNext.UseVisualStyleBackColor = True
-        '
-        'btnPrev
-        '
-        Me.btnPrev.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnPrev.Location = New System.Drawing.Point(895, 5)
-        Me.btnPrev.Name = "btnPrev"
-        Me.btnPrev.Size = New System.Drawing.Size(80, 30)
-        Me.btnPrev.TabIndex = 1
-        Me.btnPrev.Text = "← Prev"
-        Me.btnPrev.UseVisualStyleBackColor = True
-        '
-        'lblPageStatus
-        '
-        Me.lblPageStatus.AutoSize = True
-        Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        Me.lblPageStatus.Location = New System.Drawing.Point(0, 10)
-        Me.lblPageStatus.Name = "lblPageStatus"
-        Me.lblPageStatus.Size = New System.Drawing.Size(158, 20)
-        Me.lblPageStatus.TabIndex = 0
-        Me.lblPageStatus.Text = "Page 1 of 1 (0 records)"
-        '
-        'SearchContainer
-        '
-        Me.SearchContainer.BackColor = System.Drawing.Color.Transparent
-        Me.SearchContainer.BorderColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(232, Byte), Integer), CType(CType(240, Byte), Integer))
-        Me.SearchContainer.BorderThickness = 1
-        Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
-        Me.SearchContainer.CornerRadius = 10
-        Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.SearchContainer.Location = New System.Drawing.Point(508, 20)
-        Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(391, 45)
-        Me.SearchContainer.TabIndex = 11
-        '
-        'TextBoxSearch
-        '
-        Me.TextBoxSearch.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 11.0!)
-        Me.TextBoxSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(148, Byte), Integer), CType(CType(163, Byte), Integer), CType(CType(184, Byte), Integer))
-        Me.TextBoxSearch.Location = New System.Drawing.Point(15, 12)
-        Me.TextBoxSearch.Name = "TextBoxSearch"
-        Me.TextBoxSearch.Size = New System.Drawing.Size(250, 25)
-        Me.TextBoxSearch.TabIndex = 0
-        Me.TextBoxSearch.Text = "Search orders..."
-
-
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.BackColor = System.Drawing.Color.Transparent
-        Me.Label10.Font = New System.Drawing.Font("Segoe UI Semibold", 13.0!, System.Drawing.FontStyle.Bold)
-        Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
-        Me.Label10.Location = New System.Drawing.Point(32, 28)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(212, 30)
-        Me.Label10.TabIndex = 7
-        Me.Label10.Text = "Recent Table Orders"
-        '
-        'DataGridView1
-        '
-        Me.DataGridView1.AllowUserToAddRows = False
-        Me.DataGridView1.AllowUserToDeleteRows = False
-        Me.DataGridView1.AllowUserToResizeRows = False
-        Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
-        Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
-        Me.DataGridView1.ColumnHeadersHeight = 50
-        Me.DataGridView1.Location = New System.Drawing.Point(24, 85)
-        Me.DataGridView1.Name = "DataGridView1"
-        Me.DataGridView1.ReadOnly = True
-        Me.DataGridView1.RowHeadersVisible = False
-        Me.DataGridView1.RowHeadersWidth = 51
-        Me.DataGridView1.RowTemplate.Height = 50
-        Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.DataGridView1.Size = New System.Drawing.Size(1075, 329)
-        Me.DataGridView1.TabIndex = 10
-        '
-        'LabelHeader
-        '
-        Me.LabelHeader.AutoSize = True
-        Me.LabelHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 22.0!, System.Drawing.FontStyle.Bold)
-        Me.LabelHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
-        Me.LabelHeader.Location = New System.Drawing.Point(30, 25)
-        Me.LabelHeader.Name = "LabelHeader"
-        Me.LabelHeader.Size = New System.Drawing.Size(491, 50)
-        Me.LabelHeader.TabIndex = 8
-        Me.LabelHeader.Text = "Dine-In Order Management"
-        '
-        'LabelSubHeader
-        '
-        Me.LabelSubHeader.AutoSize = True
-        Me.LabelSubHeader.Font = New System.Drawing.Font("Segoe UI", 10.5!)
-        Me.LabelSubHeader.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        Me.LabelSubHeader.Location = New System.Drawing.Point(32, 68)
-        Me.LabelSubHeader.Name = "LabelSubHeader"
-        Me.LabelSubHeader.Size = New System.Drawing.Size(444, 25)
-        Me.LabelSubHeader.TabIndex = 9
-        Me.LabelSubHeader.Text = "Track and manage table orders and customer presence"
-        '
         'FormDineInOrders
         '
+        Me.AutoScroll = True
         Me.BackColor = System.Drawing.Color.GhostWhite
         Me.ClientSize = New System.Drawing.Size(1186, 749)
-        Me.Controls.Add(Me.LabelSubHeader)
-        Me.Controls.Add(Me.LabelHeader)
-        Me.Controls.Add(Me.RoundedPane24)
-        Me.Controls.Add(Me.RoundedPane23)
-        Me.Controls.Add(Me.RoundedPane22)
-        Me.Controls.Add(Me.RoundedPane21)
+        Me.Controls.Add(Me.Panel1)
         Me.DoubleBuffered = True
         Me.Name = "FormDineInOrders"
         Me.Text = "Dine-In Management"
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
+        Me.Panel2.ResumeLayout(False)
+        Me.RoundedPane24.ResumeLayout(False)
+        Me.RoundedPane24.PerformLayout()
+        Me.PaginationContainer.ResumeLayout(False)
+        Me.PaginationContainer.PerformLayout()
+        Me.SearchContainer.ResumeLayout(False)
+        Me.SearchContainer.PerformLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Panel3.ResumeLayout(False)
         Me.RoundedPane21.ResumeLayout(False)
         Me.RoundedPane21.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -408,18 +474,11 @@ Partial Class FormDineInOrders
         Me.RoundedPane23.ResumeLayout(False)
         Me.RoundedPane23.PerformLayout()
         CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.RoundedPane24.ResumeLayout(False)
-        Me.RoundedPane24.PerformLayout()
-        Me.PaginationContainer.ResumeLayout(False)
-        Me.PaginationContainer.PerformLayout()
-        Me.SearchContainer.ResumeLayout(False)
-        Me.SearchContainer.PerformLayout()
-        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
 
+    Friend WithEvents Panel1 As System.Windows.Forms.Panel
     Friend WithEvents LabelHeader As System.Windows.Forms.Label
     Friend WithEvents LabelSubHeader As System.Windows.Forms.Label
     Friend WithEvents RoundedPane21 As InformationManagement.RoundedPane2
@@ -448,4 +507,6 @@ Partial Class FormDineInOrders
     Friend WithEvents btnNext As System.Windows.Forms.Button
     Friend WithEvents btnPrev As System.Windows.Forms.Button
     Friend WithEvents lblPageStatus As System.Windows.Forms.Label
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents Panel3 As Panel
 End Class

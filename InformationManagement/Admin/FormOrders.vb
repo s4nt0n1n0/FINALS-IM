@@ -18,12 +18,12 @@ Public Class FormOrders
             InitializeDataGridView()
             InitializeFilters()
 
-            LoadOrdersData()
-            UpdateStatisticsFromDatabase()
+            LoadOrdersData() ' Ensure Grid structure is initialized first
             InitializeCharts()
-            LoadOrdersTrendChart()
-            LoadCategoriesChart()
+            RefreshData()
             
+            isInitializing = False
+
             isInitializing = False
 
         Catch ex As Exception
@@ -47,9 +47,18 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    periodFilter = $" WHERE DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                    If selectedMonth = 0 Then
+                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    Else
+                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                    End If
                 Case "Weekly"
-                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                    ' Weekly now implies "View Weekly Breakdown for selected Month"
+                    If selectedMonth = 0 Then
+                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    Else
+                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                    End If
                 Case "Monthly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
@@ -58,10 +67,20 @@ Public Class FormOrders
                     End If
 
                 Case "Yearly"
-                    periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    ' Historical 5-year summary for cards
+                    periodFilter = $" WHERE YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
                 Case Else
                     periodFilter = "" ' All time
             End Select
+
+            ' If Yearly, also get previous year data for comparison
+            Dim prevYearRevenue As Decimal = 0
+            If Reports.SelectedPeriod = "Yearly" Then
+                Dim compareQuery As String = $"SELECT COALESCE(SUM(TotalAmount), 0) FROM orders WHERE YEAR(OrderDate) = {selectedYear - 1}"
+                Using cmdComp As New MySqlCommand(compareQuery, conn)
+                    prevYearRevenue = Convert.ToDecimal(cmdComp.ExecuteScalar())
+                End Using
+            End If
 
             ' Query to get statistics
             Dim statsQuery As String = $"
@@ -86,11 +105,22 @@ Public Class FormOrders
 
                         ' Update Total Revenue Card (Label6)
                         Dim totalRevenue As Decimal = Convert.ToDecimal(reader("TotalRevenue"))
-                        Label6.Text = totalRevenue.ToString("₱#,##0.00")
+                        Label6.Text = ChrW(&H20B1) & totalRevenue.ToString("#,##0.00")
 
                         ' Update Average Order Value Card (Label7)
                         Dim avgOrderValue As Decimal = Convert.ToDecimal(reader("AvgOrderValue"))
-                        Label7.Text = avgOrderValue.ToString("₱#,##0.00")
+                        Label7.Text = ChrW(&H20B1) & avgOrderValue.ToString("#,##0.00")
+
+                        ' If Yearly, show 5-yr summary note
+                        If Reports.SelectedPeriod = "Yearly" Then
+                            Label6.Text &= " (5-yr Total)"
+                            If prevYearRevenue > 0 Then
+                                Dim diff As Decimal = totalRevenue - prevYearRevenue
+                                Dim percent As Decimal = (diff / prevYearRevenue) * 100
+                                Dim sign As String = If(diff >= 0, "+", "")
+                                Label6.Text &= $" ({sign}{percent:N1}% YoY)"
+                            End If
+                        End If
 
                         ' Optional: Store counts for future use
                         Dim pendingCount As Integer = Convert.ToInt32(reader("PendingCount"))
@@ -104,8 +134,8 @@ Public Class FormOrders
         Catch ex As Exception
             ' If database fails, show default values
             Label4.Text = "0"
-            Label6.Text = "₱0.00"
-            Label7.Text = "₱0.00"
+            Label6.Text = ChrW(&H20B1) & "0.00"
+            Label7.Text = ChrW(&H20B1) & "0.00"
 
             MessageBox.Show($"Error loading statistics: {ex.Message}", "Warning",
                           MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -214,13 +244,12 @@ Public Class FormOrders
                 End If
 
                 If .Columns.Contains("Items") Then
-                    .Columns("Items").HeaderText = "Items"
                     .Columns("Items").FillWeight = 200
                 End If
 
                 If .Columns.Contains("TotalAmount") Then
                     .Columns("TotalAmount").HeaderText = "Total"
-                    .Columns("TotalAmount").DefaultCellStyle.Format = "₱#,##0"
+                    .Columns("TotalAmount").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
                     .Columns("TotalAmount").DefaultCellStyle.Font = New Font("Segoe UI", 9.5F, FontStyle.Bold)
                     .Columns("TotalAmount").Width = 100
                 End If
@@ -317,9 +346,20 @@ Public Class FormOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                 periodFilter = $" AND DATE(o.OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                ' Daily now implies "View Daily Breakdown for selected Month"
+                ' So we filter by Year AND Month, just like Monthly
+                If selectedMonth = 0 Then
+                    periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
+                Else
+                    periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
+                End If
             Case "Weekly"
-                 periodFilter = $" AND YEARWEEK(o.OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                ' Weekly now implies "View Weekly Breakdown for selected Month"
+                If selectedMonth = 0 Then
+                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
+                Else
+                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
+                End If
             Case "Monthly"
                 If selectedMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
@@ -328,7 +368,7 @@ Public Class FormOrders
                 End If
 
             Case "Yearly"
-                periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
+                periodFilter = $" AND YEAR(o.OrderDate) <= {selectedYear} AND YEAR(o.OrderDate) >= {selectedYear - 4} "
             Case "All Time"
                 periodFilter = ""
         End Select
@@ -346,10 +386,9 @@ Public Class FormOrders
                     WHERE OrderID = o.OrderID
                 ) AS Items,
                 o.TotalAmount,
-                COALESCE(p.PaymentMethod, 'Cash') AS PaymentMethod,
+                (SELECT COALESCE(PaymentMethod, 'Cash') FROM payments WHERE OrderID = o.OrderID LIMIT 1) AS PaymentMethod,
                 o.OrderStatus
             FROM orders o
-            LEFT JOIN payments p ON o.OrderID = p.OrderID
             WHERE 1=1
         "
 
@@ -373,19 +412,19 @@ Public Class FormOrders
     ' =======================================================================
     Public Sub RefreshData()
         Try
-             
-
             ' Reload statistics
             UpdateStatisticsFromDatabase()
 
-
-
-            ' Reload grid
+            ' Reload orders data
             LoadOrdersData(currentFilter, searchText)
 
-            ' Reload charts
+            ' Load breakdown data
+            LoadOrderBreakdownAsync()
+
+            ' Refresh charts
             LoadOrdersTrendChart()
             LoadCategoriesChart()
+
         Catch ex As Exception
             MessageBox.Show($"Error refreshing data: {ex.Message}", "Error",
                           MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -463,13 +502,26 @@ Public Class FormOrders
                 seriesTrend.Color = Color.FromArgb(100, 78, 115, 223) ' Semi-transparent blue
                 seriesTrend.BorderWidth = 3
                 seriesTrend.BorderColor = Color.FromArgb(78, 115, 223)
-                seriesTrend.MarkerStyle = MarkerStyle.Circle
-                seriesTrend.MarkerSize = 8
-                seriesTrend.MarkerColor = Color.White
-                seriesTrend.MarkerBorderColor = Color.FromArgb(78, 115, 223)
-                seriesTrend.MarkerBorderWidth = 2
+                seriesTrend.YAxisType = AxisType.Primary
+
+                Dim seriesRevenue As New Series("Revenue")
+                seriesRevenue.ChartType = SeriesChartType.Spline
+                seriesRevenue.Color = Color.FromArgb(249, 115, 22) ' Orange
+                seriesRevenue.BorderWidth = 3
+                seriesRevenue.YAxisType = AxisType.Secondary
+                seriesRevenue.MarkerStyle = MarkerStyle.Circle
 
                 .Series.Add(seriesTrend)
+                .Series.Add(seriesRevenue)
+
+                ' Configure Axis
+                .ChartAreas(0).AxisY.Title = "Orders"
+                .ChartAreas(0).AxisY2.Enabled = AxisEnabled.True
+                .ChartAreas(0).AxisY2.Title = "Revenue"
+                .ChartAreas(0).AxisY2.MajorGrid.Enabled = False
+                
+                If .Legends.Count = 0 Then .Legends.Add(New Legend("Default"))
+                .Legends(0).Docking = Docking.Top
             End With
 
             ' Configure Categories Chart (Orders By Type)
@@ -523,7 +575,8 @@ Public Class FormOrders
                 Case "Daily"
                     dateGrouping = "DATE_FORMAT(OrderDate, '%m/%d')"
                 Case "Weekly"
-                    dateGrouping = "CONCAT('Wk ', WEEK(OrderDate))"
+                    ' Done below in period filter section to include WHERE clause logic if needed, but here just format
+                    dateGrouping = "CONCAT('Week ', FLOOR((DAY(OrderDate) - 1) / 7) + 1)"
                 Case "Monthly"
                     dateGrouping = "DATE_FORMAT(OrderDate, '%b')"
                 Case "Yearly"
@@ -539,9 +592,18 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    periodFilter = $" WHERE DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
+                    If selectedMonth = 0 Then
+                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    Else
+                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                    End If
                 Case "Weekly"
-                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                    ' Filter by Month for Weekly view
+                    If selectedMonth = 0 Then
+                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    Else
+                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                    End If
                 Case "Monthly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
@@ -549,11 +611,15 @@ Public Class FormOrders
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
                 Case "Yearly"
-                    periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    ' Comparison: Last 5 years including selected year
+                    periodFilter = $" WHERE YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
             End Select
 
             Dim sql As String = $"
-                SELECT {dateGrouping} AS Period, COUNT(*) AS OrderCount
+                SELECT 
+                    {dateGrouping} AS Period, 
+                    COUNT(*) AS OrderCount,
+                    COALESCE(SUM(TotalAmount), 0) AS Revenue
                 FROM orders
                 {periodFilter}
                 GROUP BY {dateGrouping}
@@ -561,11 +627,17 @@ Public Class FormOrders
             "
 
             MonthlyChartOrder.Series("Orders").Points.Clear()
+            MonthlyChartOrder.Series("Revenue").Points.Clear()
 
             Using cmd As New MySqlCommand(sql, conn)
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
                     While reader.Read()
-                        MonthlyChartOrder.Series("Orders").Points.AddXY(reader("Period").ToString(), reader("OrderCount"))
+                        Dim period As String = reader("Period").ToString()
+                        Dim count As Integer = Convert.ToInt32(reader("OrderCount"))
+                        Dim rev As Decimal = Convert.ToDecimal(reader("Revenue"))
+
+                        MonthlyChartOrder.Series("Orders").Points.AddXY(period, count)
+                        MonthlyChartOrder.Series("Revenue").Points.AddXY(period, rev)
                     End While
                 End Using
             End Using
@@ -581,12 +653,6 @@ Public Class FormOrders
     ' =======================================================================
     ' LOAD CATEGORIES CHART -> ORDERS BY TYPE (COLUMN CHART)
     ' =======================================================================
-    ' =======================================================================
-    ' LOAD CATEGORIES CHART -> ORDERS BY TYPE (COLUMN CHART) - FIXED
-    ' =======================================================================
-    ' =======================================================================
-    ' LOAD CATEGORIES CHART -> ORDERS BY TYPE (COLUMN CHART) - FIXED
-    ' =======================================================================
     Private Sub LoadCategoriesChart()
         Try
             If conn.State <> ConnectionState.Open Then openConn()
@@ -597,10 +663,12 @@ Public Class FormOrders
             Dim selectedMonth As Integer = Reports.SelectedMonth
 
             Select Case Reports.SelectedPeriod
-                Case "Daily"
-                    periodFilter = $" WHERE DATE(OrderDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}' "
-                Case "Weekly"
-                    periodFilter = $" WHERE YEARWEEK(OrderDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1) "
+                Case "Daily", "Weekly"
+                    If selectedMonth = 0 Then
+                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    Else
+                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                    End If
                 Case "Monthly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
@@ -608,97 +676,278 @@ Public Class FormOrders
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
                 Case "Yearly"
-                    periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                    periodFilter = $" WHERE YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
                 Case Else
                     periodFilter = "" ' All time - no filter
             End Select
 
-            ' FIXED: Removed the "AND" prefix and changed to proper WHERE clause
-            Dim sql As String = $"
-            SELECT OrderType, COUNT(*) AS Count
+            ' DEBUG: First, let's see what's actually in the database
+            Dim debugSql As String = $"
+            SELECT OrderType, OrderSource, COUNT(*) AS Count
             FROM orders
             {periodFilter}
-            GROUP BY OrderType
-            ORDER BY OrderType
+            GROUP BY OrderType, OrderSource
         "
 
-            ' Initialize counts with 0 - ensures all types show even if no data
-            Dim typeCounts As New Dictionary(Of String, Integer) From {
-            {"Dine-In", 0},
-            {"Takeout", 0},
-            {"Reservation", 0}
-        }
-
-            Using cmd As New MySqlCommand(sql, conn)
-                Using reader As MySqlDataReader = cmd.ExecuteReader()
-                    While reader.Read()
-                        Dim rawType As String = reader("OrderType").ToString().Trim()
-                        Dim count As Integer = Convert.ToInt32(reader("Count"))
-                        Dim key As String = ""
-
-                        ' Normalize keys - handle various spellings
-                        If rawType.Equals("Dine-In", StringComparison.OrdinalIgnoreCase) OrElse
-                       rawType.Equals("Dine In", StringComparison.OrdinalIgnoreCase) OrElse
-                       rawType.Equals("DineIn", StringComparison.OrdinalIgnoreCase) Then
-                            key = "Dine-In"
-                        ElseIf rawType.Equals("Takeout", StringComparison.OrdinalIgnoreCase) OrElse
-                           rawType.Equals("Take Out", StringComparison.OrdinalIgnoreCase) OrElse
-                           rawType.Equals("Take-Out", StringComparison.OrdinalIgnoreCase) Then
-                            key = "Takeout"
-                        ElseIf rawType.Equals("Reservation", StringComparison.OrdinalIgnoreCase) OrElse
-                           rawType.Equals("Online", StringComparison.OrdinalIgnoreCase) Then
-                            key = "Reservation"
-                        End If
-
-                        ' Add count to the correct category
-                        If Not String.IsNullOrEmpty(key) AndAlso typeCounts.ContainsKey(key) Then
-                            typeCounts(key) += count
-                        End If
+            Debug.WriteLine("=== DEBUG: Order Type Distribution ===")
+            Using debugCmd As New MySqlCommand(debugSql, conn)
+                Using debugReader As MySqlDataReader = debugCmd.ExecuteReader()
+                    While debugReader.Read()
+                        Debug.WriteLine($"OrderType: {debugReader("OrderType")}, OrderSource: {debugReader("OrderSource")}, Count: {debugReader("Count")}")
                     End While
                 End Using
             End Using
 
-            ' Bind to Chart with proper color coding
-            With OrderCategoriesGraph.Series("OrderTypes")
-                .Points.Clear()
+            ' Main query - Group by Year and OrderType for comparison
+            Dim sql As String = ""
+            If Reports.SelectedPeriod = "Yearly" Then
+                sql = $"
+                    SELECT 
+                        YEAR(OrderDate) AS StatYear,
+                        TRIM(OrderType) AS OrderType, 
+                        COUNT(*) AS Count
+                    FROM orders
+                    {periodFilter}
+                    GROUP BY YEAR(OrderDate), TRIM(OrderType)
+                    ORDER BY YEAR(OrderDate) ASC, OrderType ASC
+                "
+            Else
+                sql = $"
+                    SELECT 
+                        TRIM(OrderType) AS OrderType, 
+                        COUNT(*) AS Count
+                    FROM orders
+                    {periodFilter}
+                    GROUP BY TRIM(OrderType)
+                    ORDER BY OrderType ASC
+                "
+            End If
 
-                ' Dine-In (Purple/Blue)
-                Dim idx1 As Integer = .Points.AddXY("Dine-In", typeCounts("Dine-In"))
-                .Points(idx1).Color = Color.FromArgb(88, 86, 214) ' Purple-ish Blue
-                .Points(idx1).Label = typeCounts("Dine-In").ToString() ' Show count on bar
+            ' Bind to Chart
+            OrderCategoriesGraph.Series.Clear()
 
-                ' Takeout (Green)
-                Dim idx2 As Integer = .Points.AddXY("Takeout", typeCounts("Takeout"))
-                .Points(idx2).Color = Color.FromArgb(149, 209, 36) ' Lime Green
-                .Points(idx2).Label = typeCounts("Takeout").ToString()
+            If Reports.SelectedPeriod = "Yearly" Then
+                ' Yearly Comparison View (5 years)
+                Dim years As New List(Of Integer)
+                For i As Integer = 0 To 4
+                    years.Add(selectedYear - (4 - i))
+                Next
+                
+                For Each yr In years
+                    Dim seriesName As String = yr.ToString()
+                    Dim series = New Series(seriesName)
+                    series.ChartType = SeriesChartType.Column
+                    series("PointWidth") = "0.4"
+                    OrderCategoriesGraph.Series.Add(series)
 
-                ' Reservation (Orange)
-                Dim idx3 As Integer = .Points.AddXY("Reservation", typeCounts("Reservation"))
-                .Points(idx3).Color = Color.FromArgb(255, 149, 0) ' Orange
-                .Points(idx3).Label = typeCounts("Reservation").ToString()
-            End With
+                    ' Fill data for this year
+                    Dim typeCounts As New Dictionary(Of String, Integer) From {
+                        {"Dine-in", 0},
+                        {"Takeout", 0},
+                        {"Online", 0}
+                    }
+
+                    Using cmd As New MySqlCommand(sql, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                If Not IsDBNull(reader("StatYear")) AndAlso Convert.ToInt32(reader("StatYear")) = yr Then
+                                    Dim orderType As String = reader("OrderType").ToString()
+                                    Dim count As Integer = Convert.ToInt32(reader("Count"))
+
+                                    If typeCounts.ContainsKey(orderType) Then
+                                        typeCounts(orderType) = count
+                                    Else
+                                        For Each key In typeCounts.Keys.ToList()
+                                            If String.Equals(key, orderType, StringComparison.OrdinalIgnoreCase) Then
+                                                typeCounts(key) = count
+                                                Exit For
+                                            End If
+                                        Next
+                                    End If
+                                End If
+                            End While
+                        End Using
+                    End Using
+
+                    ' Add points to this series
+                    For Each kvp In typeCounts.OrderBy(Function(x) x.Key)
+                        Dim idx As Integer = series.Points.AddXY(kvp.Key, kvp.Value)
+                        
+                        Dim baseColor As Color
+                        Select Case kvp.Key
+                            Case "Dine-in" : baseColor = Color.FromArgb(88, 86, 214)
+                            Case "Takeout" : baseColor = Color.FromArgb(149, 209, 36)
+                            Case "Online" : baseColor = Color.FromArgb(255, 149, 0)
+                            Case Else : baseColor = Color.FromArgb(128, 128, 128)
+                        End Select
+
+                        If yr <> Reports.SelectedYear Then
+                            series.Points(idx).Color = Color.FromArgb(100 + (20 * years.IndexOf(yr)), baseColor.R, baseColor.G, baseColor.B)
+                        Else
+                            series.Points(idx).Color = baseColor
+                        End If
+
+                        series.Points(idx).Label = kvp.Value.ToString()
+                        series.Points(idx).Font = New Font("Segoe UI", 9, FontStyle.Bold)
+                    Next
+                Next
+
+                If OrderCategoriesGraph.Legends.Count = 0 Then
+                    Dim lgd As New Legend("Default")
+                    lgd.Docking = Docking.Bottom
+                    OrderCategoriesGraph.Legends.Add(lgd)
+                End If
+                OrderCategoriesGraph.Titles(0).Text = $"Order Type Distribution ({selectedYear - 4} - {selectedYear})"
+
+            Else
+                ' Standard View (Single series)
+                Dim seriesType As New Series("OrderTypes")
+                seriesType.ChartType = SeriesChartType.Column
+                seriesType("PointWidth") = "0.4"
+                OrderCategoriesGraph.Series.Add(seriesType)
+
+                Dim typeCounts As New Dictionary(Of String, Integer) From {
+                    {"Dine-in", 0},
+                    {"Takeout", 0},
+                    {"Online", 0}
+                }
+
+                Using cmd As New MySqlCommand(sql, conn)
+                    Using reader As MySqlDataReader = cmd.ExecuteReader()
+                        While reader.Read()
+                            If Not IsDBNull(reader("OrderType")) Then
+                                Dim orderType As String = reader("OrderType").ToString()
+                                Dim count As Integer = Convert.ToInt32(reader("Count"))
+
+                                If typeCounts.ContainsKey(orderType) Then
+                                    typeCounts(orderType) = count
+                                Else
+                                    For Each key In typeCounts.Keys.ToList()
+                                        If String.Equals(key, orderType, StringComparison.OrdinalIgnoreCase) Then
+                                            typeCounts(key) = count
+                                            Exit For
+                                        End If
+                                    Next
+                                End If
+                            End If
+                        End While
+                    End Using
+                End Using
+
+                With seriesType
+                    .Points.Clear()
+                    For Each kvp In typeCounts.OrderBy(Function(x) x.Key)
+                        Dim idx As Integer = .Points.AddXY(kvp.Key, kvp.Value)
+                        Select Case kvp.Key
+                            Case "Dine-in" : .Points(idx).Color = Color.FromArgb(88, 86, 214)
+                            Case "Takeout" : .Points(idx).Color = Color.FromArgb(149, 209, 36)
+                            Case "Online" : .Points(idx).Color = Color.FromArgb(255, 149, 0)
+                            Case Else : .Points(idx).Color = Color.FromArgb(128, 128, 128)
+                        End Select
+                        .Points(idx).Label = kvp.Value.ToString()
+                        .Points(idx).LabelForeColor = Color.FromArgb(50, 50, 50)
+                        .Points(idx).Font = New Font("Segoe UI", 10, FontStyle.Bold)
+                    Next
+                End With
+                
+                If OrderCategoriesGraph.Legends.Count > 0 Then OrderCategoriesGraph.Legends.Clear()
+                OrderCategoriesGraph.Titles(0).Text = "Orders by Type"
+            End If
+
+            ' Force chart refresh
+            OrderCategoriesGraph.Invalidate()
 
         Catch ex As Exception
-            ' Fallback Sample Data - only if database completely fails
-            With OrderCategoriesGraph.Series("OrderTypes")
-                .Points.Clear()
-
-                Dim idx1 As Integer = .Points.AddXY("Dine-In", 0)
-                .Points(idx1).Color = Color.FromArgb(88, 86, 214)
-                .Points(idx1).Label = "0"
-
-                Dim idx2 As Integer = .Points.AddXY("Takeout", 0)
-                .Points(idx2).Color = Color.FromArgb(149, 209, 36)
-                .Points(idx2).Label = "0"
-
-                Dim idx3 As Integer = .Points.AddXY("Reservation", 0)
-                .Points(idx3).Color = Color.FromArgb(255, 149, 0)
-                .Points(idx3).Label = "0"
-            End With
-
-            ' Optional: Log the error for debugging
-            Console.WriteLine($"Error loading categories chart: {ex.Message}")
+            Debug.WriteLine($"Chart Error: {ex.Message}")
+            ' Safe Fallback
+            If OrderCategoriesGraph.Series.IndexOf("OrderTypes") <> -1 Then
+                With OrderCategoriesGraph.Series("OrderTypes")
+                    .Points.Clear()
+                    Dim idx1 As Integer = .Points.AddXY("Dine-in", 0)
+                    .Points(idx1).Color = Color.FromArgb(88, 86, 214)
+                    .Points(idx1).Label = "0"
+                End With
+            End If
         End Try
     End Sub
 
+    ' =======================================================================
+    ' LOAD ORDER BREAKDOWN ASYNC
+    ' =======================================================================
+    Private Async Sub LoadOrderBreakdownAsync()
+        Try
+            Dim dt As New DataTable()
+            Dim selectedPeriod As String = Reports.SelectedPeriod
+            Dim selectedYear As Integer = Reports.SelectedYear
+            Dim selectedMonth As Integer = Reports.SelectedMonth
+
+            Await System.Threading.Tasks.Task.Run(Sub()
+                                                      Try
+                                                          If conn.State <> ConnectionState.Open Then openConn()
+                                                          Dim query As String = ""
+                                                          Dim params As New List(Of MySqlParameter)
+
+                                                          Select Case selectedPeriod
+                                                              Case "Daily"
+                                                                  query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
+                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                              Case "Weekly"
+                                                                  ' Week of Month Logic
+                                                                  query = "SELECT CONCAT('Week ', FLOOR((DAY(OrderDate) - 1) / 7) + 1) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY Period ORDER BY Period DESC"
+                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                              Case "Monthly"
+                                                                  query = "SELECT DATE_FORMAT(OrderDate, '%M') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY MONTH(OrderDate) DESC"
+                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
+                                                              Case "Yearly"
+                                                                  query = "SELECT YEAR(OrderDate) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) <= @Year AND YEAR(OrderDate) >= @Year - 4 GROUP BY YEAR(OrderDate) ORDER BY Period DESC"
+                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
+                                                          End Select
+
+                                                          If Not String.IsNullOrEmpty(query) Then
+                                                              Using cmd As New MySqlCommand(query, conn)
+                                                                  cmd.Parameters.AddRange(params.ToArray())
+                                                                  Using adapter As New MySqlDataAdapter(cmd)
+                                                                      adapter.Fill(dt)
+                                                                  End Using
+                                                              End Using
+                                                          End If
+                                                      Catch
+                                                      End Try
+                                                  End Sub)
+
+            If DataGridViewBreakdown IsNot Nothing Then
+                DataGridViewBreakdown.DataSource = dt
+                FormatBreakdownDataGridView()
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    Private Sub FormatBreakdownDataGridView()
+        Try
+            With DataGridViewBreakdown
+                .ReadOnly = True
+                .AllowUserToAddRows = False
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                .RowHeadersVisible = False
+                .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 9.5F, FontStyle.Bold)
+                .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
+                .AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 250)
+
+                If .Columns.Contains("Period") Then .Columns("Period").HeaderText = "Time Period"
+                If .Columns.Contains("OrderCount") Then .Columns("OrderCount").HeaderText = "Orders"
+                If .Columns.Contains("TotalRevenue") Then
+                    .Columns("TotalRevenue").HeaderText = "Revenue"
+                    .Columns("TotalRevenue").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
+                End If
+                If .Columns.Contains("AvgValue") Then
+                    .Columns("AvgValue").HeaderText = "Avg Value"
+                    .Columns("AvgValue").DefaultCellStyle.Format = ChrW(&H20B1) & "#,##0.00"
+                End If
+            End With
+        Catch
+        End Try
+    End Sub
 End Class

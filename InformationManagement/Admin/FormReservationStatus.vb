@@ -131,6 +131,10 @@ Public Class FormReservationStatus
                 openConn()
             End If
 
+            filterPeriod = Reports.SelectedPeriod
+            Dim selectedYear As Integer = Reports.SelectedYear
+            If selectedYear = 0 Then selectedYear = DateTime.Now.Year
+
             Dim dateFilter As String = GetDateFilter()
 
             ' Get reservation counts by status
@@ -146,44 +150,58 @@ Public Class FormReservationStatus
                 End If
             End If
 
-            ' Get reservation counts by status
-            Dim sql As String = $"
-                SELECT 
-                    ReservationStatus,
-                    COUNT(*) AS StatusCount
-                FROM reservations
-                WHERE {dateFilter} {sourceFilter}
-                GROUP BY ReservationStatus
-            "
+            ' Get reservation counts
+            Dim sql As String = ""
+            If filterPeriod = "Yearly" Then
+                ' Multi-year trend: Count by Year
+                sql = $"
+                    SELECT 
+                        YEAR(EventDate) AS Period,
+                        COUNT(*) AS StatusCount
+                    FROM reservations
+                    WHERE YEAR(EventDate) <= {selectedYear} AND YEAR(EventDate) >= {selectedYear - 4}
+                    {sourceFilter}
+                    GROUP BY YEAR(EventDate)
+                    ORDER BY YEAR(EventDate) ASC
+                "
+            Else
+                ' Breakdown by Status for other periods
+                sql = $"
+                    SELECT 
+                        ReservationStatus AS Period,
+                        COUNT(*) AS StatusCount
+                    FROM reservations
+                    WHERE {dateFilter} {sourceFilter}
+                    GROUP BY ReservationStatus
+                "
+            End If
 
             Using cmd As New MySqlCommand(sql, conn)
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
-                    ' Clear existing data
+                    ' Initialize defaults
                     reservationData.Clear()
-
-                    ' Initialize with zeros
-                    reservationData("Pending") = 0
-                    reservationData("Confirmed") = 0
-                    reservationData("Cancelled") = 0
-                    reservationData("Completed") = 0 ' New Status
+                    If filterPeriod <> "Yearly" Then
+                        reservationData("Pending") = 0
+                        reservationData("Confirmed") = 0
+                        reservationData("Cancelled") = 0
+                        reservationData("Completed") = 0
+                    End If
 
                     ' Load actual data
                     While reader.Read()
-                        Dim status As String = If(IsDBNull(reader("ReservationStatus")), "Unknown", reader("ReservationStatus").ToString())
+                        Dim key As String = reader("Period").ToString()
                         Dim count As Integer = Convert.ToInt32(reader("StatusCount"))
-
-                        If reservationData.ContainsKey(status) Then
-                            reservationData(status) = count
-                            ' If unexpected status, ignore or log?
-                        ElseIf status = "Completed" Then
-                            reservationData("Completed") = count
-                        End If
+                        reservationData(key) = count
                     End While
                 End Using
             End Using
 
             ' Update UI with data
-            UpdateStatisticsCards()
+            If filterPeriod = "Yearly" Then
+                UpdateYearlyStatistics(selectedYear)
+            Else
+                UpdateStatisticsCards()
+            End If
             UpdateChart()
 
             ' Update Title with context
@@ -192,12 +210,12 @@ Public Class FormReservationStatus
                 periodText = $"Report for {Reports.GlobalFilterDate:MMM dd, yyyy}"
             ElseIf filterPeriod = "Monthly" Then
                 If Reports.SelectedMonth > 0 Then
-                    periodText = $"Report for {System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Reports.SelectedMonth)} {currentYear}"
+                    periodText = $"Report for {System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Reports.SelectedMonth)} {selectedYear}"
                 Else
-                    periodText = $"Report for Year {currentYear}"
+                    periodText = $"Report for Year {selectedYear}"
                 End If
             ElseIf filterPeriod = "Yearly" Then
-                periodText = $"Report for Year {currentYear}"
+                periodText = $"Summary Throughout the Years ({selectedYear - 4}-{selectedYear})"
             End If
 
             Label4.Text = $"Reservation Status Breakdown - {periodText}"
@@ -236,16 +254,9 @@ Public Class FormReservationStatus
 
         Dim selectedMonth As Integer = Reports.SelectedMonth
 
-
         Select Case filterPeriod
-            Case "Daily"
-                filter = $"DATE(EventDate) = '{Reports.GlobalFilterDate:yyyy-MM-dd}'"
-
-            Case "Weekly"
-                filter = $"YEARWEEK(EventDate, 1) = YEARWEEK('{Reports.GlobalFilterDate:yyyy-MM-dd}', 1)"
-
-
-            Case "Monthly"
+            Case "Daily", "Weekly", "Monthly"
+                ' All three now use the Month Scope logic
                 If selectedMonth = 0 Then
                     filter = $"YEAR(EventDate) = {selectedYear}"
                 Else
@@ -261,6 +272,48 @@ Public Class FormReservationStatus
 
         Return filter
     End Function
+
+    ' Special update for Yearly view (multi-year)
+    Private Sub UpdateYearlyStatistics(selectedYear As Integer)
+        Try
+            ' Get current year stats
+            Dim currYearCount As Integer = 0
+            Dim prevYearCount As Integer = 0
+            
+            ' Query current year
+            Dim sqlCurr = $"SELECT COUNT(*) FROM reservations WHERE YEAR(EventDate) = {selectedYear}"
+            Using cmd As New MySqlCommand(sqlCurr, conn)
+                currYearCount = Convert.ToInt32(cmd.ExecuteScalar())
+            End Using
+
+            ' Query previous year
+            Dim sqlPrev = $"SELECT COUNT(*) FROM reservations WHERE YEAR(EventDate) = {selectedYear - 1}"
+            Using cmd As New MySqlCommand(sqlPrev, conn)
+                prevYearCount = Convert.ToInt32(cmd.ExecuteScalar())
+            End Using
+
+            lblTotalReservations.Text = currYearCount.ToString()
+            
+            If prevYearCount > 0 Then
+                Dim diff As Decimal = currYearCount - prevYearCount
+                Dim percent As Decimal = (diff / prevYearCount) * 100
+                Dim sign As String = If(diff >= 0, "+", "")
+                lblTotalReservations.Text &= $" ({sign}{percent:N1}%)"
+            End If
+
+            ' Hide other labels or set to N/A for yearly multi-summary 
+            ' or we can fetch their breakdowns too but let's keep it clean
+            lblPending.Text = "-"
+            lblConfirmed.Text = "-"
+            lblCancelled.Text = "-"
+            Label3.Text = "Awaiting Confirmation"
+            Label5.Text = "Confirmed & Completed"
+            Label7.Text = "Cancellations"
+
+        Catch ex As Exception
+            ' Silent fail
+        End Try
+    End Sub
 
     ' =======================================================================
     ' UPDATE STATISTICS CARDS
@@ -319,7 +372,25 @@ Public Class FormReservationStatus
         Try
             Chart1.Series("ReservationStatus").Points.Clear()
 
-            Dim pending As Integer = reservationData("Pending")
+            If filterPeriod = "Yearly" Then
+                ' Change to Column chart for trend
+                Chart1.Series("ReservationStatus").ChartType = SeriesChartType.Column
+                Chart1.Series("ReservationStatus")("PieLabelStyle") = Nothing
+                Chart1.ChartAreas(0).Area3DStyle.Enable3D = False
+                
+                For Each kvp In reservationData
+                    Dim point = Chart1.Series("ReservationStatus").Points.AddXY(kvp.Key, kvp.Value)
+                    Chart1.Series("ReservationStatus").Points(point).Color = Color.FromArgb(59, 130, 246) ' Blue
+                Next
+                Return
+            End If
+
+            ' Restore Pie chart for non-yearly
+            Chart1.Series("ReservationStatus").ChartType = SeriesChartType.Pie
+            Chart1.Series("ReservationStatus")("PieLabelStyle") = "Inside"
+            Chart1.ChartAreas(0).Area3DStyle.Enable3D = True
+            
+            Dim pending As Integer = If(reservationData.ContainsKey("Pending"), reservationData("Pending"), 0)
             Dim confirmed As Integer = reservationData("Confirmed")
             Dim completed As Integer = If(reservationData.ContainsKey("Completed"), reservationData("Completed"), 0)
             Dim cancelled As Integer = reservationData("Cancelled")
