@@ -28,7 +28,7 @@ Partial Class Feedback
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.txtSearch = New InformationManagement.RoundedPane2()
         Me.TextBoxSearch = New System.Windows.Forms.TextBox()
-        Me.btnExport = New System.Windows.Forms.Button()
+
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.btnViewDetails = New System.Windows.Forms.Button()
         Me.btnRefresh = New System.Windows.Forms.Button()
@@ -82,7 +82,7 @@ Partial Class Feedback
         '
         Me.Panel2.BackColor = System.Drawing.Color.GhostWhite
         Me.Panel2.Controls.Add(Me.txtSearch)
-        Me.Panel2.Controls.Add(Me.btnExport)
+
         Me.Panel2.Controls.Add(Me.btnDelete)
         Me.Panel2.Controls.Add(Me.btnViewDetails)
         Me.Panel2.Controls.Add(Me.btnRefresh)
@@ -119,21 +119,7 @@ Partial Class Feedback
         Me.TextBoxSearch.Size = New System.Drawing.Size(250, 18)
         Me.TextBoxSearch.TabIndex = 0
         Me.TextBoxSearch.Text = "Search feedback..."
-        '
-        'btnExport
-        '
-        Me.btnExport.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(123, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.btnExport.FlatAppearance.BorderSize = 0
-        Me.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExport.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnExport.ForeColor = System.Drawing.Color.White
-        Me.btnExport.Location = New System.Drawing.Point(1035, 12)
-        Me.btnExport.Name = "btnExport"
-        Me.btnExport.Size = New System.Drawing.Size(105, 35)
-        Me.btnExport.TabIndex = 5
-        Me.btnExport.Text = "Export to CSV"
-        Me.btnExport.UseVisualStyleBackColor = False
-        '
+
         'btnDelete
         '
         Me.btnDelete.BackColor = System.Drawing.Color.FromArgb(CType(CType(220, Byte), Integer), CType(CType(53, Byte), Integer), CType(CType(69, Byte), Integer))
@@ -458,7 +444,7 @@ Partial Class Feedback
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Panel4 As Panel
     Friend WithEvents lblTotalReviews As Label
-    Friend WithEvents btnExport As Button
+
     Friend WithEvents btnFirstPage As Button
     Friend WithEvents btnPrevPage As Button
     Friend WithEvents btnNextPage As Button

@@ -709,38 +709,5 @@ Public Class Feedback
         End If
     End Sub
 
-    ' Export to CSV
-    Private Sub btnExport_Click(sender As Object, e As EventArgs) Handles btnExport.Click
-        Try
-            Dim saveFileDialog As New SaveFileDialog()
-            saveFileDialog.Filter = "CSV Files (*.csv)|*.csv"
-            saveFileDialog.FileName = "Feedback_Export_" & DateTime.Now.ToString("yyyyMMdd") & ".csv"
 
-            If saveFileDialog.ShowDialog() = DialogResult.OK Then
-                Using writer As New IO.StreamWriter(saveFileDialog.FileName)
-                    ' Write headers
-                    For i As Integer = 0 To dt.Columns.Count - 1
-                        writer.Write(dt.Columns(i).ColumnName)
-                        If i < dt.Columns.Count - 1 Then writer.Write(",")
-                    Next
-                    writer.WriteLine()
-
-                    ' Write data
-                    For Each row As DataRow In dt.Rows
-                        For i As Integer = 0 To dt.Columns.Count - 1
-                            Dim itemValue As String = row(i).ToString().Replace(",", ";")
-                            writer.Write(itemValue)
-                            If i < dt.Columns.Count - 1 Then writer.Write(",")
-                        Next
-                        writer.WriteLine()
-                    Next
-                End Using
-
-                MessageBox.Show("Feedback exported successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show("Export error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-    End Sub
 End Class
