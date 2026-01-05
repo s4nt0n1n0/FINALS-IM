@@ -75,7 +75,7 @@ Partial Class FormProductPerformance
         'RoundedPane21
         '
         Me.RoundedPane21.AutoScroll = True
-        Me.RoundedPane21.BorderColor = System.Drawing.Color.FromArgb(CType(CType(230, Byte), Integer), CType(CType(230, Byte), Integer), CType(CType(240, Byte), Integer))
+        Me.RoundedPane21.BorderColor = System.Drawing.Color.Empty
         Me.RoundedPane21.BorderThickness = 1
         Me.RoundedPane21.Controls.Add(Me.RoundedPane28)
         Me.RoundedPane21.Controls.Add(Me.RoundedPane27)
@@ -86,11 +86,11 @@ Partial Class FormProductPerformance
         Me.RoundedPane21.Controls.Add(Me.RoundedPane23)
         Me.RoundedPane21.Controls.Add(Me.Label1)
         Me.RoundedPane21.CornerRadius = 20
-        Me.RoundedPane21.FillColor = System.Drawing.Color.White
+        Me.RoundedPane21.FillColor = System.Drawing.Color.GhostWhite
         Me.RoundedPane21.ForeColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(41, Byte), Integer), CType(CType(59, Byte), Integer))
-        Me.RoundedPane21.Location = New System.Drawing.Point(-6, -35)
+        Me.RoundedPane21.Location = New System.Drawing.Point(12, 12)
         Me.RoundedPane21.Name = "RoundedPane21"
-        Me.RoundedPane21.Size = New System.Drawing.Size(1256, 690)
+        Me.RoundedPane21.Size = New System.Drawing.Size(1226, 643)
         Me.RoundedPane21.TabIndex = 0
         '
         'RoundedPane28
@@ -125,7 +125,7 @@ Partial Class FormProductPerformance
         Legend1.Enabled = False
         Legend1.Name = "Legend1"
         Me.Chart1.Legends.Add(Legend1)
-        Me.Chart1.Location = New System.Drawing.Point(9, 11)
+        Me.Chart1.Location = New System.Drawing.Point(10, 11)
         Me.Chart1.Name = "Chart1"
         Me.Chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None
         Series1.BorderWidth = 0
@@ -137,7 +137,7 @@ Partial Class FormProductPerformance
         Series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.[String]
         Series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int64
         Me.Chart1.Series.Add(Series1)
-        Me.Chart1.Size = New System.Drawing.Size(1175, 356)
+        Me.Chart1.Size = New System.Drawing.Size(1167, 353)
         Me.Chart1.TabIndex = 0
         Me.Chart1.Text = "Chart1"
         Title1.Alignment = System.Drawing.ContentAlignment.TopLeft
@@ -156,10 +156,10 @@ Partial Class FormProductPerformance
         Me.RoundedPane27.Controls.Add(Me.Label13)
         Me.RoundedPane27.Controls.Add(Me.PictureBox6)
         Me.RoundedPane27.CornerRadius = 15
-        Me.RoundedPane27.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.RoundedPane27.Location = New System.Drawing.Point(707, 76)
+        Me.RoundedPane27.FillColor = System.Drawing.Color.White
+        Me.RoundedPane27.Location = New System.Drawing.Point(844, 76)
         Me.RoundedPane27.Name = "RoundedPane27"
-        Me.RoundedPane27.Size = New System.Drawing.Size(320, 77)
+        Me.RoundedPane27.Size = New System.Drawing.Size(375, 77)
         Me.RoundedPane27.TabIndex = 12
         '
         'Label12
@@ -205,10 +205,10 @@ Partial Class FormProductPerformance
         Me.RoundedPane26.Controls.Add(Me.Label11)
         Me.RoundedPane26.Controls.Add(Me.PictureBox5)
         Me.RoundedPane26.CornerRadius = 15
-        Me.RoundedPane26.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.RoundedPane26.Location = New System.Drawing.Point(707, 170)
+        Me.RoundedPane26.FillColor = System.Drawing.Color.White
+        Me.RoundedPane26.Location = New System.Drawing.Point(844, 170)
         Me.RoundedPane26.Name = "RoundedPane26"
-        Me.RoundedPane26.Size = New System.Drawing.Size(320, 77)
+        Me.RoundedPane26.Size = New System.Drawing.Size(375, 77)
         Me.RoundedPane26.TabIndex = 15
         '
         'Label10
@@ -254,10 +254,10 @@ Partial Class FormProductPerformance
         Me.RoundedPane25.Controls.Add(Me.Label9)
         Me.RoundedPane25.Controls.Add(Me.PictureBox4)
         Me.RoundedPane25.CornerRadius = 15
-        Me.RoundedPane25.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.RoundedPane25.Location = New System.Drawing.Point(365, 170)
+        Me.RoundedPane25.FillColor = System.Drawing.Color.White
+        Me.RoundedPane25.Location = New System.Drawing.Point(431, 170)
         Me.RoundedPane25.Name = "RoundedPane25"
-        Me.RoundedPane25.Size = New System.Drawing.Size(320, 77)
+        Me.RoundedPane25.Size = New System.Drawing.Size(375, 77)
         Me.RoundedPane25.TabIndex = 14
         '
         'Label8
@@ -303,10 +303,10 @@ Partial Class FormProductPerformance
         Me.RoundedPane24.Controls.Add(Me.Label7)
         Me.RoundedPane24.Controls.Add(Me.PictureBox3)
         Me.RoundedPane24.CornerRadius = 15
-        Me.RoundedPane24.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.RoundedPane24.Location = New System.Drawing.Point(365, 76)
+        Me.RoundedPane24.FillColor = System.Drawing.Color.White
+        Me.RoundedPane24.Location = New System.Drawing.Point(431, 76)
         Me.RoundedPane24.Name = "RoundedPane24"
-        Me.RoundedPane24.Size = New System.Drawing.Size(320, 77)
+        Me.RoundedPane24.Size = New System.Drawing.Size(375, 77)
         Me.RoundedPane24.TabIndex = 13
         '
         'Label6
@@ -352,10 +352,10 @@ Partial Class FormProductPerformance
         Me.RoundedPane22.Controls.Add(Me.Label5)
         Me.RoundedPane22.Controls.Add(Me.PictureBox1)
         Me.RoundedPane22.CornerRadius = 15
-        Me.RoundedPane22.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.RoundedPane22.FillColor = System.Drawing.Color.White
         Me.RoundedPane22.Location = New System.Drawing.Point(21, 170)
         Me.RoundedPane22.Name = "RoundedPane22"
-        Me.RoundedPane22.Size = New System.Drawing.Size(320, 77)
+        Me.RoundedPane22.Size = New System.Drawing.Size(375, 77)
         Me.RoundedPane22.TabIndex = 12
         '
         'Label4
@@ -401,10 +401,10 @@ Partial Class FormProductPerformance
         Me.RoundedPane23.Controls.Add(Me.Label2)
         Me.RoundedPane23.Controls.Add(Me.PictureBox2)
         Me.RoundedPane23.CornerRadius = 15
-        Me.RoundedPane23.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
+        Me.RoundedPane23.FillColor = System.Drawing.Color.White
         Me.RoundedPane23.Location = New System.Drawing.Point(21, 76)
         Me.RoundedPane23.Name = "RoundedPane23"
-        Me.RoundedPane23.Size = New System.Drawing.Size(320, 77)
+        Me.RoundedPane23.Size = New System.Drawing.Size(375, 77)
         Me.RoundedPane23.TabIndex = 11
         '
         'Label3
