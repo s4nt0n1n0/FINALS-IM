@@ -21,7 +21,7 @@ Public Class FormOrders
             LoadOrdersData() ' Ensure Grid structure is initialized first
             InitializeCharts()
             RefreshData()
-            
+
             isInitializing = False
 
             isInitializing = False
@@ -47,17 +47,12 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    If selectedMonth = 0 Then
-                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
-                    Else
-                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
-                    End If
+                    periodFilter = " WHERE DATE(OrderDate) = @filterDate "
                 Case "Weekly"
-                    ' Weekly now implies "View Weekly Breakdown for selected Month"
                     If selectedMonth = 0 Then
-                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
+                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
                     Else
-                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
+                        periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
                 Case "Monthly"
                     If selectedMonth = 0 Then
@@ -65,12 +60,10 @@ Public Class FormOrders
                     Else
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
-
                 Case "Yearly"
-                    ' Historical 5-year summary for cards
                     periodFilter = $" WHERE YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
                 Case Else
-                    periodFilter = "" ' All time
+                    periodFilter = ""
             End Select
 
             ' If Yearly, also get previous year data for comparison
@@ -97,6 +90,7 @@ Public Class FormOrders
             "
 
             Using cmd As New MySqlCommand(statsQuery, conn)
+                cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
                     If reader.Read() Then
                         ' Update Total Orders Card (Label4)
@@ -170,6 +164,7 @@ Public Class FormOrders
             Dim sql As String = BuildOrdersQuery(filterStatus, search)
 
             Using cmd As New MySqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                 Using adapter As New MySqlDataAdapter(cmd)
                     ordersData.Clear()
                     adapter.Fill(ordersData)
@@ -346,19 +341,12 @@ Public Class FormOrders
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                ' Daily now implies "View Daily Breakdown for selected Month"
-                ' So we filter by Year AND Month, just like Monthly
+                periodFilter = " AND DATE(o.OrderDate) = @filterDate "
+            Case "Weekly"
                 If selectedMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
-                End If
-            Case "Weekly"
-                ' Weekly now implies "View Weekly Breakdown for selected Month"
-                If selectedMonth = 0 Then
-                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} "
-                Else
-                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
                 End If
             Case "Monthly"
                 If selectedMonth = 0 Then
@@ -366,7 +354,6 @@ Public Class FormOrders
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {selectedYear} AND MONTH(o.OrderDate) = {selectedMonth} "
                 End If
-
             Case "Yearly"
                 periodFilter = $" AND YEAR(o.OrderDate) <= {selectedYear} AND YEAR(o.OrderDate) >= {selectedYear - 4} "
             Case "All Time"
@@ -406,6 +393,10 @@ Public Class FormOrders
 
         Return sql
     End Function
+
+    ' We need to add parameters to the LoadOrdersData call or modify how it uses BuildOrdersQuery
+    ' Since BuildOrdersQuery is called inside LoadOrdersData, we need to pass parameters there.
+    ' I'll modify LoadOrdersData to use parameters.
 
     ' =======================================================================
     ' REFRESH DATA - Public method to refresh all data
@@ -519,7 +510,7 @@ Public Class FormOrders
                 .ChartAreas(0).AxisY2.Enabled = AxisEnabled.True
                 .ChartAreas(0).AxisY2.Title = "Revenue"
                 .ChartAreas(0).AxisY2.MajorGrid.Enabled = False
-                
+
                 If .Legends.Count = 0 Then .Legends.Add(New Legend("Default"))
                 .Legends(0).Docking = Docking.Top
             End With
@@ -573,14 +564,13 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
-                    dateGrouping = "DATE_FORMAT(OrderDate, '%m/%d')"
+                    dateGrouping = "TIME_FORMAT(OrderTime, '%h %p')"
                 Case "Weekly"
-                    ' Done below in period filter section to include WHERE clause logic if needed, but here just format
-                    dateGrouping = "CONCAT('Week ', FLOOR((DAY(OrderDate) - 1) / 7) + 1)"
+                    dateGrouping = "DATE_FORMAT(OrderDate, '%a')"
                 Case "Monthly"
-                    dateGrouping = "DATE_FORMAT(OrderDate, '%b')"
+                    dateGrouping = "DATE_FORMAT(OrderDate, '%d')"
                 Case "Yearly"
-                    dateGrouping = "YEAR(OrderDate)"
+                    dateGrouping = "DATE_FORMAT(OrderDate, '%b')"
                 Case Else
                     dateGrouping = "DATE_FORMAT(OrderDate, '%m/%d')"
             End Select
@@ -592,17 +582,12 @@ Public Class FormOrders
 
             Select Case Reports.SelectedPeriod
                 Case "Daily"
+                    periodFilter = " WHERE DATE(OrderDate) = @filterDate "
+                Case "Weekly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
                     Else
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
-                    End If
-                Case "Weekly"
-                    ' Filter by Month for Weekly view
-                    If selectedMonth = 0 Then
-                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
-                    Else
-                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
                 Case "Monthly"
                     If selectedMonth = 0 Then
@@ -611,8 +596,7 @@ Public Class FormOrders
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
                 Case "Yearly"
-                    ' Comparison: Last 5 years including selected year
-                    periodFilter = $" WHERE YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
+                    periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
             End Select
 
             Dim sql As String = $"
@@ -630,6 +614,7 @@ Public Class FormOrders
             MonthlyChartOrder.Series("Revenue").Points.Clear()
 
             Using cmd As New MySqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
                     While reader.Read()
                         Dim period As String = reader("Period").ToString()
@@ -663,7 +648,9 @@ Public Class FormOrders
             Dim selectedMonth As Integer = Reports.SelectedMonth
 
             Select Case Reports.SelectedPeriod
-                Case "Daily", "Weekly"
+                Case "Daily"
+                    periodFilter = " WHERE DATE(OrderDate) = @filterDate "
+                Case "Weekly"
                     If selectedMonth = 0 Then
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
                     Else
@@ -676,9 +663,9 @@ Public Class FormOrders
                         periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} AND MONTH(OrderDate) = {selectedMonth} "
                     End If
                 Case "Yearly"
-                    periodFilter = $" WHERE YEAR(OrderDate) <= {selectedYear} AND YEAR(OrderDate) >= {selectedYear - 4} "
+                    periodFilter = $" WHERE YEAR(OrderDate) = {selectedYear} "
                 Case Else
-                    periodFilter = "" ' All time - no filter
+                    periodFilter = ""
             End Select
 
             ' DEBUG: First, let's see what's actually in the database
@@ -691,6 +678,7 @@ Public Class FormOrders
 
             Debug.WriteLine("=== DEBUG: Order Type Distribution ===")
             Using debugCmd As New MySqlCommand(debugSql, conn)
+                debugCmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                 Using debugReader As MySqlDataReader = debugCmd.ExecuteReader()
                     While debugReader.Read()
                         Debug.WriteLine($"OrderType: {debugReader("OrderType")}, OrderSource: {debugReader("OrderSource")}, Count: {debugReader("Count")}")
@@ -732,7 +720,7 @@ Public Class FormOrders
                 For i As Integer = 0 To 4
                     years.Add(selectedYear - (4 - i))
                 Next
-                
+
                 For Each yr In years
                     Dim seriesName As String = yr.ToString()
                     Dim series = New Series(seriesName)
@@ -748,6 +736,7 @@ Public Class FormOrders
                     }
 
                     Using cmd As New MySqlCommand(sql, conn)
+                        cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 If Not IsDBNull(reader("StatYear")) AndAlso Convert.ToInt32(reader("StatYear")) = yr Then
@@ -772,7 +761,7 @@ Public Class FormOrders
                     ' Add points to this series
                     For Each kvp In typeCounts.OrderBy(Function(x) x.Key)
                         Dim idx As Integer = series.Points.AddXY(kvp.Key, kvp.Value)
-                        
+
                         Dim baseColor As Color
                         Select Case kvp.Key
                             Case "Dine-in" : baseColor = Color.FromArgb(88, 86, 214)
@@ -849,7 +838,7 @@ Public Class FormOrders
                         .Points(idx).Font = New Font("Segoe UI", 10, FontStyle.Bold)
                     Next
                 End With
-                
+
                 If OrderCategoriesGraph.Legends.Count > 0 Then OrderCategoriesGraph.Legends.Clear()
                 OrderCategoriesGraph.Titles(0).Text = "Orders by Type"
             End If
@@ -889,19 +878,29 @@ Public Class FormOrders
 
                                                           Select Case selectedPeriod
                                                               Case "Daily"
-                                                                  query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
-                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
-                                                                  params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                  query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d %H:00') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE DATE(OrderDate) = @filterDate GROUP BY HOUR(OrderTime) ORDER BY Period DESC"
+                                                                  params.Add(New MySqlParameter("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd")))
                                                               Case "Weekly"
-                                                                  ' Week of Month Logic
-                                                                  query = "SELECT CONCAT('Week ', FLOOR((DAY(OrderDate) - 1) / 7) + 1) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY Period ORDER BY Period DESC"
-                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
-                                                                  params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                  ' Week-by-week analysis for the selected month/year
+                                                                  If selectedMonth = 0 Then
+                                                                      query = "SELECT CONCAT('Week ', WEEK(OrderDate, 1)) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year GROUP BY YEARWEEK(OrderDate, 1) ORDER BY YEARWEEK(OrderDate, 1) DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  Else
+                                                                      query = "SELECT CONCAT('Week ', FLOOR((DAY(OrderDate) - 1) / 7) + 1) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY Period ORDER BY Period DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                  End If
                                                               Case "Monthly"
-                                                                  query = "SELECT DATE_FORMAT(OrderDate, '%M') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY MONTH(OrderDate) DESC"
-                                                                  params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  If selectedMonth = 0 Then
+                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY Period DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                  Else
+                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
+                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                  End If
                                                               Case "Yearly"
-                                                                  query = "SELECT YEAR(OrderDate) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) <= @Year AND YEAR(OrderDate) >= @Year - 4 GROUP BY YEAR(OrderDate) ORDER BY Period DESC"
+                                                                  query = "SELECT DATE_FORMAT(OrderDate, '%M') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY MONTH(OrderDate) DESC"
                                                                   params.Add(New MySqlParameter("@Year", selectedYear))
                                                           End Select
 

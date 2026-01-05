@@ -65,6 +65,10 @@ Partial Class FormSales
         Me.PictureBox11 = New System.Windows.Forms.PictureBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.lblTotalRevenue = New System.Windows.Forms.Label()
+        Me.TabControlSales = New System.Windows.Forms.TabControl()
+        Me.TabPageOverview = New System.Windows.Forms.TabPage()
+        Me.TabPageDetailed = New System.Windows.Forms.TabPage()
+        Me.dgvSales = New System.Windows.Forms.DataGridView()
         Me.RoundedPane24.SuspendLayout()
         CType(Me.Chart1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane23.SuspendLayout()
@@ -100,11 +104,144 @@ Partial Class FormSales
         Me.RoundedPane24.CornerRadius = 15
         Me.RoundedPane24.FillColor = System.Drawing.Color.White
         Me.RoundedPane24.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.RoundedPane24.Location = New System.Drawing.Point(47, 239)
-        Me.RoundedPane24.Margin = New System.Windows.Forms.Padding(4)
-        Me.RoundedPane24.Name = "RoundedPane24"
-        Me.RoundedPane24.Size = New System.Drawing.Size(1393, 476)
         Me.RoundedPane24.TabIndex = 10
+        Me.RoundedPane24.Location = New System.Drawing.Point(10, 10)
+        Me.RoundedPane24.Size = New System.Drawing.Size(1370, 450)
+        '
+        'TabControlSales
+        '
+        Me.TabControlSales.Controls.Add(Me.TabPageOverview)
+        Me.TabControlSales.Controls.Add(Me.TabPageDetailed)
+        Me.TabControlSales.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.TabControlSales.Location = New System.Drawing.Point(47, 239)
+        Me.TabControlSales.Name = "TabControlSales"
+        Me.TabControlSales.SelectedIndex = 0
+        Me.TabControlSales.Size = New System.Drawing.Size(1400, 500)
+        Me.TabControlSales.TabIndex = 30
+        '
+        'TabPageOverview
+        '
+        Me.TabPageOverview.Controls.Add(Me.RoundedPane24)
+        Me.TabPageOverview.Location = New System.Drawing.Point(4, 32)
+        Me.TabPageOverview.Name = "TabPageOverview"
+        Me.TabPageOverview.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageOverview.Size = New System.Drawing.Size(1392, 464)
+        Me.TabPageOverview.TabIndex = 0
+        Me.TabPageOverview.Text = "Overview"
+        Me.TabPageOverview.UseVisualStyleBackColor = True
+        '
+        'TabPageDetailed
+        '
+        Me.TabPageDetailed.Controls.Add(Me.dgvSales)
+        Me.TabPageDetailed.Location = New System.Drawing.Point(4, 32)
+        Me.TabPageDetailed.Name = "TabPageDetailed"
+        Me.TabPageDetailed.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageDetailed.Size = New System.Drawing.Size(1392, 464)
+        Me.TabPageDetailed.TabIndex = 1
+        Me.TabPageDetailed.Text = "Detailed Sales"
+        Me.TabPageDetailed.UseVisualStyleBackColor = True
+        '
+        'dgvSales
+        '
+        Me.dgvSales.BackgroundColor = System.Drawing.Color.White
+        Me.dgvSales.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvSales.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvSales.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.dgvSales.Location = New System.Drawing.Point(3, 3)
+        Me.dgvSales.Name = "dgvSales"
+        Me.dgvSales.RowHeadersWidth = 51
+        Me.dgvSales.Size = New System.Drawing.Size(1386, 458)
+        Me.dgvSales.TabIndex = 0
+        '
+        'LabelHeader
+        '
+        Me.LabelHeader = New System.Windows.Forms.Label()
+        Me.LabelHeader.AutoSize = True
+        Me.LabelHeader.Font = New System.Drawing.Font("Segoe UI", 16.0!, System.Drawing.FontStyle.Bold)
+        Me.LabelHeader.Location = New System.Drawing.Point(40, 25)
+        Me.LabelHeader.Name = "LabelHeader"
+        Me.LabelHeader.Size = New System.Drawing.Size(250, 37)
+        Me.LabelHeader.TabIndex = 20
+        Me.LabelHeader.Text = "Financial Overview"
+        '
+        'btnExportPdf
+        '
+        Me.btnExportPdf = New System.Windows.Forms.Button()
+        Me.btnExportPdf.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.btnExportPdf.ForeColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.btnExportPdf.Location = New System.Drawing.Point(1330, 25)
+        Me.btnExportPdf.Name = "btnExportPdf"
+        Me.btnExportPdf.Size = New System.Drawing.Size(150, 40)
+        Me.btnExportPdf.TabIndex = 22
+        Me.btnExportPdf.Text = "Export to PDF"
+        '
+        'SearchContainer
+        '
+        Me.SearchContainer = New InformationManagement.RoundedPane2()
+        Me.TextBoxSearch = New System.Windows.Forms.TextBox()
+        Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
+        Me.SearchContainer.CornerRadius = 10
+        Me.SearchContainer.Location = New System.Drawing.Point(47, 725)
+        Me.SearchContainer.Name = "SearchContainer"
+        Me.SearchContainer.Size = New System.Drawing.Size(300, 40)
+        Me.SearchContainer.TabIndex = 23
+        Me.SearchContainer.BorderColor = Color.LightGray
+        Me.SearchContainer.FillColor = Color.White
+        '
+        'TextBoxSearch
+        '
+        Me.TextBoxSearch.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.TextBoxSearch.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.TextBoxSearch.Location = New System.Drawing.Point(10, 10)
+        Me.TextBoxSearch.Name = "TextBoxSearch"
+        Me.TextBoxSearch.Size = New System.Drawing.Size(280, 23)
+        Me.TextBoxSearch.TabIndex = 0
+        Me.TextBoxSearch.Text = "Search sales..."
+        '
+        'PaginationContainer
+        '
+        Me.PaginationContainer = New System.Windows.Forms.Panel()
+        Me.btnPrev = New System.Windows.Forms.Button()
+        Me.btnNext = New System.Windows.Forms.Button()
+        Me.lblPageStatus = New System.Windows.Forms.Label()
+        Me.PaginationContainer.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.PaginationContainer.Controls.Add(Me.btnPrev)
+        Me.PaginationContainer.Controls.Add(Me.btnNext)
+        Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
+        Me.PaginationContainer.Location = New System.Drawing.Point(1040, 725)
+        Me.PaginationContainer.Name = "PaginationContainer"
+        Me.PaginationContainer.Size = New System.Drawing.Size(400, 40)
+        Me.PaginationContainer.TabIndex = 24
+        '
+        'btnPrev
+        '
+        Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnPrev.Location = New System.Drawing.Point(230, 5)
+        Me.btnPrev.Name = "btnPrev"
+        Me.btnPrev.Size = New System.Drawing.Size(80, 30)
+        Me.btnPrev.TabIndex = 0
+        Me.btnPrev.Text = "Previous"
+        '
+        'btnNext
+        '
+        Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNext.Location = New System.Drawing.Point(315, 5)
+        Me.btnNext.Name = "btnNext"
+        Me.btnNext.Size = New System.Drawing.Size(80, 30)
+        Me.btnNext.TabIndex = 1
+        Me.btnNext.Text = "Next"
+        '
+        'lblPageStatus
+        '
+        Me.lblPageStatus.AutoSize = True
+        Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.lblPageStatus.Location = New System.Drawing.Point(10, 10)
+        Me.lblPageStatus.Name = "lblPageStatus"
+        Me.lblPageStatus.Size = New System.Drawing.Size(84, 20)
+        Me.lblPageStatus.TabIndex = 2
+        Me.lblPageStatus.Text = "Page 1 of 1"
 
 
         'Label1
@@ -394,10 +531,14 @@ Partial Class FormSales
         Me.AutoSize = True
         Me.BackColor = System.Drawing.Color.GhostWhite
         Me.ClientSize = New System.Drawing.Size(1530, 626)
-        Me.Controls.Add(Me.RoundedPane24)
-        Me.Controls.Add(Me.RoundedPane23)
-        Me.Controls.Add(Me.RoundedPane22)
         Me.Controls.Add(Me.RoundedPane21)
+        Me.Controls.Add(Me.RoundedPane22)
+        Me.Controls.Add(Me.RoundedPane23)
+        Me.Controls.Add(Me.LabelHeader)
+        Me.Controls.Add(Me.btnExportPdf)
+        Me.Controls.Add(Me.TabControlSales)
+        Me.Controls.Add(Me.SearchContainer)
+        Me.Controls.Add(Me.PaginationContainer)
         Me.Controls.Add(Me.Panel1)
         Me.DoubleBuffered = True
         Me.Margin = New System.Windows.Forms.Padding(4)
@@ -418,6 +559,10 @@ Partial Class FormSales
         Me.RoundedPane21.PerformLayout()
         Me.RoundedPane221.ResumeLayout(False)
         CType(Me.PictureBox11, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabControlSales.ResumeLayout(False)
+        Me.TabPageOverview.ResumeLayout(False)
+        Me.TabPageDetailed.ResumeLayout(False)
+        CType(Me.dgvSales, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -432,14 +577,25 @@ Partial Class FormSales
     Friend WithEvents RoundedPane24 As RoundedPane2
     Friend WithEvents Label1 As Label
     Friend WithEvents Panel1 As Panel
-    Friend WithEvents Label11 As Label
-    Friend WithEvents Label10 As Label
-    Friend WithEvents RoundedPane22 As RoundedPane2
+    Friend WithEvents TabControlSales As TabControl
+    Friend WithEvents TabPageOverview As TabPage
+    Friend WithEvents TabPageDetailed As TabPage
+    Friend WithEvents dgvSales As DataGridView
+    Friend WithEvents LabelHeader As Label
+    Friend WithEvents btnExportPdf As Button
+    Friend WithEvents SearchContainer As RoundedPane2
+    Friend WithEvents TextBoxSearch As TextBox
+    Friend WithEvents PaginationContainer As Panel
+    Friend WithEvents btnPrev As Button
+    Friend WithEvents btnNext As Button
+    Friend WithEvents lblPageStatus As Label
     Friend WithEvents RoundedPane218 As RoundedPane2
-    Friend WithEvents PictureBox5 As PictureBox
-    Friend WithEvents RoundedPane221 As RoundedPane2
-    Friend WithEvents PictureBox11 As PictureBox
+    Friend WithEvents RoundedPane22 As RoundedPane2
     Friend WithEvents RoundedPane25 As RoundedPane2
+    Friend WithEvents RoundedPane221 As RoundedPane2
+    Friend WithEvents PictureBox5 As PictureBox
     Friend WithEvents PictureBox1 As PictureBox
-
+    Friend WithEvents PictureBox11 As PictureBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents Label11 As Label
 End Class

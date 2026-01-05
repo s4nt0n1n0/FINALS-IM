@@ -316,28 +316,25 @@ Public Class Reports
 
 
     Private Sub UpdateFilterVisibility()
-        ' Month selection is only critical for "Monthly"
+        ' Month selection is critical for "Monthly", and useful for Monthly/Yearly overview
+        ' But for Daily/Weekly, we want a specific Date Picker if possible, or use the Month selector.
+        ' REFINEMENT: Show DatePicker for Daily, and keep Year/Month for others but filter correctly.
+        
+        Dim isDaily As Boolean = (SelectedPeriod = "Daily")
+        Dim isWeekly As Boolean = (SelectedPeriod = "Weekly")
         Dim isMonthly As Boolean = (SelectedPeriod = "Monthly")
-        cmbMonth.Enabled = isMonthly
-        lblMonth.Enabled = isMonthly
+        Dim isYearly As Boolean = (SelectedPeriod = "Yearly")
 
-        ' Date Picker is needed only for Weekly (if specific week selection is needed by date)
-        ' For Daily and Weekly, we now use Year/Month selectors to show the Data breakdown
-        Dim isDateSpecific As Boolean = False
-
-        dtpDate.Visible = isDateSpecific
+        ' Show DatePicker only for Daily specific selection
+        dtpDate.Visible = isDaily
         
-        ' Hide Year/Month if DatePicker is active
-        cmbYear.Visible = Not isDateSpecific
-        lblYear.Visible = Not isDateSpecific
-        
-        ' Month combo is visible for Monthly, Daily AND Weekly
-        Dim isMonthNeeded As Boolean = (SelectedPeriod = "Monthly" OrElse SelectedPeriod = "Daily" OrElse SelectedPeriod = "Weekly")
-        cmbMonth.Visible = isMonthNeeded
-        lblMonth.Visible = isMonthNeeded
+        ' Month selector is needed for Weekly, Monthly, and optionally Yearly (to narrow down)
+        cmbYear.Visible = Not isDaily
+        lblYear.Visible = Not isDaily
+        cmbMonth.Visible = isWeekly OrElse isMonthly
+        lblMonth.Visible = isWeekly OrElse isMonthly
 
-        If isDateSpecific Then
-             ' Ensure the date picker initializes with the current global filter date
+        If dtpDate.Visible Then
              dtpDate.Value = _filterDate
         End If
     End Sub

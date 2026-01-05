@@ -311,8 +311,6 @@ $"SELECT DisplayName,
  GROUP BY DisplayName {(If(periodFilter = "Yearly", ", StatYear", ""))}
  ORDER BY Revenue DESC"
 
-        query &= " ORDER BY Revenue DESC;"
-
         Dim dt As New DataTable()
 
         Using connection As New MySqlConnection(strConnection)

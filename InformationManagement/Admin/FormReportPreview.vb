@@ -130,7 +130,7 @@ Public Class FormReportPreview
         Dim pi = GetType(Control).GetProperty("DoubleBuffered", Reflection.BindingFlags.Instance Or Reflection.BindingFlags.NonPublic)
         pi?.SetValue(previewControl, True, Nothing)
 
-        AddHandler previewControl.MouseWheel, AddressOf OnMouseWheel
+        AddHandler previewControl.MouseWheel, AddressOf PreviewControl_MouseWheel
         
         ' 3. Loading/Progress Panel (Centered Overlay)
         loadingPanel = New Panel()
@@ -178,7 +178,7 @@ Public Class FormReportPreview
         lblZoom.Text = Math.Round(previewControl.Zoom * 100).ToString() & "%"
     End Sub
 
-    Private Sub OnMouseWheel(sender As Object, e As MouseEventArgs)
+    Private Sub PreviewControl_MouseWheel(sender As Object, e As MouseEventArgs)
         ' Intercept mouse wheel to scroll or change page
         ' PrintPreviewControl is a bit picky about scrolling via wheel if not focused correctly
         Try

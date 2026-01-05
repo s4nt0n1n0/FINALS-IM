@@ -121,35 +121,26 @@ Public Class FormTakeOutOrders
     End Function
 
     Private Function FetchTotalTakeOutCount(searchText As String) As Integer
-        ' Get period filter from Reports form
         Dim periodFilter As String = ""
         Dim sYear As Integer = Reports.SelectedYear
         Dim sMonth As Integer = Reports.SelectedMonth
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                If sMonth = 0 Then
-                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
-                Else
-                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
-                End If
-
+                periodFilter = " AND DATE(o.OrderDate) = @filterDate "
             Case "Weekly"
                 If sMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
                 End If
-
             Case "Monthly"
                 If sMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
                 End If
-
             Case "Yearly"
-                ' 5-year historical summary
                 periodFilter = $" AND YEAR(o.OrderDate) <= {sYear} AND YEAR(o.OrderDate) >= {sYear - 4} "
         End Select
 
@@ -160,45 +151,36 @@ Public Class FormTakeOutOrders
                 conn.Open()
                 Using cmd As New MySqlCommand(query, conn)
                     cmd.Parameters.AddWithValue("@search", "%" & searchText & "%")
+                    cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                     Return Convert.ToInt32(cmd.ExecuteScalar())
                 End Using
             End Using
         Catch ex As Exception
-            ' Return 0 if there's an error
             Return 0
         End Try
     End Function
 
     Private Function LoadOrdersDataFromDB(searchText As String, offset As Integer, limit As Integer) As DataTable
-        ' Get period filter from Reports form
         Dim periodFilter As String = ""
         Dim sYear As Integer = Reports.SelectedYear
         Dim sMonth As Integer = Reports.SelectedMonth
 
         Select Case Reports.SelectedPeriod
             Case "Daily"
-                If sMonth = 0 Then
-                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
-                Else
-                    periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
-                End If
-
+                periodFilter = " AND DATE(o.OrderDate) = @filterDate "
             Case "Weekly"
                 If sMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
                 End If
-
             Case "Monthly"
                 If sMonth = 0 Then
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
                 Else
                     periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
                 End If
-
             Case "Yearly"
-                ' 5-year historical summary
                 periodFilter = $" AND YEAR(o.OrderDate) <= {sYear} AND YEAR(o.OrderDate) >= {sYear - 4} "
         End Select
 
@@ -208,19 +190,14 @@ Public Class FormTakeOutOrders
                 conn.Open()
                 Dim query As String =
                     "SELECT " &
-                    "o.OrderID, " &
-                    "CONCAT('#', o.OrderID) AS OrderNumber, " &
-                    "(SELECT GROUP_CONCAT(CONCAT(oi.Quantity, 'x ', oi.ProductName) SEPARATOR ', ') " &
-                    "   FROM order_items oi " &
-                    "   WHERE oi.OrderID = o.OrderID " &
-                    "   LIMIT 10) AS ItemsOrdered, " &
-                    "o.TotalAmount AS Amount, " &
-                    "o.OrderStatus AS Status, " &
-                    "COALESCE(p.PaymentMethod, 'Cash') AS PaymentMethod, " &
-                    "DATE_FORMAT(CONCAT(o.OrderDate, ' ', o.OrderTime), '%Y-%m-%d %H:%i') AS Time " &
+                    "OrderID, " &
+                    "CONCAT('#', OrderID) AS OrderNumber, " &
+                    "ItemsOrderedCount AS Items, " &
+                    "TotalAmount AS Amount, " &
+                    "OrderStatus AS Status, " &
+                    "DATE_FORMAT(CONCAT(OrderDate, ' ', OrderTime), '%Y-%m-%d %H:%i') AS Time " &
                     "FROM orders o " &
-                    "LEFT JOIN payments p ON o.OrderID = p.OrderID " &
-                    "WHERE o.OrderType = 'Takeout' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search OR p.PaymentMethod LIKE @search) " &
+                    "WHERE o.OrderType = 'Takeout' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search) " &
                     "ORDER BY o.OrderDate DESC, o.OrderTime DESC, o.OrderID DESC " &
                     "LIMIT @limit OFFSET @offset"
 
@@ -228,6 +205,7 @@ Public Class FormTakeOutOrders
                     cmd.Parameters.AddWithValue("@search", "%" & searchText & "%")
                     cmd.Parameters.AddWithValue("@limit", limit)
                     cmd.Parameters.AddWithValue("@offset", offset)
+                    cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                     Using adapter As New MySqlDataAdapter(cmd)
                         adapter.Fill(dt)
                     End Using
@@ -253,30 +231,22 @@ Public Class FormTakeOutOrders
                                Dim sYear As Integer = Reports.SelectedYear
                                Dim sMonth As Integer = Reports.SelectedMonth
 
-                               Select Case Reports.SelectedPeriod
+                                Select Case Reports.SelectedPeriod
                                    Case "Daily"
-                                       If sMonth = 0 Then
-                                           periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
-                                       Else
-                                           periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
-                                       End If
-
+                                       periodFilter = " AND DATE(o.OrderDate) = @filterDate "
                                    Case "Weekly"
                                        If sMonth = 0 Then
                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
                                        Else
                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
                                        End If
-
                                    Case "Monthly"
                                        If sMonth = 0 Then
                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} "
                                        Else
                                            periodFilter = $" AND YEAR(o.OrderDate) = {sYear} AND MONTH(o.OrderDate) = {sMonth} "
                                        End If
-
                                    Case "Yearly"
-                                       ' 5-year historical summary
                                        periodFilter = $" AND YEAR(o.OrderDate) <= {sYear} AND YEAR(o.OrderDate) >= {sYear - 4} "
                                End Select
 
@@ -285,6 +255,7 @@ Public Class FormTakeOutOrders
                                    Dim sql = "SELECT COUNT(*), COALESCE(SUM(TotalAmount), 0) FROM orders o WHERE o.OrderType = 'Takeout' " & periodFilter & " AND (o.OrderID LIKE @search OR o.OrderStatus LIKE @search)"
                                    Using cmd As New MySqlCommand(sql, conn)
                                        cmd.Parameters.AddWithValue("@search", "%" & searchText & "%")
+                                       cmd.Parameters.AddWithValue("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd"))
                                        Using reader = cmd.ExecuteReader()
                                            If reader.Read() Then
                                                totalCount = reader.GetInt32(0)
@@ -458,14 +429,14 @@ Public Class FormTakeOutOrders
             .CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal
             .GridColor = Color.FromArgb(241, 245, 249)
             .DefaultCellStyle.SelectionBackColor = Color.FromArgb(248, 250, 252)
-            .DefaultCellStyle.SelectionForeColor = Color.Black ' Changed to Black for better readability on select
+            .DefaultCellStyle.SelectionForeColor = Color.Black
             .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F)
             .ColumnHeadersDefaultCellStyle.BackColor = Color.White
-            .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(100, 116, 139)
-            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-            .ColumnHeadersHeight = 45
-            .RowTemplate.Height = 45
-            .EnableHeadersVisualStyles = True
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(71, 85, 105)
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI Semibold", 10.0F, FontStyle.Bold)
+            .ColumnHeadersHeight = 50
+            .RowTemplate.Height = 50
+            .EnableHeadersVisualStyles = False
 
             If .Columns.Contains("OrderID") Then .Columns("OrderID").Visible = False
 
@@ -476,13 +447,11 @@ Public Class FormTakeOutOrders
                 End With
             End If
 
-            If .Columns.Contains("ItemsOrdered") Then
-                With .Columns("ItemsOrdered")
-                    .HeaderText = "Ordered Products"
-                    .FillWeight = 100
-                    .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-                    .DefaultCellStyle.WrapMode = DataGridViewTriState.False
-                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+            If .Columns.Contains("Items") Then
+                With .Columns("Items")
+                    .HeaderText = "Items"
+                    .FillWeight = 60
+                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                 End With
             End If
 
@@ -490,19 +459,10 @@ Public Class FormTakeOutOrders
                 With .Columns("Amount")
                     .HeaderText = "Total Amount"
                     .DefaultCellStyle.Format = "₱#,##0.00"
-                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
-                    .DefaultCellStyle.Font = New Font("Segoe UI", 9.5F, FontStyle.Bold)
+                    .DefaultCellStyle.ForeColor = Color.FromArgb(15, 23, 42)
+                    .DefaultCellStyle.Font = New Font("Segoe UI Semibold", 10)
                 End With
             End If
-
-            If .Columns.Contains("PaymentMethod") Then
-                With .Columns("PaymentMethod")
-                    .HeaderText = "Payment"
-                    .FillWeight = 100
-                    .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-                End With
-            End If
-
 
             If .Columns.Contains("Time") Then
                 With .Columns("Time")
@@ -568,17 +528,29 @@ Public Class FormTakeOutOrders
 
                                                               Select Case selectedPeriod
                                                                   Case "Daily"
-                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
-                                                                      params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d %H:00') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND DATE(OrderDate) = @filterDate GROUP BY HOUR(OrderTime) ORDER BY Period DESC"
+                                                                      params.Add(New MySqlParameter("@filterDate", Reports.GlobalFilterDate.ToString("yyyy-MM-dd")))
                                                                   Case "Weekly"
-                                                                      query = "SELECT CONCAT('Week ', WEEK(OrderDate, 1)) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY YEARWEEK(OrderDate, 1) ORDER BY YEARWEEK(OrderDate, 1) DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      ' Week-by-week analysis for the selected month/year
+                                                                      If selectedMonth = 0 Then
+                                                                          query = "SELECT CONCAT('Week ', WEEK(OrderDate, 1)) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY YEARWEEK(OrderDate, 1) ORDER BY YEARWEEK(OrderDate, 1) DESC"
+                                                                          params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      Else
+                                                                          query = "SELECT CONCAT('Week ', FLOOR((DAY(OrderDate) - 1) / 7) + 1) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY Period ORDER BY Period DESC"
+                                                                          params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                          params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                      End If
                                                                   Case "Monthly"
-                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%M') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY MONTH(OrderDate) DESC"
-                                                                      params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      If selectedMonth = 0 Then
+                                                                          query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY Period DESC"
+                                                                          params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                      Else
+                                                                          query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m-%d') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year AND MONTH(OrderDate) = @Month GROUP BY DATE(OrderDate) ORDER BY Period DESC"
+                                                                          params.Add(New MySqlParameter("@Year", selectedYear))
+                                                                          params.Add(New MySqlParameter("@Month", selectedMonth))
+                                                                      End If
                                                                   Case "Yearly"
-                                                                      query = "SELECT YEAR(OrderDate) AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) <= @Year AND YEAR(OrderDate) >= @Year - 4 GROUP BY YEAR(OrderDate) ORDER BY Period DESC"
+                                                                      query = "SELECT DATE_FORMAT(OrderDate, '%Y-%m') AS Period, COUNT(*) AS OrderCount, SUM(TotalAmount) AS TotalRevenue, AVG(TotalAmount) AS AvgValue FROM orders WHERE OrderType = 'Takeout' AND YEAR(OrderDate) = @Year GROUP BY MONTH(OrderDate) ORDER BY Period DESC"
                                                                       params.Add(New MySqlParameter("@Year", selectedYear))
                                                               End Select
 

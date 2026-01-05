@@ -151,4 +151,15 @@
         bx5Q5nMht7RxAAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="btnExportPdf.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEbSURBVDhPldOx
+        K0VhGMfx26WkpIwWxWCQFGVgEYsyGgxyWQxisfgDJINRkYEyGRWDslykMCijstjY2CyWj97bc3Xc0j3n
+        t5z3/J7zfJ/3Oc/7lkoZ4RadOEMPjjEcsV6c4xOD2bxfRbAFdxjAIeYC+oIFXGK8MTcld+At1nXAJtax
+        iIOIXfwH6MdjA2AFO9jCWjPACKqxnkRbVN7HNlabAWotpMrx3h79LuUCJGE6IBN4xh7KuQFJOMJsTKQc
+        XiHACWbwntoIrxDgFFN4RVd4hQC1D+IfdIe3ga9o67sZoBojfUJfxk/jnM+zg/s4RLVnxs8NSJXTxblK
+        O8n4hQBDeGgA7GIZNxj9m5URKviIq9ua8cditNfpmNf9H/Ru8ZLy9fQaAAAAAElFTkSuQmCC
+</value>
+  </data>
 </root>

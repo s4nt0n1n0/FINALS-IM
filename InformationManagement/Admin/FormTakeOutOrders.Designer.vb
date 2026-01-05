@@ -24,7 +24,6 @@ Partial Class FormTakeOutOrders
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormTakeOutOrders))
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.RoundedPane21 = New InformationManagement.RoundedPane2()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
@@ -48,10 +47,16 @@ Partial Class FormTakeOutOrders
         Me.SearchContainer = New InformationManagement.RoundedPane2()
         Me.TextBoxSearch = New System.Windows.Forms.TextBox()
         Me.dtpFilter = New System.Windows.Forms.DateTimePicker()
+        Me.btnExportPdf = New System.Windows.Forms.Button()
+
         Me.Label10 = New System.Windows.Forms.Label()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.LabelHeader = New System.Windows.Forms.Label()
         Me.LabelSubHeader = New System.Windows.Forms.Label()
+        Me.TabControlReports = New System.Windows.Forms.TabControl()
+        Me.TabPageDetailed = New System.Windows.Forms.TabPage()
+        Me.TabPageBreakdown = New System.Windows.Forms.TabPage()
+        Me.DataGridViewBreakdown = New System.Windows.Forms.DataGridView()
         Me.RoundedPane21.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.RoundedPane22.SuspendLayout()
@@ -62,6 +67,10 @@ Partial Class FormTakeOutOrders
         Me.PaginationContainer.SuspendLayout()
         Me.SearchContainer.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabControlReports.SuspendLayout()
+        Me.TabPageDetailed.SuspendLayout()
+        Me.TabPageBreakdown.SuspendLayout()
+        CType(Me.DataGridViewBreakdown, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'RoundedPane21
@@ -252,19 +261,19 @@ Partial Class FormTakeOutOrders
         '
         'RoundedPane24
         '
-        Me.RoundedPane24.AutoScroll = True
         Me.RoundedPane24.BorderColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(245, Byte), Integer), CType(CType(249, Byte), Integer))
         Me.RoundedPane24.BorderThickness = 1
+        Me.RoundedPane24.Controls.Add(Me.TabControlReports)
         Me.RoundedPane24.Controls.Add(Me.PaginationContainer)
         Me.RoundedPane24.Controls.Add(Me.SearchContainer)
         Me.RoundedPane24.Controls.Add(Me.dtpFilter)
+        Me.RoundedPane24.Controls.Add(Me.btnExportPdf)
         Me.RoundedPane24.Controls.Add(Me.Label10)
-        Me.RoundedPane24.Controls.Add(Me.DataGridView1)
         Me.RoundedPane24.CornerRadius = 15
         Me.RoundedPane24.FillColor = System.Drawing.Color.White
         Me.RoundedPane24.Location = New System.Drawing.Point(30, 255)
         Me.RoundedPane24.Name = "RoundedPane24"
-        Me.RoundedPane24.Size = New System.Drawing.Size(1045, 470)
+        Me.RoundedPane24.Size = New System.Drawing.Size(1140, 463)
         Me.RoundedPane24.TabIndex = 7
         '
         'PaginationContainer
@@ -274,9 +283,9 @@ Partial Class FormTakeOutOrders
         Me.PaginationContainer.Controls.Add(Me.btnNext)
         Me.PaginationContainer.Controls.Add(Me.btnPrev)
         Me.PaginationContainer.Controls.Add(Me.lblPageStatus)
-        Me.PaginationContainer.Location = New System.Drawing.Point(24, 427)
+        Me.PaginationContainer.Location = New System.Drawing.Point(24, 415)
         Me.PaginationContainer.Name = "PaginationContainer"
-        Me.PaginationContainer.Size = New System.Drawing.Size(1002, 40)
+        Me.PaginationContainer.Size = New System.Drawing.Size(1097, 40)
         Me.PaginationContainer.TabIndex = 12
         '
         'btnNext
@@ -285,7 +294,7 @@ Partial Class FormTakeOutOrders
         Me.btnNext.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnNext.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnNext.Location = New System.Drawing.Point(912, 5)
+        Me.btnNext.Location = New System.Drawing.Point(1007, 5)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(80, 30)
         Me.btnNext.TabIndex = 2
@@ -298,7 +307,7 @@ Partial Class FormTakeOutOrders
         Me.btnPrev.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnPrev.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.btnPrev.Location = New System.Drawing.Point(822, 5)
+        Me.btnPrev.Location = New System.Drawing.Point(917, 5)
         Me.btnPrev.Name = "btnPrev"
         Me.btnPrev.Size = New System.Drawing.Size(80, 30)
         Me.btnPrev.TabIndex = 1
@@ -310,7 +319,7 @@ Partial Class FormTakeOutOrders
         Me.lblPageStatus.AutoSize = True
         Me.lblPageStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.lblPageStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        Me.lblPageStatus.Location = New System.Drawing.Point(5, 10)
+        Me.lblPageStatus.Location = New System.Drawing.Point(0, 10)
         Me.lblPageStatus.Name = "lblPageStatus"
         Me.lblPageStatus.Size = New System.Drawing.Size(124, 15)
         Me.lblPageStatus.TabIndex = 0
@@ -324,9 +333,9 @@ Partial Class FormTakeOutOrders
         Me.SearchContainer.Controls.Add(Me.TextBoxSearch)
         Me.SearchContainer.CornerRadius = 10
         Me.SearchContainer.FillColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(250, Byte), Integer), CType(CType(252, Byte), Integer))
-        Me.SearchContainer.Location = New System.Drawing.Point(632, 10)
+        Me.SearchContainer.Location = New System.Drawing.Point(498, 14)
         Me.SearchContainer.Name = "SearchContainer"
-        Me.SearchContainer.Size = New System.Drawing.Size(384, 38)
+        Me.SearchContainer.Size = New System.Drawing.Size(482, 38)
         Me.SearchContainer.TabIndex = 11
         '
         'TextBoxSearch
@@ -345,12 +354,30 @@ Partial Class FormTakeOutOrders
         '
         Me.dtpFilter.CalendarFont = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.dtpFilter.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpFilter.Location = New System.Drawing.Point(432, 15)
+        Me.dtpFilter.Format = System.Windows.Forms.DateTimePickerFormat.Short
+        Me.dtpFilter.Location = New System.Drawing.Point(320, 28) ' Positioned before search
         Me.dtpFilter.Name = "dtpFilter"
         Me.dtpFilter.Size = New System.Drawing.Size(150, 25)
         Me.dtpFilter.TabIndex = 11
         Me.dtpFilter.Visible = False
+        '
+        'btnExportPdf
+        '
+        Me.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(CType(CType(99, Byte), Integer), CType(CType(102, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnExportPdf.FlatAppearance.BorderSize = 0
+        Me.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnExportPdf.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnExportPdf.ForeColor = System.Drawing.Color.White
+        Me.btnExportPdf.Image = CType(resources.GetObject("Button1.Image"), System.Drawing.Image)
+        Me.btnExportPdf.Location = New System.Drawing.Point(986, 13)
+        Me.btnExportPdf.Name = "btnExportPdf"
+        Me.btnExportPdf.Size = New System.Drawing.Size(135, 45)
+        Me.btnExportPdf.TabIndex = 10
+        Me.btnExportPdf.Text = "   Export PDF"
+        Me.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.btnExportPdf.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.btnExportPdf.UseVisualStyleBackColor = False
         '
         'Label10
         '
@@ -358,7 +385,7 @@ Partial Class FormTakeOutOrders
         Me.Label10.BackColor = System.Drawing.Color.Transparent
         Me.Label10.Font = New System.Drawing.Font("Segoe UI Semibold", 13.0!, System.Drawing.FontStyle.Bold)
         Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
-        Me.Label10.Location = New System.Drawing.Point(32, 23)
+        Me.Label10.Location = New System.Drawing.Point(32, 28)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(131, 25)
         Me.Label10.TabIndex = 7
@@ -366,34 +393,24 @@ Partial Class FormTakeOutOrders
         '
         'DataGridView1
         '
-        Me.DataGridView1.AllowUserToResizeColumns = False
-        Me.DataGridView1.AllowUserToResizeRows = False
         Me.DataGridView1.BackgroundColor = System.Drawing.Color.White
         Me.DataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.DataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
         Me.DataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(250, Byte), Integer))
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(248, Byte), Integer), CType(CType(249, Byte), Integer), CType(CType(250, Byte), Integer))
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(116, Byte), Integer), CType(CType(139, Byte), Integer))
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
-        Me.DataGridView1.ColumnHeadersHeight = 45
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        Me.DataGridView1.Location = New System.Drawing.Point(26, 59)
+        Me.DataGridView1.ColumnHeadersHeight = 40
+        Me.DataGridView1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DataGridView1.Location = New System.Drawing.Point(3, 3)
         Me.DataGridView1.Name = "DataGridView1"
-        Me.DataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        Me.DataGridView1.RowHeadersWidth = 45
-        Me.DataGridView1.Size = New System.Drawing.Size(993, 358)
+        Me.DataGridView1.RowHeadersWidth = 51
+        Me.DataGridView1.Size = New System.Drawing.Size(1083, 294)
         Me.DataGridView1.TabIndex = 10
         '
         'LabelHeader
@@ -446,6 +463,56 @@ Partial Class FormTakeOutOrders
         Me.PaginationContainer.PerformLayout()
         Me.SearchContainer.ResumeLayout(False)
         Me.SearchContainer.PerformLayout()
+        '
+        'TabControlReports
+        '
+        Me.TabControlReports.Controls.Add(Me.TabPageDetailed)
+        Me.TabControlReports.Controls.Add(Me.TabPageBreakdown)
+        Me.TabControlReports.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.TabControlReports.Location = New System.Drawing.Point(24, 75)
+        Me.TabControlReports.Name = "TabControlReports"
+        Me.TabControlReports.SelectedIndex = 0
+        Me.TabControlReports.Size = New System.Drawing.Size(1097, 330)
+        Me.TabControlReports.TabIndex = 13
+        '
+        'TabPageDetailed
+        '
+        Me.TabPageDetailed.Controls.Add(Me.DataGridView1)
+        Me.TabPageDetailed.Location = New System.Drawing.Point(4, 26)
+        Me.TabPageDetailed.Name = "TabPageDetailed"
+        Me.TabPageDetailed.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageDetailed.Size = New System.Drawing.Size(1089, 300)
+        Me.TabPageDetailed.TabIndex = 0
+        Me.TabPageDetailed.Text = "Detailed List"
+        Me.TabPageDetailed.UseVisualStyleBackColor = True
+        '
+        'TabPageBreakdown
+        '
+        Me.TabPageBreakdown.Controls.Add(Me.DataGridViewBreakdown)
+        Me.TabPageBreakdown.Location = New System.Drawing.Point(4, 26)
+        Me.TabPageBreakdown.Name = "TabPageBreakdown"
+        Me.TabPageBreakdown.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPageBreakdown.Size = New System.Drawing.Size(1089, 300)
+        Me.TabPageBreakdown.TabIndex = 1
+        Me.TabPageBreakdown.Text = "Order Breakdown"
+        Me.TabPageBreakdown.UseVisualStyleBackColor = True
+        '
+        'DataGridViewBreakdown
+        '
+        Me.DataGridViewBreakdown.BackgroundColor = System.Drawing.Color.White
+        Me.DataGridViewBreakdown.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.DataGridViewBreakdown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridViewBreakdown.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DataGridViewBreakdown.Location = New System.Drawing.Point(3, 3)
+        Me.DataGridViewBreakdown.Name = "DataGridViewBreakdown"
+        Me.DataGridViewBreakdown.RowHeadersWidth = 51
+        Me.DataGridViewBreakdown.Size = New System.Drawing.Size(1083, 294)
+        Me.DataGridViewBreakdown.TabIndex = 0
+        '
+        Me.TabControlReports.ResumeLayout(False)
+        Me.TabPageDetailed.ResumeLayout(False)
+        Me.TabPageBreakdown.ResumeLayout(False)
+        CType(Me.DataGridViewBreakdown, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -477,9 +544,14 @@ Partial Class FormTakeOutOrders
 
     Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
+    Friend WithEvents TabControlReports As System.Windows.Forms.TabControl
+    Friend WithEvents TabPageDetailed As System.Windows.Forms.TabPage
+    Friend WithEvents TabPageBreakdown As System.Windows.Forms.TabPage
+    Friend WithEvents DataGridViewBreakdown As System.Windows.Forms.DataGridView
     Friend WithEvents PaginationContainer As System.Windows.Forms.Panel
     Friend WithEvents btnNext As System.Windows.Forms.Button
     Friend WithEvents btnPrev As System.Windows.Forms.Button
     Friend WithEvents lblPageStatus As System.Windows.Forms.Label
     Friend WithEvents dtpFilter As System.Windows.Forms.DateTimePicker
+    Friend WithEvents btnExportPdf As System.Windows.Forms.Button
 End Class
