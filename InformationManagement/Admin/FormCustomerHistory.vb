@@ -60,8 +60,18 @@ Public Class FormCustomerHistory
     End Sub
 
     Private Function FetchTotalHistoryCount(searchText As String) As Integer
-        ' Calculate count of ACTIVE customers matching search (AccountStatus = 'Active')
-        Dim query As String = "SELECT COUNT(*) FROM customers c WHERE c.AccountStatus = 'Active' AND (CONCAT(c.FirstName, ' ', c.LastName) LIKE @search OR c.Email LIKE @search OR c.CustomerType LIKE @search)"
+        ' Calculate count of ACTIVE customers with at least 1 order or reservation
+        Dim query As String = 
+            "SELECT COUNT(*) FROM ( " &
+            "  SELECT c.CustomerID " &
+            "  FROM customers c " &
+            "  LEFT JOIN orders o ON c.CustomerID = o.CustomerID " &
+            "  LEFT JOIN reservations r ON c.CustomerID = r.CustomerID " &
+            "  WHERE c.AccountStatus = 'Active' " &
+            "  AND (CONCAT(c.FirstName, ' ', c.LastName) LIKE @search OR c.Email LIKE @search OR c.CustomerType LIKE @search) " &
+            "  GROUP BY c.CustomerID " &
+            "  HAVING COUNT(DISTINCT o.OrderID) > 0 OR COUNT(DISTINCT r.ReservationID) > 0 " &
+            ") AS filtered_customers"
 
         Using conn As New MySqlConnection(connectionString)
             conn.Open()
@@ -105,11 +115,11 @@ Public Class FormCustomerHistory
             "SELECT " &
             "  c.CustomerID, " &
             "  CONCAT(c.FirstName, ' ', c.LastName) AS CustomerName, " &
-            "  IF(c.ContactNumber IS NOT NULL AND c.ContactNumber <> '', c.ContactNumber, c.Email) AS ContactInfo, " &
+            "  c.Email AS ContactInfo, " &
             "  c.CustomerType, " &
             "  CASE WHEN oStats.LastOrder IS NULL THEN rStats.LastRes WHEN rStats.LastRes IS NULL THEN oStats.LastOrder ELSE GREATEST(oStats.LastOrder, rStats.LastRes) END AS LastVisit, " &
             "  (COALESCE(oStats.OrderCount, 0) + COALESCE(rStats.ResCount, 0)) AS TotalVisits, " &
-            "  COALESCE(oStats.TotalSpent, 0) AS TotalSpent " &
+            "  (COALESCE(oStats.TotalSpent, 0) + COALESCE(rStats.TotalSpent, 0)) AS TotalSpent " &
             "FROM customers c " &
             "LEFT JOIN ( " &
             "   SELECT CustomerID, COUNT(*) as OrderCount, SUM(TotalAmount) as TotalSpent, MAX(OrderDate) as LastOrder " &
@@ -118,13 +128,15 @@ Public Class FormCustomerHistory
             "   GROUP BY CustomerID " &
             ") oStats ON c.CustomerID = oStats.CustomerID " &
             "LEFT JOIN ( " &
-            "   SELECT CustomerID, COUNT(*) as ResCount, MAX(EventDate) as LastRes " &
+            "   SELECT CustomerID, COUNT(*) as ResCount, SUM(rp.AmountPaid) as TotalSpent, MAX(r.EventDate) as LastRes " &
             "   FROM reservations r " &
+            "   LEFT JOIN reservation_payments rp ON r.ReservationID = rp.ReservationID " &
             "   WHERE 1=1 " & resDateCond &
             "   GROUP BY CustomerID " &
             ") rStats ON c.CustomerID = rStats.CustomerID " &
             "WHERE c.AccountStatus = 'Active' " &
             "AND (CONCAT(c.FirstName, ' ', c.LastName) LIKE @search OR c.Email LIKE @search OR c.CustomerType LIKE @search) " &
+            "HAVING TotalVisits > 0 " &
             "ORDER BY TotalSpent DESC " &
             "LIMIT @limit OFFSET @offset;"
 
